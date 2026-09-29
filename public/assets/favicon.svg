@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="fav-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00f0ff" />
+      <stop offset="0.5" stop-color="#6366f1" />
+      <stop offset="1" stop-color="#ec4899" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#050713" />
+  <path d="M32 10L50 52H40L32 32L24 52H14L32 10Z" fill="url(#fav-grad)" />
+  <ellipse cx="32" cy="36" rx="26" ry="9" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-dasharray="3 4" transform="rotate(-15 32 36)" />
+  <circle cx="54" cy="30" r="3.5" fill="#fbbf24" />
+</svg>

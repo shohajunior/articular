@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArticularUZ | Where Young Minds Articulate Science & Space</title>
+  <meta name="description" content="A youth-led initiative in official partnership with Uzcosmos, empowering students across Uzbekistan to explore science and space, think critically, and communicate boldly." />
+  <meta name="keywords" content="ArticularUZ, Uzcosmos, Science Communication, STEM Uzbekistan, Space Youth, Critical Thinking, Public Speaking" />
+  
+  <!-- Transparent Favicon -->
+  <link rel="icon" type="image/png" href="./assets/logo.png" />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <!-- 3D WebGL Canvas Layer -->
+  <canvas id="bg-canvas"></canvas>
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- Navigation -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner container">
+      <a href="#hero" class="brand-logo" id="logo-link">
+        <img src="./assets/logo.png" alt="ArticularUZ Logo" class="brand-img-logo" />
+        <div class="brand-text">
+          <span class="brand-name">ARTICULAR<span class="highlight">UZ</span></span>
+          <span class="brand-sub">LEARN · THINK · ARTICULATE</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu" id="nav-menu">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#uzcosmos" class="nav-link">Uzcosmos Partner</a>
+        <a href="#regions" class="nav-link">Regions Map</a>
+        <a href="#gallery" class="nav-link">Wall of Fame</a>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Sound Effect Toggle -->
+        <button id="sound-toggle" class="btn-icon" aria-label="Toggle sci-fi audio effects" title="Toggle Sound FX">
+          <span id="sound-icon-holder" data-iconly="volume" data-size="20"></span>
+        </button>
+
+        <!-- Clean Monochrome Telegram Button (Dark Outline Style matching Photo 3) -->
+        <a href="https://t.me/articularuz" target="_blank" rel="noopener noreferrer" class="btn-telegram-nav" title="Telegram Community @articularuz">
+          <span class="tg-svg-box" data-iconly="telegram" data-size="18"></span>
+          <span class="tg-label">@articularuz</span>
+        </a>
+
+        <a href="#join" id="cta-header-btn">
+          <span>Join Us</span>
+        </a>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Open menu">
+        <span data-iconly="menu" data-size="24"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-drawer" id="mobile-drawer">
+    <div class="drawer-header">
+      <img src="./assets/logo.png" alt="ArticularUZ Logo" class="brand-img-logo" />
+      <button id="close-drawer" class="btn-icon" aria-label="Close menu">
+        <span data-iconly="close" data-size="20"></span>
+      </button>
+    </div>
+    <div class="drawer-links">
+      <a href="#about" class="drawer-link">About Mission</a>
+      <a href="#uzcosmos" class="drawer-link">Uzcosmos Official Backing</a>
+      <a href="#regions" class="drawer-link">Uzbekistan Regional Map</a>
+      <a href="#gallery" class="drawer-link">Wall of Fame</a>
+      <a href="https://t.me/articularuz" target="_blank" class="drawer-link-tg">
+        <span data-iconly="telegram" data-size="22"></span>
+        <span>Telegram @articularuz</span>
+      </a>
+    </div>
+  </div>
+
+  <main id="main-content">
+    <!-- HERO SECTION -->
+    <section class="hero-section" id="hero">
+      <div class="container hero-container">
+        <!-- Left Hero Content -->
+        <div class="hero-content">
+          <h1 class="hero-title">
+            Where Young Minds <br />
+            <span class="gradient-text text-glow">Articulate The Future</span>
+          </h1>
+
+          <p class="hero-desc">Empowering youth across Uzbekistan to master critical thinking, defend scientific ideas, and speak with confidence.</p>
+
+          <div class="hero-actions">
+            <a href="#join" class="btn btn-primary btn-xl btn-glow" id="hero-join-btn">
+              <span>Register for Next Event</span>
+              <span data-iconly="arrowRight" data-size="18"></span>
+            </a>
+          </div>
+
+          <!-- Hero Metrics Bar -->
+          <div class="hero-stats">
+            <div class="stat-card">
+              <div class="stat-number" data-target="14">0</div>
+              <div class="stat-label">Regions Expanding</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-card">
+              <div class="stat-number" data-target="500" data-suffix="+">0</div>
+              <div class="stat-label">Young Thinkers</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-card">
+              <div class="stat-number" data-target="100" data-suffix="%">0</div>
+              <div class="stat-label">English Defense</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-card">
+              <div class="stat-number highlight-gold">UZCOSMOS</div>
+              <div class="stat-label">National Partner</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Hero: Detailed Rotating 3D Earth -->
+        <div class="hero-visual">
+          <div class="hero-earth-stage" id="hero-earth-stage">
+            <canvas id="hero-earth-canvas" class="hero-earth-canvas"></canvas>
+            <div class="earth-glow-backdrop"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STRATEGIC PARTNERS CAROUSEL -->
+    <section class="partners-section" id="partners">
+      <div class="container">
+        <div class="partners-header">
+          <span class="partners-label">STRATEGIC PARTNERS</span>
+        </div>
+        <div class="partners-carousel-track">
+          <div class="partners-marquee">
+            <!-- Set 1 -->
+            <div class="partner-logo-item">
+              <img src="./assets/uzcosmos-dark.png" alt="Uzcosmos Space Agency" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/Logo_IT_Park_Uzbekistan.svg.webp" alt="IT Park Uzbekistan" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/innovatsiya.png" alt="Ministry of Higher Education, Science and Innovations" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/cspace.png" alt="C-Space Coworking" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/yoshlar.png" alt="Youth Affairs Agency" class="partner-logo-img" />
+            </div>
+
+            <!-- Set 2 -->
+            <div class="partner-logo-item">
+              <img src="./assets/uzcosmos-dark.png" alt="Uzcosmos Space Agency" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/Logo_IT_Park_Uzbekistan.svg.webp" alt="IT Park Uzbekistan" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/innovatsiya.png" alt="Ministry of Higher Education, Science and Innovations" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/cspace.png" alt="C-Space Coworking" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/yoshlar.png" alt="Youth Affairs Agency" class="partner-logo-img" />
+            </div>
+
+            <!-- Set 3 -->
+            <div class="partner-logo-item">
+              <img src="./assets/uzcosmos-dark.png" alt="Uzcosmos Space Agency" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/Logo_IT_Park_Uzbekistan.svg.webp" alt="IT Park Uzbekistan" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/innovatsiya.png" alt="Ministry of Higher Education, Science and Innovations" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/cspace.png" alt="C-Space Coworking" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/yoshlar.png" alt="Youth Affairs Agency" class="partner-logo-img" />
+            </div>
+
+            <!-- Set 4 -->
+            <div class="partner-logo-item">
+              <img src="./assets/uzcosmos-dark.png" alt="Uzcosmos Space Agency" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/Logo_IT_Park_Uzbekistan.svg.webp" alt="IT Park Uzbekistan" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/innovatsiya.png" alt="Ministry of Higher Education, Science and Innovations" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/cspace.png" alt="C-Space Coworking" class="partner-logo-img" />
+            </div>
+            <div class="partner-logo-item">
+              <img src="./assets/yoshlar.png" alt="Youth Affairs Agency" class="partner-logo-img" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MISSION PHILOSOPHY (ALTERNATING PLANETARY STORY ROWS) -->
+    <section class="section manifesto-section" id="about">
+      <div class="container">
+        <div class="manifesto-header text-center">
+          <h2 class="section-heading">
+            Ideas Create Impact When You Can <br />
+            <span class="gradient-text">Defend Them</span>
+          </h2>
+        </div>
+
+        <div class="manifesto-stories">
+          <!-- Story 1: Text Left, Planet Mars Right -->
+          <div class="manifesto-row">
+            <div class="story-content">
+              <span class="story-step">01 · RESEARCH</span>
+              <h3 class="story-title">From Formula to Impact</h3>
+              <p class="story-desc">
+                An idea in a notebook only creates value when you can explain and defend why it matters before real scientists.
+              </p>
+            </div>
+            <div class="story-visual">
+              <div class="planet-frame">
+                <div class="planet-ambient orange-ambient"></div>
+                <img src="./assets/planet-mars.jpg" alt="Planet Mars" class="planet-img mars-img" loading="lazy" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Story 2: Planet Jupiter Left, Text Right -->
+          <div class="manifesto-row row-reverse">
+            <div class="story-content">
+              <span class="story-step">02 · DEFENSE</span>
+              <h3 class="story-title">English-First Defense</h3>
+              <p class="story-desc">
+                Students pitch and defend scientific theses in fluent English, bridging the gap to global space agencies.
+              </p>
+            </div>
+            <div class="story-visual">
+              <div class="planet-frame">
+                <div class="planet-ambient amber-ambient"></div>
+                <img src="./assets/planet-jupiter.jpg" alt="Planet Jupiter" class="planet-img jupiter-img" loading="lazy" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Story 3: Text Left, Planet Saturn Right -->
+          <div class="manifesto-row">
+            <div class="story-content">
+              <span class="story-step">03 · REACH</span>
+              <h3 class="story-title">Nationwide Network</h3>
+              <p class="story-desc">
+                Uniting ambitious youth, mentors, and partners across all 14 regions of Uzbekistan into one ecosystem.
+              </p>
+            </div>
+            <div class="story-visual">
+              <div class="planet-frame">
+                <div class="planet-ambient gold-ambient"></div>
+                <img src="./assets/planet-saturn.jpg" alt="Planet Saturn" class="planet-img saturn-img" loading="lazy" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UZCOSMOS OFFICIAL PARTNERSHIP SECTION -->
+    <section class="section uzcosmos-section" id="uzcosmos">
+      <div class="container">
+        <div class="uzcosmos-banner glass-panel">
+          <div class="uzcosmos-grid">
+            <div class="uzcosmos-text">
+              <div class="uzcosmos-header-logo">
+                <img src="./assets/uzcosmos-white-logo.png" alt="Uzcosmos Space Agency" class="uzcosmos-brand-logo" />
+              </div>
+              <h2 class="uzcosmos-title">
+                Supported by <br />
+                <span class="text-glow-gold">Uzcosmos Agency</span>
+              </h2>
+              <p class="uzcosmos-desc">
+                Official partnership with the Space Research and Technology Agency under the Cabinet of Ministers of Uzbekistan. Finalists receive state-recognized credentials signed by agency leadership.
+              </p>
+
+              <div class="uzcosmos-actions">
+                <a href="#gallery" class="btn btn-gold">
+                  <span>View Awarded Finalists</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="uzcosmos-media">
+              <div class="uzcosmos-card-visual">
+                <img src="./assets/uzcosmos-banner.jpg" alt="ArticularUZ and Uzcosmos partnership" class="uzcosmos-img" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE UZBEKISTAN REGIONAL MAP RADAR -->
+    <section class="section regions-section" id="regions">
+      <div class="container">
+        <h2 class="section-heading text-center">Active Across <span class="gradient-text">14 Regions</span></h2>
+        <p class="section-sub text-center">Regional presentation hubs and coordinator chapters across Uzbekistan.</p>
+
+        <div class="regions-interactive-wrapper glass-panel">
+          <!-- Left: Dynamic Interactive Map Visual -->
+          <div class="map-view-box">
+            
+
+            <!-- Stylized SVG Map of Uzbekistan with Interactive Clickable Regions -->
+            <div class="svg-map-container" id="svg-map-container"></div>
+          </div>
+
+          <!-- Right: Detailed Regional Intelligence Card -->
+          <div class="region-detail-panel" id="region-detail-panel">
+            <div class="region-detail-header">
+              <div class="region-flag-tag" id="region-tag">TASHKENT CITY</div>
+              <h3 id="region-name">Tashkent City (Central Hub)</h3>
+            </div>
+
+            <div class="region-detail-body">
+              <div class="detail-row">
+                <span class="detail-label"><span data-iconly="mapPin" data-size="14"></span> Primary Venue</span>
+                <span class="detail-val" id="region-venue">C-Space Yunusabad / Abdulla Qodiriy School</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label"><span data-iconly="calendar" data-size="14"></span> Recent Cohort</span>
+                <span class="detail-val" id="region-date">27 September 2026</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label"><span data-iconly="users" data-size="14"></span> Coordinator Status</span>
+                <span class="detail-val status-active" id="region-status">Active Regional Chapter</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label"><span data-iconly="shieldCheck" data-size="14"></span> Focus Track</span>
+                <span class="detail-val" id="region-track">Space Telemetry & STEM Communication</span>
+              </div>
+              <div class="region-bio" id="region-desc">
+                The flagship operational arena hosting multi-school presentation finals, judged by industry mentors and Uzcosmos leadership.
+              </div>
+            </div>
+
+            <div class="region-detail-footer">
+              <button class="btn btn-primary btn-block btn-glow" id="apply-coordinator-btn">
+                <span>Apply as Coordinator for this Region</span>
+                <span data-iconly="arrowRight" data-size="16"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Region Selector Pills -->
+        <div class="regions-pills" id="regions-pills"></div>
+      </div>
+    </section>
+
+    <!-- WALL OF FAME (REAL PHOTO GALLERY & EVENT MOMENTS) -->
+    <section class="section gallery-section" id="gallery">
+      <div class="container">
+        <div class="section-header-split align-center">
+          <div>
+            <h2 class="section-heading" style="margin-bottom: 0;">Wall of <span class="gradient-text">Fame & Action</span></h2>
+          </div>
+          <!-- Filter Tabs -->
+          <div class="gallery-filters" id="gallery-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="pitches">Presentations</button>
+            <button class="filter-btn" data-filter="awards">Awards & Certificates</button>
+            <button class="filter-btn" data-filter="teams">Team Collaboration</button>
+          </div>
+        </div>
+
+        <!-- Masonry Grid with Real Photos -->
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- Item 1: Team Jupiter -->
+          <div class="gallery-item" data-category="teams" data-img="./assets/team-jupiter.jpg" data-caption="Team Jupiter designing their space presentation at C-Space Yunusabad">
+            <div class="gallery-card glass-panel">
+              <img src="./assets/team-jupiter.jpg" alt="Team Jupiter working" loading="lazy" />
+              <div class="gallery-hover">
+                <h4>Team Jupiter</h4>
+                <p>Collaborative deck building with live research</p>
+                <span class="zoom-icon-box" data-iconly="maximize" data-size="16"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2: Finalists Grand Photo -->
+          <div class="gallery-item large" data-category="awards" data-img="./assets/event-grand.jpg" data-caption="All participating finalists and winners receiving certificates jointly organized by Uzcosmos Agency">
+            <div class="gallery-card glass-panel">
+              <img src="./assets/event-grand.jpg" alt="Finalists Grand Award" loading="lazy" />
+              <div class="gallery-hover">
+                <h4>ArticularUZ x Uzcosmos Awards</h4>
+                <p>Award ceremony with certificates of appreciation</p>
+                <span class="zoom-icon-box" data-iconly="maximize" data-size="16"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3: Signed Certificates Stack -->
+          <div class="gallery-item" data-category="awards" data-img="./assets/certificates.jpg" data-caption="Bronze Award Certificates signed by Kh. Rakhmonov, Head of Science, Innovations and Technology Transfer Department at Uzcosmos Agency">
+            <div class="gallery-card glass-panel">
+              <img src="./assets/certificates.jpg" alt="Bronze Award Certificates" loading="lazy" />
+              <div class="gallery-hover">
+                <h4>Uzcosmos Certificates</h4>
+                <p>Signed by Kh. Rakhmonov (Uzcosmos)</p>
+                <span class="zoom-icon-box" data-iconly="maximize" data-size="16"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 4: Mentoring & Feedback -->
+          <div class="gallery-item" data-category="pitches" data-img="./assets/mentoring.jpg" data-caption="Mentors listening to a student pitch and providing critique">
+            <div class="gallery-card glass-panel">
+              <img src="./assets/mentoring.jpg" alt="Mentoring session" loading="lazy" />
+              <div class="gallery-hover">
+                <h4>Stage Pitch Critique</h4>
+                <p>Sharpening argumentation and public presentation</p>
+                <span class="zoom-icon-box" data-iconly="maximize" data-size="16"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 5: Workshop Collaboration -->
+          <div class="gallery-item" data-category="teams" data-img="./assets/collaboration.jpg" data-caption="Youth participants analyzing scientific case study during the workshop">
+            <div class="gallery-card glass-panel">
+              <img src="./assets/collaboration.jpg" alt="Collaborative analysis" loading="lazy" />
+              <div class="gallery-hover">
+                <h4>Scientific Case Solving</h4>
+                <p>Interdisciplinary team synergy in action</p>
+                <span class="zoom-icon-box" data-iconly="maximize" data-size="16"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 6: Pitching on Stage -->
+          <div class="gallery-item" data-category="pitches" data-img="./assets/pitching.jpg" data-caption="Student presenting hypothesis on stage in English">
+            <div class="gallery-card glass-panel">
+              <img src="./assets/pitching.jpg" alt="Student pitching on stage" loading="lazy" />
+              <div class="gallery-hover">
+                <h4>Articulating Truth</h4>
+                <p>Confident science communication before peers</p>
+                <span class="zoom-icon-box" data-iconly="maximize" data-size="16"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS & PARTNER REVIEWS CAROUSEL (FIKRLAR VA SHARHLAR) -->
+    <section class="section testimonials-section" id="testimonials">
+      <div class="container">
+        <div class="section-header-split align-center">
+          <div>
+            <h2 class="section-heading" style="margin-bottom: 0;">Voice of Mentors & <span class="gradient-text">Hamkorlar</span></h2>
+          </div>
+          <div class="carousel-nav-arrows">
+            <button class="carousel-arrow" id="rev-prev-btn" aria-label="Previous review" title="Previous Review">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="carousel-arrow" id="rev-next-btn" aria-label="Next review" title="Next Review">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="testimonials-carousel" id="testimonials-carousel">
+          <div class="testimonials-track" id="testimonials-track">
+            <!-- Slide 1: Uzcosmos Leadership (State Space Agency) -->
+            <div class="testimonial-slide active">
+              <div class="quote-card glass-panel">
+                <div class="testimonial-top">
+                  <div class="stars-row">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                  </div>
+                  
+                </div>
+                <blockquote class="quote-text">
+                  “The level of scientific rigor and articulacy demonstrated by these young Uzbek students during their space thesis defense is genuinely impressive. Partnering with ArticularUZ allows Uzcosmos to identify and mentor tomorrow's aerospace innovators early on.”
+                </blockquote>
+                <div class="quote-author">
+                  <div class="author-avatar-crest">
+                    <i class="fa-solid fa-satellite"></i>
+                  </div>
+                  <div class="quote-author-text">
+                    <div class="author-name">Kh. Rakhmonov</div>
+                    <div class="author-title">Head of Science, Innovations & Technology Transfer Department · Uzcosmos Agency</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2: Finalist Team Leader -->
+            <div class="testimonial-slide">
+              <div class="quote-card glass-panel">
+                <div class="testimonial-top">
+                  <div class="stars-row">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                  </div>
+                  
+                </div>
+                <blockquote class="quote-text">
+                  “Before ArticularUZ, I had endless formulas in my notebook about celestial orbits, but I couldn't pitch them in English under pressure. After our defense at C-Space, our team won certificates signed by Uzcosmos leadership. It completely redefined my confidence.”
+                </blockquote>
+                <div class="quote-author">
+                  <div class="author-avatar-crest student">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                  </div>
+                  <div class="quote-author-text">
+                    <div class="author-name">Jasur Alimov</div>
+                    <div class="author-title">Finalist Team Leader (Team Jupiter) · Abdulla Qodiriy School, Tashkent</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3: Regional Coordinator -->
+            <div class="testimonial-slide">
+              <div class="quote-card glass-panel">
+                <div class="testimonial-top">
+                  <div class="stars-row">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                  </div>
+                  
+                </div>
+                <blockquote class="quote-text">
+                  “Bringing the Articular defense rounds to Samarkand proved that exceptional scientific talent is distributed all across Uzbekistan. Students from across the province defended physics theses with remarkable composure in front of demanding jury members.”
+                </blockquote>
+                <div class="quote-author">
+                  <div class="author-avatar-crest coord">
+                    <i class="fa-solid fa-compass"></i>
+                  </div>
+                  <div class="quote-author-text">
+                    <div class="author-name">Malika Karimova</div>
+                    <div class="author-title">Regional Coordinator · Samarkand Chapter Lead</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 4: Ecosystem & Venue Partner -->
+            <div class="testimonial-slide">
+              <div class="quote-card glass-panel">
+                <div class="testimonial-top">
+                  <div class="stars-row">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                  </div>
+                  
+                </div>
+                <blockquote class="quote-text">
+                  “We host dozens of youth initiatives, but ArticularUZ stands out because it doesn't just teach theory — it demands structured debate, thesis validation, and real-time mentor critique. It is the premier communication platform for STEM youth in Uzbekistan.”
+                </blockquote>
+                <div class="quote-author">
+                  <div class="author-avatar-crest">
+                    <i class="fa-solid fa-cube"></i>
+                  </div>
+                  <div class="quote-author-text">
+                    <div class="author-name">C-Space Yunusabad Management</div>
+                    <div class="author-title">Innovation Hub & National Presentation Venue</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carousel Indicators / Dots -->
+          <div class="carousel-dots" id="carousel-dots">
+            <button class="dot active" data-slide="0" aria-label="Slide 1"></button>
+            <button class="dot" data-slide="1" aria-label="Slide 2"></button>
+            <button class="dot" data-slide="2" aria-label="Slide 3"></button>
+            <button class="dot" data-slide="3" aria-label="Slide 4"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALL TO ACTION & ON-PAGE REGISTRATION PORTAL -->
+    <section class="section cta-section" id="join">
+      <div class="container">
+        <div class="registration-portal glass-panel">
+          <div class="cta-orb-bg"></div>
+          
+          <div class="portal-grid portal-grid-reversed">
+            <!-- Left Column: Embedded Registration Form -->
+            <div class="portal-form-wrap">
+              <div class="embedded-form-box">
+                <div class="form-box-header">
+                  <h3 class="form-box-title">Join <span class="gradient-text">ArticularUZ</span></h3>
+                  <p class="form-box-sub">Complete this form to reserve your seat or apply for leadership.</p>
+                </div>
+
+                <form id="reg-form" class="embedded-form">
+                  <div class="form-group">
+                    <label for="user-name">Your Full Name</label>
+                    <input type="text" id="user-name" required placeholder="e.g. Jasur Alimov" />
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="user-tg">Telegram Username or Phone</label>
+                      <input type="text" id="user-tg" required placeholder="@username or +998..." />
+                    </div>
+                    <div class="form-group">
+                      <label for="user-region">Your Region</label>
+                      <select id="user-region" required>
+                        <option value="Tashkent City">Tashkent City</option>
+                        <option value="Tashkent Region">Tashkent Region</option>
+                        <option value="Samarkand">Samarkand</option>
+                        <option value="Bukhara">Bukhara</option>
+                        <option value="Fergana">Fergana</option>
+                        <option value="Andijan">Andijan</option>
+                        <option value="Namangan">Namangan</option>
+                        <option value="Karakalpakstan">Karakalpakstan</option>
+                        <option value="Khorezm">Khorezm</option>
+                        <option value="Kashkadarya">Kashkadarya</option>
+                        <option value="Surkhandarya">Surkhandarya</option>
+                        <option value="Navoi">Navoi</option>
+                        <option value="Jizzakh">Jizzakh</option>
+                        <option value="Syrdarya">Syrdarya</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="user-role">How would you like to participate?</label>
+                    <select id="user-role">
+                      <option value="Student Participant">Student Participant (Compete & Present)</option>
+                      <option value="Regional Coordinator">Regional Coordinator (Lead in your city)</option>
+                      <option value="Mentor / Judge">Scientific Mentor / Judge</option>
+                      <option value="Partner / Sponsor">Institutional Partner / School</option>
+                    </select>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary btn-block btn-xl btn-glow" id="form-submit-btn">
+                    <span>Submit Application</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                  </button>
+
+                  <div class="form-success-message" id="form-success" style="display:none;">
+                    <div class="success-icon"><i class="fa-solid fa-circle-check text-cyan" style="font-size: 44px;"></i></div>
+                    <h4>Application Received! 🚀</h4>
+                    <p>We've logged your registration. Join the official Telegram channel for updates and event schedules.</p>
+                    <a href="https://t.me/articularuz" target="_blank" class="btn btn-telegram btn-block btn-xl">
+                      <i class="fa-brands fa-telegram"></i>
+                      <span>Open Telegram @articularuz</span>
+                    </a>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Right Column: Cosmic Ground / Telegram Access (No Wall of Text) -->
+            <div class="portal-ground-card">
+              <div>
+                <h3 class="portal-ground-title">
+                  Direct Channel to <br />
+                  <span class="gradient-text">Uzcosmos & Mentors</span>
+                </h3>
+
+                <!-- Clean Telegram Community Card (Monochrome dark style) -->
+                <div class="portal-tg-box">
+                  <div class="portal-tg-left">
+                    <div class="tg-icon-sq">
+                      <i class="fa-brands fa-telegram"></i>
+                    </div>
+                    <div class="portal-tg-text">
+                      <span class="portal-tg-title">Official Telegram Community</span>
+                      <span class="portal-tg-sub">Direct access to mentors & schedules</span>
+                    </div>
+                  </div>
+                  <a href="https://t.me/articularuz" target="_blank" rel="noopener noreferrer" class="btn btn-telegram-clean">
+                    <span>Open @articularuz</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                  </a>
+                </div>
+
+                <div class="portal-perks">
+                  <div class="portal-perk-item">
+                    <i class="fa-solid fa-circle-check" style="color: var(--primary-cyan);"></i>
+                    <span>100% Free for Students</span>
+                  </div>
+                  <div class="portal-perk-item">
+                    <i class="fa-solid fa-circle-check" style="color: var(--primary-cyan);"></i>
+                    <span>Uzcosmos Official Certificates</span>
+                  </div>
+                  <div class="portal-perk-item">
+                    <i class="fa-solid fa-circle-check" style="color: var(--primary-cyan);"></i>
+                    <span>Active in 14 Regions of Uzbekistan</span>
+                  </div>
+                </div>
+              </div>
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <a href="#hero" class="brand-logo footer-logo">
+          <img src="./assets/logo.png" alt="ArticularUZ Logo" class="brand-img-logo" />
+          <div class="brand-text">
+            <span class="brand-name">ARTICULAR<span class="highlight">UZ</span></span>
+            <span class="brand-sub">LEARN · THINK · ARTICULATE</span>
+          </div>
+        </a>
+        <p class="footer-bio">
+          Empowering Uzbekistan's youth to understand scientific breakthroughs, think critically, and defend bold ideas before the world.
+        </p>
+        <div class="footer-socials">
+          <a href="https://t.me/articularuz" target="_blank" rel="noopener noreferrer" class="social-sq-btn" title="Telegram @articularuz">
+            <span data-iconly="telegram" data-size="18"></span>
+          </a>
+          <a href="https://instagram.com/articularuz" target="_blank" rel="noopener noreferrer" class="social-sq-btn" title="Instagram">
+            <span data-iconly="instagram" data-size="18"></span>
+          </a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-sq-btn" title="LinkedIn">
+            <span data-iconly="linkedin" data-size="18"></span>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-nav">
+        <h4>Navigation</h4>
+        <a href="#about">Philosophy</a>
+        <a href="#uzcosmos">Uzcosmos Partnership</a>
+        <a href="#regions">Uzbekistan Regional Map</a>
+        <a href="#gallery">Wall of Fame</a>
+      </div>
+
+      <div class="footer-nav">
+        <h4>Partner & Agency</h4>
+        <a href="https://uzspace.uz" target="_blank" rel="noopener">Uzcosmos Space Agency</a>
+        <a href="#regions">Regional Coordinators</a>
+        <a href="https://t.me/articularuz" target="_blank">Telegram Announcements</a>
+        <a href="#join">Event Registration</a>
+      </div>
+
+      <div class="footer-nav">
+        <h4>Official Contacts</h4>
+        <p class="footer-contact-item"><span data-iconly="telegram" data-size="18"></span> @articularuz</p>
+        <p class="footer-contact-item"><span data-iconly="mapPin" data-size="18"></span> Tashkent, Uzbekistan</p>
+        <p class="footer-contact-item"><span data-iconly="globe" data-size="18"></span> Science & Space Track</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom container">
+      <p>© 2026 ArticularUZ. All rights reserved.</p>
+      <p class="motto">Learn. Think. Articulate. 🚀</p>
+    </div>
+  </footer>
+
+  <!-- LIGHTBOX MODAL FOR GALLERY -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox-overlay" id="lightbox-overlay"></div>
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightbox-close" aria-label="Close modal">
+        <span data-iconly="close" data-size="20"></span>
+      </button>
+      <img src="" alt="" id="lightbox-img" />
+      <p class="lightbox-caption" id="lightbox-caption"></p>
+    </div>
+  </div>
+
+  <!-- Vite entry script -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
