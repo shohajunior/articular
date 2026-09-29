@@ -2478,11 +2478,13 @@ input:focus, select:focus {
 }
 
 .uzcosmos-brand-logo {
-  height: 50px;
-  width: auto;
-  max-width: 210px;
-  object-fit: contain;
+  height: 68px;
+  width: 68px;
+  border-radius: 16px;
+  object-fit: cover;
   display: block;
+  border: 1.5px solid rgba(0, 240, 255, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.18);
 }
 
 .section-header-split.align-center {
