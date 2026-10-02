@@ -2236,6 +2236,38 @@ input:focus, select:focus {
   filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.18)) !important;
   transform: scale(1.08);
 }
+
+.partner-yvc-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+.yvc-logo-img {
+  height: 44px !important;
+  width: 44px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+  border: 1.5px solid rgba(15, 23, 42, 0.15) !important;
+}
+
+.partner-name-text {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.partner-yvc-item:hover .partner-name-text {
+  color: #0284c7;
+  transform: translateX(2px);
+}
 /* ==========================================================================
    TESTIMONIALS & PARTNER REVIEWS CAROUSEL
    ========================================================================== */
