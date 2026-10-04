@@ -142,28 +142,8 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               isRevealed ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
             }`}
           >
-            {/* Visual container with 6 overlapping photos & 2 floating sidebars */}
+            {/* Visual container with 6 overlapping photos */}
             <div className="relative mx-auto h-[520px] w-full max-w-[540px]">
-              
-              {/* Floating Sidebar Chip 1 (Top-Left): Live Metric */}
-              <div className="absolute -top-3 left-6 z-35 flex items-center gap-2 rounded-2xl border border-[var(--line)] bg-[var(--header-bg)] px-3.5 py-1.5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:border-[var(--accent)]">
-                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="font-mono text-xs font-bold text-[var(--ink)]">500+</span>
-                <span className="text-[11px] text-[var(--ink-muted)]">Participants</span>
-              </div>
-
-              {/* Floating Sidebar Chip 2 (Right-Edge): Strategic Partner */}
-              <div className="absolute -right-3 top-32 z-35 flex items-center gap-2.5 rounded-2xl border border-[var(--line)] bg-[var(--header-bg)] px-3.5 py-2 shadow-xl backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:border-[var(--accent)]">
-                <span className="text-sm">🏆</span>
-                <div className="flex flex-col">
-                  <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-[var(--accent)]">
-                    Official State Partner
-                  </span>
-                  <span className="text-[11px] font-bold text-[var(--ink)] leading-tight">
-                    Uzcosmos Agency
-                  </span>
-                </div>
-              </div>
 
               {/* Card 1 (Base Anchor Left): Grand Final Tashkent */}
               <div
