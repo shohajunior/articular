@@ -59,22 +59,25 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
 
   return (
     <section className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">
-      {/* Ambient Interactive CursorGrid Background (Subtle & Delicate) */}
+      {/* Ambient Interactive CursorGrid Background with Right-to-Left Laser Scanline */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <CursorGrid
           cellSize={65}
           color="#1f5eea"
-          radius={140}
+          radius={160}
           falloff="smooth"
-          holdTime={300}
-          fadeDuration={700}
-          lineWidth={1}
-          maxOpacity={0.18}
-          fillOpacity={0.02}
-          gridOpacity={0}
-          cellRadius={2}
+          holdTime={400}
+          fadeDuration={850}
+          lineWidth={1.2}
+          maxOpacity={0.45}
+          fillOpacity={0.08}
+          gridOpacity={0.05}
+          cellRadius={3}
           clickPulse={true}
-          pulseSpeed={500}
+          pulseSpeed={550}
+          sweepLine={true}
+          sweepInterval={6500}
+          sweepDuration={2600}
           className="h-full w-full"
         />
       </div>
@@ -224,7 +227,7 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
                 </div>
               </div>
 
-              {/* Card 4 (Center-Left): Aerospace Workshop [NEW] */}
+              {/* Card 4 (Center-Left): Aerospace Workshop */}
               <div
                 onClick={() => onPhotoClick(galleryItems[3])}
                 className="group absolute left-2 top-52 z-22 w-[52%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] rotate-4"
@@ -245,7 +248,7 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
                 </div>
               </div>
 
-              {/* Card 5 (Bottom-Right): Mentoring & Jury [NEW] */}
+              {/* Card 5 (Bottom-Right): Mentoring & Jury */}
               <div
                 onClick={() => onPhotoClick(galleryItems[4])}
                 className="group absolute right-4 bottom-2 z-30 w-[54%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-2xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-2"

@@ -16,6 +16,9 @@ export interface CursorGridProps {
   clickPulse?: boolean;
   pulseSpeed?: number;
   className?: string;
+  sweepLine?: boolean;
+  sweepInterval?: number;
+  sweepDuration?: number;
 }
 
 const FALLOFF_CURVES = {
@@ -46,7 +49,10 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
   cellRadius = 0,
   clickPulse = true,
   pulseSpeed = 600,
-  className = ''
+  className = '',
+  sweepLine = false,
+  sweepInterval = 7000,
+  sweepDuration = 2800,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -66,7 +72,10 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     gridOpacity,
     cellRadius,
     clickPulse,
-    pulseSpeed
+    pulseSpeed,
+    sweepLine,
+    sweepInterval,
+    sweepDuration
   };
 
   useEffect(() => {
@@ -78,7 +87,6 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     if (!ctx) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    // Grid state: one alpha + timestamp pair per cell, indexed row-major.
     let cols = 0;
     let rows = 0;
     let offX = 0;
@@ -91,6 +99,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     let raf = 0;
     let running = false;
     let lastFrame = 0;
+    let lastSweepStart = performance.now() - 4000;
 
     const rebuild = () => {
       const p = propsRef.current;
@@ -104,7 +113,6 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       cols = Math.ceil(w / cSize) + 1;
       rows = Math.ceil(h / cSize) + 1;
-      // Center the lattice so edge cells crop evenly on both sides
       offX = (w - cols * cSize) / 2;
       offY = (h - rows * cSize) / 2;
       alphas = new Float32Array(cols * rows);
@@ -119,8 +127,6 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
       return [cx, cy];
     };
 
-    // Light up every cell whose center falls inside the radius, with the
-    // configured falloff curve mapping distance to brightness.
     const energize = (x: number, y: number, boost?: number) => {
       const p = propsRef.current;
       const cSize = p.cellSize || 70;
@@ -159,7 +165,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
       ctx.clearRect(0, 0, w, h);
       const [cr, cg, cb] = hexToRgb(p.color || '#1f5eea');
 
-      // Optional faint static lattice
+      // 1. Static guide lattice
       if (p.gridOpacity && p.gridOpacity > 0) {
         ctx.strokeStyle = `rgba(${cr}, ${cg}, ${cb}, ${p.gridOpacity})`;
         ctx.lineWidth = 1;
@@ -177,7 +183,59 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
         ctx.stroke();
       }
 
-      // Expanding click pulses hand their energy to cells as they pass
+      // 2. Right-to-Left Laser / Radar Scanline (sweeping across the hero background)
+      let sweepActive = false;
+      if (p.sweepLine) {
+        const sInterval = p.sweepInterval || 7000;
+        const sDuration = p.sweepDuration || 2800;
+        const elapsed = now - lastSweepStart;
+        const progress = elapsed / sDuration;
+
+        if (progress >= 0 && progress <= 1) {
+          sweepActive = true;
+          // Sweep from right (w + 40) to left (-80)
+          const sweepX = (w + 40) - progress * (w + 120);
+
+          ctx.save();
+          // Trailing horizontal light tail to the right of the beam
+          const tailWidth = Math.min(160, cSize * 2.5);
+          const glowGrad = ctx.createLinearGradient(sweepX, 0, sweepX + tailWidth, 0);
+          glowGrad.addColorStop(0, `rgba(56, 189, 248, 0.4)`);
+          glowGrad.addColorStop(0.12, `rgba(${cr}, ${cg}, ${cb}, 0.22)`);
+          glowGrad.addColorStop(1, `rgba(${cr}, ${cg}, ${cb}, 0)`);
+
+          ctx.fillStyle = glowGrad;
+          ctx.fillRect(sweepX, 0, tailWidth, h);
+
+          // Crisp vertical beam line
+          ctx.strokeStyle = `rgba(186, 230, 253, 0.65)`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(sweepX, 0);
+          ctx.lineTo(sweepX, h);
+          ctx.stroke();
+          ctx.restore();
+
+          // Energize grid cells directly under the sweep line
+          const sweepCol = Math.floor((sweepX - offX) / cSize);
+          if (sweepCol >= 0 && sweepCol < cols) {
+            const boost = (p.maxOpacity ?? 1) * 0.85;
+            for (let cRow = 0; cRow < rows; cRow++) {
+              const idx = cRow * cols + sweepCol;
+              if (boost > alphas[idx]) {
+                alphas[idx] = boost;
+                touched[idx] = now;
+              }
+            }
+          }
+        } else if (elapsed > sInterval) {
+          // Restart periodic sweep
+          lastSweepStart = now;
+          sweepActive = true;
+        }
+      }
+
+      // 3. Expanding click pulses
       const pSpeed = p.pulseSpeed || 600;
       const maxOp = p.maxOpacity ?? 1;
       for (let pi = pulses.length - 1; pi >= 0; pi--) {
@@ -206,7 +264,8 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
         }
       }
 
-      let anyVisible = pulses.length > 0;
+      // 4. Render active cells
+      let anyVisible = pulses.length > 0 || sweepActive;
       const fadeDuration = p.fadeDuration || 800;
       const holdTime = p.holdTime || 400;
       const fadeStep = dt / Math.max(fadeDuration, 16);
@@ -249,7 +308,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
         ctx.stroke();
       }
 
-      if (anyVisible) {
+      if (anyVisible || (p.sweepLine && (now - lastSweepStart < (p.sweepDuration || 2800) + 100))) {
         raf = requestAnimationFrame(draw);
       } else {
         running = false;
@@ -278,6 +337,17 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
       wake();
     };
 
+    const onPointerEnter = () => {
+      // Trigger a sweep line when user enters the section if not recently triggered
+      if (propsRef.current.sweepLine) {
+        const now = performance.now();
+        if (now - lastSweepStart > 3500) {
+          lastSweepStart = now;
+        }
+      }
+      wake();
+    };
+
     const onPointerDown = (e: MouseEvent | PointerEvent) => {
       if (!propsRef.current.clickPulse) return;
       const [x, y] = toLocal(e);
@@ -293,23 +363,34 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     rebuild();
     wake();
 
-    // Listen on parent section so cursor anywhere in hero lights up the grid
+    // Periodic sweep interval ticker
+    let sweepTimer: any = null;
+    if (sweepLine) {
+      sweepTimer = setInterval(() => {
+        lastSweepStart = performance.now();
+        wake();
+      }, sweepInterval);
+    }
+
     const targetElement = container.closest('section') || container.parentElement || container;
+    targetElement.addEventListener('pointerenter', onPointerEnter as EventListener);
     targetElement.addEventListener('pointermove', onPointerMove as EventListener);
     targetElement.addEventListener('pointerdown', onPointerDown as EventListener);
 
     return () => {
       cancelAnimationFrame(raf);
+      if (sweepTimer) clearInterval(sweepTimer);
       ro.disconnect();
+      targetElement.removeEventListener('pointerenter', onPointerEnter as EventListener);
       targetElement.removeEventListener('pointermove', onPointerMove as EventListener);
       targetElement.removeEventListener('pointerdown', onPointerDown as EventListener);
     };
-  }, [cellSize]);
+  }, [cellSize, sweepLine, sweepInterval, sweepDuration]);
 
   // Repaint static layers when visual props change while idle
   useEffect(() => {
     wakeRef.current?.();
-  }, [gridOpacity, color, lineWidth, maxOpacity, fillOpacity, cellRadius]);
+  }, [gridOpacity, color, lineWidth, maxOpacity, fillOpacity, cellRadius, sweepLine]);
 
   return (
     <div ref={containerRef} className={`cursor-grid${className ? ` ${className}` : ''}`}>
