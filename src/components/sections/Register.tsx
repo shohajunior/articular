@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { siteData } from '../../data/site';
-import { CheckCircle2, ArrowRight, ShieldCheck, Users, MapPin, Award } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Users, MapPin, Award } from 'lucide-react';
 import { TelegramIcon } from '../ui/SocialIcons';
 
 interface RegisterProps {
@@ -43,10 +43,12 @@ export const Register: React.FC<RegisterProps> = ({ onOpenLegal }) => {
             </span>
           </div>
 
-          {/* Heading */}
+          {/* Heading with Telegram bot cleanly on the second line */}
           <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl">
-            Register exclusively via{' '}
-            <span className="font-serif-italic text-[var(--accent)]">Telegram bot</span>
+            Register exclusively via <br />
+            <span className="inline-block whitespace-nowrap font-serif-italic text-[var(--accent)]">
+              Telegram bot
+            </span>
           </h2>
 
           {/* Subtitle */}
