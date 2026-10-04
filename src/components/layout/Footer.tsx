@@ -1,6 +1,5 @@
 ﻿import React from 'react';
 import { siteData } from '../../data/site';
-import { ArrowUp } from 'lucide-react';
 import { TelegramIcon, InstagramIcon, LinkedinIcon } from '../ui/SocialIcons';
 
 interface FooterProps {
@@ -8,10 +7,6 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -51,32 +46,36 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
             <ul className="space-y-2 text-xs text-[var(--ink-muted)]">
               <li>
                 <button
+                  type="button"
                   onClick={() => scrollTo('stages')}
-                  className="transition-colors hover:text-[var(--accent)]"
+                  className="cursor-pointer transition-colors hover:text-[var(--accent)]"
                 >
                   Tournament Stages
                 </button>
               </li>
               <li>
                 <button
+                  type="button"
                   onClick={() => scrollTo('partners')}
-                  className="transition-colors hover:text-[var(--accent)]"
+                  className="cursor-pointer transition-colors hover:text-[var(--accent)]"
                 >
                   Official Partners
                 </button>
               </li>
               <li>
                 <button
+                  type="button"
                   onClick={() => scrollTo('regions')}
-                  className="transition-colors hover:text-[var(--accent)]"
+                  className="cursor-pointer transition-colors hover:text-[var(--accent)]"
                 >
                   14 Regional Chapters
                 </button>
               </li>
               <li>
                 <button
+                  type="button"
                   onClick={() => scrollTo('team')}
-                  className="transition-colors hover:text-[var(--accent)]"
+                  className="cursor-pointer transition-colors hover:text-[var(--accent)]"
                 >
                   Organizing Team
                 </button>
@@ -137,7 +136,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
             </ul>
           </div>
 
-          {/* Legal Pages and Back to Top */}
+          {/* Legal Pages */}
           <div className="space-y-4">
             <div>
               <div className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--ink)]">
@@ -170,15 +169,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
                 </li>
               </ul>
             </div>
-
-            <button
-              onClick={scrollToTop}
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--bg)] px-4 py-2 text-xs font-medium text-[var(--ink)] transition-colors hover:border-[var(--line-strong)] hover:bg-[var(--surface-elevated)]"
-              aria-label="Scroll to top"
-            >
-              <span>Back to Top</span>
-              <ArrowUp className="h-3.5 w-3.5" />
-            </button>
           </div>
         </div>
 
