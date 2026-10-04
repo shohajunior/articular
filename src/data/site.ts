@@ -74,7 +74,7 @@ export const siteData = {
       num: "02",
       title: "Deck & Prototype",
       desc: "During timed workshop sessions with laptops and tablets, teams synthesize data, architecture, and calculations.",
-      photo: "./assets/team-jupiter.jpg",
+      photo: "",
       caption: "Team Jupiter drafting presentation"
     },
     {
@@ -218,7 +218,7 @@ export const siteData = {
       role: "Tournament Director",
       department: "Organizing Council",
       badge: "Lead & Founder",
-      photo: "./assets/team-temurbek.jpg",
+      photo: "",
       socials: {
         telegram: "https://t.me/articularuz",
         instagram: "https://instagram.com/articularuz",
@@ -231,7 +231,7 @@ export const siteData = {
       role: "Technical Lead",
       department: "Aerospace Track",
       badge: "Engineering",
-      photo: "./assets/team-alisher.jpg",
+      photo: "",
       socials: {
         telegram: "https://t.me/articularuz",
         instagram: "https://instagram.com/articularuz",
@@ -244,7 +244,7 @@ export const siteData = {
       role: "Academic Standards Lead",
       department: "English Defense",
       badge: "Academic Panel",
-      photo: "./assets/team-madina.jpg",
+      photo: "",
       socials: {
         telegram: "https://t.me/articularuz",
         instagram: "https://instagram.com/articularuz",
@@ -257,7 +257,7 @@ export const siteData = {
       role: "Regional Coordinator",
       department: "Regional Operations",
       badge: "YVC Liaison",
-      photo: "./assets/team-jamshid.jpg",
+      photo: "",
       socials: {
         telegram: "https://t.me/yvc_uz",
         instagram: "https://instagram.com/articularuz",
@@ -266,3 +266,4 @@ export const siteData = {
     }
   ] as TeamMember[]
 };
+
