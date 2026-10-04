@@ -28,7 +28,7 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
     {
       src: './assets/team-jupiter.jpg',
       alt: 'Team Jupiter Drafting Presentation',
-      title: 'Team Jupiter  Deck Preparation',
+      title: 'Team Jupiter — Deck Preparation',
       tag: 'Orbital Mechanics Track'
     },
     {
@@ -36,6 +36,18 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
       alt: 'Uzcosmos Agency Certificates Awarding',
       title: 'Official Uzcosmos Agency Awards',
       tag: 'Gold & Silver Honors'
+    },
+    {
+      src: './assets/workshop.jpg',
+      alt: 'Aerospace Engineering Workshop',
+      title: 'Aerospace Hardware Workshop',
+      tag: 'Rocketry & CubeSat Track'
+    },
+    {
+      src: './assets/mentoring.jpg',
+      alt: 'Academic Mentors & Jury Consultation',
+      title: 'Academic Jury Consultation',
+      tag: 'Defense Preparation'
     },
     {
       src: './assets/pitching.jpg',
@@ -93,7 +105,7 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               <button
                 type="button"
                 onClick={() => scrollTo('register')}
-                className="group flex items-center gap-2 rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent-contrast)] transition-colors hover:bg-[var(--accent-hover)]"
+                className="group flex items-center gap-2 rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent-contrast)] transition-colors hover:bg-[var(--accent-hover)] cursor-pointer"
               >
                 <span>Register for Season</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -102,7 +114,7 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               <button
                 type="button"
                 onClick={() => scrollTo('regions')}
-                className="rounded-full border border-[var(--line)] bg-transparent px-6 py-3 text-sm font-semibold text-[var(--ink)] transition-colors hover:border-[var(--line-strong)] hover:bg-[var(--surface-elevated)]"
+                className="rounded-full border border-[var(--line)] bg-transparent px-6 py-3 text-sm font-semibold text-[var(--ink)] transition-colors hover:border-[var(--line-strong)] hover:bg-[var(--surface-elevated)] cursor-pointer"
               >
                 Explore 14 Regions
               </button>
@@ -121,28 +133,49 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
             </div>
           </div>
 
-          {/* Right Hero: Vericase-Style Scattered Overlapping Photo Collage (No clips, clickable) */}
+          {/* Right Hero: Vericase-Style Scattered Overlapping Photo Collage (Edge-to-edge, zero margins) */}
           <div
-            className={`relative min-h-[460px] select-none transition-all duration-1000 delay-150 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            className={`relative min-h-[520px] select-none transition-all duration-1000 delay-150 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               isRevealed ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
             }`}
           >
-            {/* Visual container with overlapping layers */}
-            <div className="relative mx-auto h-[460px] w-full max-w-[500px]">
-              {/* Card 1 (Base Anchor): Grand Final Tashkent */}
+            {/* Visual container with 6 overlapping photos & 2 floating sidebars */}
+            <div className="relative mx-auto h-[520px] w-full max-w-[540px]">
+              
+              {/* Floating Sidebar Chip 1 (Top-Left): Live Metric */}
+              <div className="absolute -top-3 left-6 z-35 flex items-center gap-2 rounded-2xl border border-[var(--line)] bg-[var(--header-bg)] px-3.5 py-1.5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:border-[var(--accent)]">
+                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-mono text-xs font-bold text-[var(--ink)]">500+</span>
+                <span className="text-[11px] text-[var(--ink-muted)]">Participants</span>
+              </div>
+
+              {/* Floating Sidebar Chip 2 (Right-Edge): Strategic Partner */}
+              <div className="absolute -right-3 top-32 z-35 flex items-center gap-2.5 rounded-2xl border border-[var(--line)] bg-[var(--header-bg)] px-3.5 py-2 shadow-xl backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:border-[var(--accent)]">
+                <span className="text-sm">🏆</span>
+                <div className="flex flex-col">
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-[var(--accent)]">
+                    Official State Partner
+                  </span>
+                  <span className="text-[11px] font-bold text-[var(--ink)] leading-tight">
+                    Uzcosmos Agency
+                  </span>
+                </div>
+              </div>
+
+              {/* Card 1 (Base Anchor Left): Grand Final Tashkent */}
               <div
                 onClick={() => onPhotoClick(galleryItems[0])}
-                className="group absolute left-0 top-6 z-10 w-[78%] cursor-pointer rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-2.5 shadow-md transition-all duration-300 ease-out hover:z-30 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.03] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-2"
+                className="group absolute left-0 top-8 z-10 w-[68%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.03] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-3"
               >
-                <div className="relative aspect-[16/11] overflow-hidden rounded-2xl">
+                <div className="relative aspect-[16/10] w-full overflow-hidden">
                   <img
                     src={galleryItems[0].src}
                     alt={galleryItems[0].alt}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--header-bg)] px-3 py-1 text-[11px] font-semibold text-[var(--ink)] backdrop-blur-md">
+                  <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md shadow-sm">
                     <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                    <span>Grand Final  Tashkent</span>
+                    <span>Grand Final · Tashkent</span>
                   </div>
                   <div className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
                     <Maximize2 className="h-3.5 w-3.5" />
@@ -150,18 +183,18 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
                 </div>
               </div>
 
-              {/* Card 2 (Overlapping Top-Right): Team Jupiter Presentation */}
+              {/* Card 2 (Top-Right): Team Jupiter Presentation */}
               <div
                 onClick={() => onPhotoClick(galleryItems[1])}
-                className="group absolute right-0 top-0 z-20 w-[62%] cursor-pointer rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-2 shadow-lg transition-all duration-300 ease-out hover:z-30 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] rotate-3"
+                className="group absolute right-0 top-0 z-20 w-[58%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-lg transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] rotate-3"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+                <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <img
                     src={galleryItems[1].src}
                     alt={galleryItems[1].alt}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--header-bg)] px-2.5 py-0.5 text-[10px] font-semibold text-[var(--ink)] backdrop-blur-md">
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-2.5 py-0.5 text-[10px] font-semibold text-white backdrop-blur-md shadow-sm">
                     <span>Team Jupiter</span>
                   </div>
                   <div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/40 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
@@ -170,18 +203,18 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
                 </div>
               </div>
 
-              {/* Card 3 (Overlapping Bottom-Right): Uzcosmos Awards */}
+              {/* Card 3 (Center-Right): Uzcosmos Awards */}
               <div
                 onClick={() => onPhotoClick(galleryItems[2])}
-                className="group absolute bottom-4 right-2 z-25 w-[66%] cursor-pointer rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-2.5 shadow-xl transition-all duration-300 ease-out hover:z-30 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-1"
+                className="group absolute right-2 top-40 z-25 w-[62%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-1"
               >
-                <div className="relative aspect-[16/11] overflow-hidden rounded-2xl">
+                <div className="relative aspect-[16/11] w-full overflow-hidden">
                   <img
                     src={galleryItems[2].src}
                     alt={galleryItems[2].alt}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--header-bg)] px-3 py-1 text-[11px] font-semibold text-[var(--ink)] backdrop-blur-md">
+                  <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md shadow-sm">
                     <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
                     <span>Uzcosmos Awards</span>
                   </div>
@@ -191,22 +224,68 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
                 </div>
               </div>
 
-              {/* Card 4 (Mini Floating Accent Card, Bottom-Left): Pitching Defense */}
+              {/* Card 4 (Center-Left): Aerospace Workshop [NEW] */}
               <div
                 onClick={() => onPhotoClick(galleryItems[3])}
-                className="group absolute -bottom-2 left-6 z-20 w-[42%] cursor-pointer rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-1.5 shadow-md transition-all duration-300 ease-out hover:z-30 hover:-translate-y-2 hover:rotate-0 hover:scale-105 hover:shadow-2xl hover:border-[var(--line-strong)] rotate-2"
+                className="group absolute left-2 top-52 z-22 w-[52%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] rotate-4"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
+                <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <img
                     src={galleryItems[3].src}
                     alt={galleryItems[3].alt}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute bottom-1.5 left-1.5 rounded-full bg-black/60 px-2 py-0.5 text-[9px] font-medium text-white backdrop-blur-sm">
-                    English Defense
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-2.5 py-0.5 text-[10px] font-semibold text-white backdrop-blur-md shadow-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
+                    <span>Workshop Lab</span>
+                  </div>
+                  <div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/40 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+                    <Maximize2 className="h-3 w-3" />
                   </div>
                 </div>
               </div>
+
+              {/* Card 5 (Bottom-Right): Mentoring & Jury [NEW] */}
+              <div
+                onClick={() => onPhotoClick(galleryItems[4])}
+                className="group absolute right-4 bottom-2 z-30 w-[54%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-2xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-2"
+              >
+                <div className="relative aspect-[16/11] w-full overflow-hidden">
+                  <img
+                    src={galleryItems[4].src}
+                    alt={galleryItems[4].alt}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-2.5 py-0.5 text-[10px] font-semibold text-white backdrop-blur-md shadow-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    <span>Jury Mentoring</span>
+                  </div>
+                  <div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/40 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+                    <Maximize2 className="h-3 w-3" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 6 (Bottom-Left): Pitching Defense */}
+              <div
+                onClick={() => onPhotoClick(galleryItems[5])}
+                className="group absolute -left-2 bottom-3 z-28 w-[45%] cursor-pointer overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-105 hover:shadow-2xl hover:border-[var(--line-strong)] rotate-2"
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden">
+                  <img
+                    src={galleryItems[5].src}
+                    alt={galleryItems[5].alt}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute bottom-1.5 left-1.5 rounded-full border border-white/20 bg-black/65 px-2 py-0.5 text-[9px] font-medium text-white backdrop-blur-sm shadow-sm">
+                    English Defense
+                  </div>
+                  <div className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/40 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+                    <Maximize2 className="h-2.5 w-2.5" />
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
