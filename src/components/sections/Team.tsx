@@ -31,7 +31,7 @@ export const Team: React.FC = () => {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1140px] px-6">
+      <div className="relative mx-auto max-w-[1340px] px-6 lg:px-8">
         <div className="mb-12">
           <span className="font-mono-tag text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
             Leadership
@@ -45,33 +45,29 @@ export const Team: React.FC = () => {
           </p>
         </div>
 
+        {/* Wider Cards Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {siteData.team.map((member) => (
             <div
               key={member.id}
-              className="group flex flex-col overflow-hidden rounded-[28px] border border-[var(--line)] bg-[var(--surface)] shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-[var(--accent)]/50 hover:shadow-[0_16px_36px_rgba(31,94,234,0.12)]"
+              className="group flex flex-col overflow-hidden rounded-[28px] border border-[var(--line)] bg-[var(--surface)] shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-[var(--accent)]/50 hover:shadow-[0_16px_36px_rgba(31,94,234,0.14)]"
             >
-              {/* Top Photo Container */}
+              {/* Top Photo Container (Badge removed as requested) */}
               <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-900">
                 <img
                   src={member.photo}
                   alt={member.name}
                   className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
-
-                {/* Floating Top-Right Pill Badge (Volontyorlar Style) */}
-                <div className="absolute top-3.5 right-3.5 rounded-full border border-white/20 bg-black/65 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md shadow-sm">
-                  {member.badge}
-                </div>
               </div>
 
               {/* Bottom Dark Navy Info Box */}
-              <div className="flex flex-1 flex-col justify-between bg-[#0a233f] p-5 text-white">
+              <div className="flex flex-1 flex-col justify-between bg-[#0a233f] p-5 sm:p-6 text-white">
                 <div>
                   <h3 className="text-base font-bold tracking-tight text-white sm:text-lg">
                     {member.name}
                   </h3>
-                  <div className="mt-0.5 text-xs font-semibold text-sky-300">
+                  <div className="mt-1 text-xs font-semibold text-sky-300">
                     {member.role}
                   </div>
                 </div>
@@ -82,7 +78,7 @@ export const Team: React.FC = () => {
 
                   {/* Bottom Row: Department on left + Small Social Buttons on right */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-slate-300 truncate">
+                    <span className="text-xs font-medium text-slate-300 whitespace-nowrap">
                       {member.department}
                     </span>
 
