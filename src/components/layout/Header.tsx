@@ -64,29 +64,33 @@ export const Header: React.FC = () => {
           </span>
         </a>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation with Color Change on Hover */}
         <nav className="hidden items-center gap-6 md:flex">
           <button
+            type="button"
             onClick={() => scrollTo('stages')}
-            className="text-xs font-medium text-[var(--ink-muted)] transition-colors hover:text-[var(--ink)]"
+            className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
           >
             Stages
           </button>
           <button
+            type="button"
             onClick={() => scrollTo('regions')}
-            className="text-xs font-medium text-[var(--ink-muted)] transition-colors hover:text-[var(--ink)]"
+            className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
           >
             14 Regions
           </button>
           <button
+            type="button"
             onClick={() => scrollTo('partners')}
-            className="text-xs font-medium text-[var(--ink-muted)] transition-colors hover:text-[var(--ink)]"
+            className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
           >
             Partners
           </button>
           <button
+            type="button"
             onClick={() => scrollTo('team')}
-            className="text-xs font-medium text-[var(--ink-muted)] transition-colors hover:text-[var(--ink)]"
+            className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
           >
             Team
           </button>
@@ -100,7 +104,7 @@ export const Header: React.FC = () => {
               href={siteData.links.channel}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink-dim)] transition-colors hover:bg-[var(--surface-elevated)] hover:text-[var(--ink)]"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink-dim)] transition-colors hover:bg-[var(--surface-elevated)] hover:text-[var(--accent)]"
               title="Telegram Channel @articularuz"
               aria-label="Telegram"
             >
@@ -110,7 +114,7 @@ export const Header: React.FC = () => {
               href={siteData.links.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink-dim)] transition-colors hover:bg-[var(--surface-elevated)] hover:text-[var(--ink)]"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink-dim)] transition-colors hover:bg-[var(--surface-elevated)] hover:text-[var(--accent)]"
               title="Instagram"
               aria-label="Instagram"
             >
@@ -120,7 +124,7 @@ export const Header: React.FC = () => {
               href={siteData.links.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink-dim)] transition-colors hover:bg-[var(--surface-elevated)] hover:text-[var(--ink)]"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink-dim)] transition-colors hover:bg-[var(--surface-elevated)] hover:text-[var(--accent)]"
               title="LinkedIn"
               aria-label="LinkedIn"
             >
@@ -134,7 +138,7 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={toggleTheme}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] text-[var(--ink)] transition-colors hover:border-[var(--line-strong)] hover:bg-[var(--surface-elevated)]"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--line)] text-[var(--ink)] transition-colors hover:border-[var(--line-strong)] hover:bg-[var(--surface-elevated)] hover:text-[var(--accent)]"
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             aria-label="Toggle Theme"
           >
@@ -172,25 +176,25 @@ export const Header: React.FC = () => {
           <nav className="flex flex-col gap-3">
             <button
               onClick={() => scrollTo('stages')}
-              className="text-left text-sm font-medium text-[var(--ink)]"
+              className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
             >
               Stages
             </button>
             <button
               onClick={() => scrollTo('regions')}
-              className="text-left text-sm font-medium text-[var(--ink)]"
+              className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
             >
               14 Regions
             </button>
             <button
               onClick={() => scrollTo('partners')}
-              className="text-left text-sm font-medium text-[var(--ink)]"
+              className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
             >
               Partners
             </button>
             <button
               onClick={() => scrollTo('team')}
-              className="text-left text-sm font-medium text-[var(--ink)]"
+              className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
             >
               Team
             </button>
@@ -199,7 +203,7 @@ export const Header: React.FC = () => {
                 href={siteData.links.channel}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                className="text-xs text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
               >
                 Telegram
               </a>
@@ -207,7 +211,7 @@ export const Header: React.FC = () => {
                 href={siteData.links.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                className="text-xs text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
               >
                 Instagram
               </a>
@@ -215,7 +219,7 @@ export const Header: React.FC = () => {
                 href={siteData.links.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                className="text-xs text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
               >
                 LinkedIn
               </a>
