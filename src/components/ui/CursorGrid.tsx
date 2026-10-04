@@ -99,7 +99,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     let raf = 0;
     let running = false;
     let lastFrame = 0;
-    let lastSweepStart = performance.now() - 4000;
+    let lastSweepStart = performance.now() - 3000;
 
     const rebuild = () => {
       const p = propsRef.current;
@@ -183,7 +183,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
         ctx.stroke();
       }
 
-      // 2. Right-to-Left Laser / Radar Scanline (sweeping across the hero background)
+      // 2. Right-to-Left Wave (NO visible line drawn: only grid cells illuminate organically)
       let sweepActive = false;
       if (p.sweepLine) {
         const sInterval = p.sweepInterval || 7000;
@@ -193,38 +193,25 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
 
         if (progress >= 0 && progress <= 1) {
           sweepActive = true;
-          // Sweep from right (w + 40) to left (-80)
-          const sweepX = (w + 40) - progress * (w + 120);
+          // Sweep from right to left
+          const sweepX = (w + cSize * 2) - progress * (w + cSize * 4);
 
-          ctx.save();
-          // Trailing horizontal light tail to the right of the beam
-          const tailWidth = Math.min(160, cSize * 2.5);
-          const glowGrad = ctx.createLinearGradient(sweepX, 0, sweepX + tailWidth, 0);
-          glowGrad.addColorStop(0, `rgba(56, 189, 248, 0.4)`);
-          glowGrad.addColorStop(0.12, `rgba(${cr}, ${cg}, ${cb}, 0.22)`);
-          glowGrad.addColorStop(1, `rgba(${cr}, ${cg}, ${cb}, 0)`);
+          // Wave band width: smoothly lights up columns of cells without any drawn line
+          const waveRadius = cSize * 1.5;
+          const minCol = Math.max(0, Math.floor((sweepX - waveRadius - offX) / cSize));
+          const maxCol = Math.min(cols - 1, Math.floor((sweepX + waveRadius - offX) / cSize));
 
-          ctx.fillStyle = glowGrad;
-          ctx.fillRect(sweepX, 0, tailWidth, h);
-
-          // Crisp vertical beam line
-          ctx.strokeStyle = `rgba(186, 230, 253, 0.65)`;
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.moveTo(sweepX, 0);
-          ctx.lineTo(sweepX, h);
-          ctx.stroke();
-          ctx.restore();
-
-          // Energize grid cells directly under the sweep line
-          const sweepCol = Math.floor((sweepX - offX) / cSize);
-          if (sweepCol >= 0 && sweepCol < cols) {
-            const boost = (p.maxOpacity ?? 1) * 0.85;
-            for (let cRow = 0; cRow < rows; cRow++) {
-              const idx = cRow * cols + sweepCol;
-              if (boost > alphas[idx]) {
-                alphas[idx] = boost;
-                touched[idx] = now;
+          for (let cCol = minCol; cCol <= maxCol; cCol++) {
+            const cellX = offX + cCol * cSize + cSize / 2;
+            const dist = Math.abs(cellX - sweepX);
+            if (dist <= waveRadius) {
+              const intensity = (1 - dist / waveRadius) * (p.maxOpacity ?? 1) * 0.95;
+              for (let cRow = 0; cRow < rows; cRow++) {
+                const idx = cRow * cols + cCol;
+                if (intensity > alphas[idx]) {
+                  alphas[idx] = intensity;
+                  touched[idx] = now;
+                }
               }
             }
           }
@@ -264,7 +251,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
         }
       }
 
-      // 4. Render active cells
+      // 4. Render active illuminated cells
       let anyVisible = pulses.length > 0 || sweepActive;
       const fadeDuration = p.fadeDuration || 800;
       const holdTime = p.holdTime || 400;
@@ -338,7 +325,6 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     };
 
     const onPointerEnter = () => {
-      // Trigger a sweep line when user enters the section if not recently triggered
       if (propsRef.current.sweepLine) {
         const now = performance.now();
         if (now - lastSweepStart > 3500) {
@@ -363,7 +349,6 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     rebuild();
     wake();
 
-    // Periodic sweep interval ticker
     let sweepTimer: any = null;
     if (sweepLine) {
       sweepTimer = setInterval(() => {
@@ -387,7 +372,6 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     };
   }, [cellSize, sweepLine, sweepInterval, sweepDuration]);
 
-  // Repaint static layers when visual props change while idle
   useEffect(() => {
     wakeRef.current?.();
   }, [gridOpacity, color, lineWidth, maxOpacity, fillOpacity, cellRadius, sweepLine]);
