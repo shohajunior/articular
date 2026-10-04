@@ -49,8 +49,8 @@ export const siteData = {
     {
       name: "Uzcosmos",
       fullName: "Space Research and Technology Agency under the Cabinet of Ministers of the Republic of Uzbekistan",
-      logoLight: "./assets/uzcosmos-dark.png",
-      logoDark: "./assets/uzcosmos-white-logo.png",
+      logoLight: "./assets/uzcosmos-official-logo.png",
+      logoDark: "./assets/uzcosmos-official-logo.png",
       role: "Official State Partner  Certified Credentials"
     },
     {
@@ -266,4 +266,5 @@ export const siteData = {
     }
   ] as TeamMember[]
 };
+
 

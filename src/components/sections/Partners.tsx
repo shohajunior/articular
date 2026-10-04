@@ -1,9 +1,6 @@
 ﻿import React from 'react';
-import { useTheme } from '../../lib/theme';
 
 export const Partners: React.FC = () => {
-  const { theme } = useTheme();
-
   return (
     <section id="partners" className="border-t border-[var(--line)] bg-[var(--surface)] py-16">
       <div className="mx-auto max-w-[1040px] px-6">
@@ -13,21 +10,21 @@ export const Partners: React.FC = () => {
           </span>
         </div>
 
-        {/* Full Logos Only, Centered and Prominent */}
+        {/* Full Official Partner Logos Only */}
         <div className="mx-auto grid max-w-2xl grid-cols-1 gap-6 sm:grid-cols-2">
-          {/* Uzcosmos Agency Full Logo */}
+          {/* Uzcosmos Agency Official Logo */}
           <a
             href="https://uzspace.uz"
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex h-28 items-center justify-center rounded-3xl border border-[var(--line)] bg-[var(--bg)] p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--line-strong)] hover:shadow-md"
+            className="group flex h-28 items-center justify-center rounded-3xl border border-[var(--line)] bg-[var(--bg)] p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--line-strong)] hover:shadow-md"
             title="Uzcosmos Agency"
             aria-label="Uzcosmos Agency"
           >
             <img
-              src={theme === 'dark' ? './assets/uzcosmos-white-logo.png' : './assets/uzcosmos-dark.png'}
+              src="./assets/uzcosmos-official-logo.png"
               alt="Uzcosmos Agency Official Logo"
-              className="max-h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              className="h-20 w-20 rounded-2xl object-cover shadow-sm transition-transform duration-300 group-hover:scale-105"
             />
           </a>
 
