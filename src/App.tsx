@@ -8,42 +8,49 @@ import { RegionsMap } from './components/sections/RegionsMap';
 import { Team } from './components/sections/Team';
 import { Register } from './components/sections/Register';
 import { Footer } from './components/layout/Footer';
-import { LegalModal } from './components/sections/LegalModal';
+import { LegalPage } from './components/pages/LegalPage';
 import { LightboxModal, LightboxItem } from './components/ui/LightboxModal';
 
 export const App: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState<'home' | 'privacy' | 'terms'>('home');
   const [heroRevealed, setHeroRevealed] = useState(false);
   const [activeLightbox, setActiveLightbox] = useState<LightboxItem | null>(null);
 
-  const [legalModalState, setLegalModalState] = useState<{
-    isOpen: boolean;
-    docKey: 'privacy' | 'terms' | null;
-  }>({
-    isOpen: false,
-    docKey: null,
-  });
-
+  // Sync route with URL hash for standalone shareable pages (e.g. #/privacy, #/terms)
   useEffect(() => {
+    const syncPageFromHash = () => {
+      const hash = window.location.hash;
+      if (hash === '#/privacy') {
+        setCurrentPage('privacy');
+      } else if (hash === '#/terms') {
+        setCurrentPage('terms');
+      } else {
+        setCurrentPage('home');
+      }
+    };
+
+    syncPageFromHash();
+    window.addEventListener('hashchange', syncPageFromHash);
+
     // If intro was already seen in this session, reveal hero immediately
     if (sessionStorage.getItem('articular-rocket-played')) {
       setHeroRevealed(true);
     }
+
+    return () => window.removeEventListener('hashchange', syncPageFromHash);
   }, []);
 
-  const handleOpenLegal = (docKey: 'privacy' | 'terms') => {
-    setLegalModalState({
-      isOpen: true,
-      docKey,
-    });
+  const handleNavigate = (page: 'home' | 'privacy' | 'terms') => {
+    setCurrentPage(page);
+    window.location.hash = page === 'home' ? '' : `#/${page}`;
   };
 
-  const handleCloseLegal = () => {
-    setLegalModalState({
-      isOpen: false,
-      docKey: null,
-    });
-  };
+  // Render Dedicated Separate Page for Privacy Policy & Terms of Participation
+  if (currentPage === 'privacy' || currentPage === 'terms') {
+    return <LegalPage docKey={currentPage} onNavigate={handleNavigate} />;
+  }
 
+  // Render Main Tournament Landing Page
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] antialiased selection:bg-[var(--accent)] selection:text-white transition-colors duration-300">
       {/* Horizontal Flight Rocket + Smoke Dissolve Intro */}
@@ -71,18 +78,11 @@ export const App: React.FC = () => {
         <Team />
 
         {/* Telegram-First Registration */}
-        <Register onOpenLegal={handleOpenLegal} />
+        <Register onNavigateLegal={handleNavigate} />
       </main>
 
       {/* Modern Minimal Footer */}
-      <Footer onOpenLegal={handleOpenLegal} />
-
-      {/* Native Light-Dismiss Legal Modal */}
-      <LegalModal
-        isOpen={legalModalState.isOpen}
-        docKey={legalModalState.docKey}
-        onClose={handleCloseLegal}
-      />
+      <Footer onNavigateLegal={handleNavigate} />
 
       {/* High-Res Photo Lightbox Modal */}
       <LightboxModal

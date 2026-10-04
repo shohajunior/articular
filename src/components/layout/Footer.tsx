@@ -4,10 +4,10 @@ import { ArrowUp } from 'lucide-react';
 import { TelegramIcon, InstagramIcon, LinkedinIcon } from '../ui/SocialIcons';
 
 interface FooterProps {
-  onOpenLegal: (docKey: 'privacy' | 'terms') => void;
+  onNavigateLegal: (docKey: 'privacy' | 'terms') => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenLegal }) => {
+export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -59,18 +59,18 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLegal }) => {
               </li>
               <li>
                 <button
-                  onClick={() => scrollTo('regions')}
-                  className="transition-colors hover:text-[var(--accent)]"
-                >
-                  14 Regional Chapters
-                </button>
-              </li>
-              <li>
-                <button
                   onClick={() => scrollTo('partners')}
                   className="transition-colors hover:text-[var(--accent)]"
                 >
                   Official Partners
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => scrollTo('regions')}
+                  className="transition-colors hover:text-[var(--accent)]"
+                >
+                  14 Regional Chapters
                 </button>
               </li>
               <li>
@@ -137,7 +137,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLegal }) => {
             </ul>
           </div>
 
-          {/* Legal and Top */}
+          {/* Legal Pages and Back to Top */}
           <div className="space-y-4">
             <div>
               <div className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--ink)]">
@@ -145,20 +145,28 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLegal }) => {
               </div>
               <ul className="space-y-2 text-xs text-[var(--ink-muted)]">
                 <li>
-                  <button
-                    onClick={() => onOpenLegal('privacy')}
+                  <a
+                    href="#/privacy"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onNavigateLegal('privacy');
+                    }}
                     className="transition-colors hover:text-[var(--accent)]"
                   >
                     Privacy Policy
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
-                    onClick={() => onOpenLegal('terms')}
+                  <a
+                    href="#/terms"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onNavigateLegal('terms');
+                    }}
                     className="transition-colors hover:text-[var(--accent)]"
                   >
                     Terms of Participation
-                  </button>
+                  </a>
                 </li>
               </ul>
             </div>

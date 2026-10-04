@@ -4,10 +4,10 @@ import { ArrowRight, ShieldCheck, Users, MapPin, Award } from 'lucide-react';
 import { TelegramIcon } from '../ui/SocialIcons';
 
 interface RegisterProps {
-  onOpenLegal: (docKey: 'privacy' | 'terms') => void;
+  onNavigateLegal: (docKey: 'privacy' | 'terms') => void;
 }
 
-export const Register: React.FC<RegisterProps> = ({ onOpenLegal }) => {
+export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
   const perks = [
     {
       icon: Users,
@@ -103,24 +103,30 @@ export const Register: React.FC<RegisterProps> = ({ onOpenLegal }) => {
             </a>
           </div>
 
-          {/* Legal notes */}
+          {/* Legal notes linking to separate pages */}
           <div className="mt-8 border-t border-[var(--line)] pt-6 text-xs text-[var(--ink-dim)]">
             By participating, you agree to our{' '}
-            <button
-              type="button"
-              onClick={() => onOpenLegal('privacy')}
+            <a
+              href="#/privacy"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigateLegal('privacy');
+              }}
               className="font-medium text-[var(--accent)] underline underline-offset-2 transition-colors hover:text-[var(--accent-hover)]"
             >
               Privacy Policy
-            </button>{' '}
+            </a>{' '}
             and{' '}
-            <button
-              type="button"
-              onClick={() => onOpenLegal('terms')}
+            <a
+              href="#/terms"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigateLegal('terms');
+              }}
               className="font-medium text-[var(--accent)] underline underline-offset-2 transition-colors hover:text-[var(--accent-hover)]"
             >
               Terms of Participation
-            </button>.
+            </a>.
           </div>
         </div>
       </div>
