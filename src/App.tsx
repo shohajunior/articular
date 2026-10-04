@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { RocketIntro } from './components/intro/RocketIntro';
 import { Header } from './components/layout/Header';
 import { Hero } from './components/sections/Hero';
@@ -9,8 +9,12 @@ import { Team } from './components/sections/Team';
 import { Register } from './components/sections/Register';
 import { Footer } from './components/layout/Footer';
 import { LegalModal } from './components/sections/LegalModal';
+import { LightboxModal, LightboxItem } from './components/ui/LightboxModal';
 
 export const App: React.FC = () => {
+  const [heroRevealed, setHeroRevealed] = useState(false);
+  const [activeLightbox, setActiveLightbox] = useState<LightboxItem | null>(null);
+
   const [legalModalState, setLegalModalState] = useState<{
     isOpen: boolean;
     docKey: 'privacy' | 'terms' | null;
@@ -18,6 +22,13 @@ export const App: React.FC = () => {
     isOpen: false,
     docKey: null,
   });
+
+  useEffect(() => {
+    // If intro was already seen in this session, reveal hero immediately
+    if (sessionStorage.getItem('articular-rocket-played')) {
+      setHeroRevealed(true);
+    }
+  }, []);
 
   const handleOpenLegal = (docKey: 'privacy' | 'terms') => {
     setLegalModalState({
@@ -35,15 +46,18 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] antialiased selection:bg-[var(--accent)] selection:text-white transition-colors duration-300">
-      {/* 1.2s Micro-takeoff Rocket Intro */}
-      <RocketIntro />
+      {/* Horizontal Flight Rocket + Smoke Dissolve Intro */}
+      <RocketIntro onComplete={() => setHeroRevealed(true)} />
 
       {/* Floating Pill Header */}
       <Header />
 
       {/* Main Page Content */}
       <main>
-        <Hero />
+        <Hero
+          isRevealed={heroRevealed}
+          onPhotoClick={(item) => setActiveLightbox(item)}
+        />
         <Partners />
         <Stages />
         <RegionsMap />
@@ -59,6 +73,12 @@ export const App: React.FC = () => {
         isOpen={legalModalState.isOpen}
         docKey={legalModalState.docKey}
         onClose={handleCloseLegal}
+      />
+
+      {/* High-Res Photo Lightbox Modal */}
+      <LightboxModal
+        item={activeLightbox}
+        onClose={() => setActiveLightbox(null)}
       />
     </div>
   );
