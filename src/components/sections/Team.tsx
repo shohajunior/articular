@@ -20,14 +20,21 @@ export const Team: React.FC = () => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onMouseMove={handleMouseMove}
-      className="relative overflow-hidden bg-dotted-pattern py-24 transition-colors"
+      className="relative overflow-hidden bg-[var(--surface)] py-24 transition-colors"
     >
-      {/* Interactive Subtle Blue Cursor Spotlight */}
+      {/* 1. Base Subtle Dotted Grid */}
+      <div className="pointer-events-none absolute inset-0 bg-dotted-pattern opacity-70" />
+
+      {/* 2. Interactive Glowing Dots: Only the dots themselves illuminate under the cursor */}
       <div
-        className="pointer-events-none absolute inset-0 transition-opacity duration-500 ease-out"
+        className="pointer-events-none absolute inset-0 transition-opacity duration-300"
         style={{
           opacity: isHovered ? 1 : 0,
-          background: `radial-gradient(650px circle at ${mousePos.x}px ${mousePos.y}px, rgba(31, 94, 234, 0.08), transparent 75%)`,
+          backgroundImage: 'radial-gradient(var(--accent) 1.75px, transparent 1.75px)',
+          backgroundSize: '24px 24px',
+          WebkitMaskImage: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, black 15%, transparent 100%)`,
+          maskImage: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, black 15%, transparent 100%)`,
+          filter: 'drop-shadow(0 0 2.5px var(--accent))',
         }}
       />
 
@@ -50,9 +57,9 @@ export const Team: React.FC = () => {
           {siteData.team.map((member) => (
             <div
               key={member.id}
-              className="group flex flex-col overflow-hidden rounded-[28px] border border-[var(--line)] bg-[var(--surface)] shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-[var(--accent)]/50 hover:shadow-[0_16px_36px_rgba(31,94,234,0.14)]"
+              className="group flex flex-col overflow-hidden rounded-[28px] border border-[var(--line)] bg-[var(--surface)] shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-[var(--line-strong)] hover:shadow-xl"
             >
-              {/* Top Photo Container (Badge removed as requested) */}
+              {/* Top Photo Container */}
               <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-900">
                 <img
                   src={member.photo}
