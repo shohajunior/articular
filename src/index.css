@@ -88,6 +88,16 @@ body {
   letter-spacing: 0.04em;
 }
 
+/* Dotted grid pattern for sections like Organizers */
+.bg-dotted-pattern {
+  background-image: radial-gradient(rgba(14, 17, 23, 0.10) 1.25px, transparent 1.25px);
+  background-size: 24px 24px;
+}
+.dark .bg-dotted-pattern, [data-theme="dark"] .bg-dotted-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.10) 1.25px, transparent 1.25px);
+  background-size: 24px 24px;
+}
+
 /* Custom subtle scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

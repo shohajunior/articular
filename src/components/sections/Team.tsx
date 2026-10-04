@@ -1,11 +1,37 @@
-﻿import React from 'react';
+﻿import React, { useState } from 'react';
 import { siteData } from '../../data/site';
 import { TelegramIcon, InstagramIcon, LinkedinIcon } from '../ui/SocialIcons';
 
 export const Team: React.FC = () => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
   return (
-    <section id="team" className="py-20">
-      <div className="mx-auto max-w-[1140px] px-6">
+    <section
+      id="team"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onMouseMove={handleMouseMove}
+      className="relative overflow-hidden bg-dotted-pattern py-24 transition-colors"
+    >
+      {/* Interactive Subtle Blue Cursor Spotlight */}
+      <div
+        className="pointer-events-none absolute inset-0 transition-opacity duration-500 ease-out"
+        style={{
+          opacity: isHovered ? 1 : 0,
+          background: `radial-gradient(650px circle at ${mousePos.x}px ${mousePos.y}px, rgba(31, 94, 234, 0.08), transparent 75%)`,
+        }}
+      />
+
+      <div className="relative mx-auto max-w-[1140px] px-6">
         <div className="mb-12">
           <span className="font-mono-tag text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
             Leadership
@@ -23,7 +49,7 @@ export const Team: React.FC = () => {
           {siteData.team.map((member) => (
             <div
               key={member.id}
-              className="group flex flex-col overflow-hidden rounded-[28px] border border-[var(--line)] bg-[var(--surface)] shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-[var(--line-strong)] hover:shadow-2xl"
+              className="group flex flex-col overflow-hidden rounded-[28px] border border-[var(--line)] bg-[var(--surface)] shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-[var(--accent)]/50 hover:shadow-[0_16px_36px_rgba(31,94,234,0.12)]"
             >
               {/* Top Photo Container */}
               <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-900">
@@ -39,7 +65,7 @@ export const Team: React.FC = () => {
                 </div>
               </div>
 
-              {/* Bottom Dark Navy Info Box (Exact match with provided style) */}
+              {/* Bottom Dark Navy Info Box */}
               <div className="flex flex-1 flex-col justify-between bg-[#0a233f] p-5 text-white">
                 <div>
                   <h3 className="text-base font-bold tracking-tight text-white sm:text-lg">
@@ -54,13 +80,13 @@ export const Team: React.FC = () => {
                   {/* Subtle Separator Line */}
                   <div className="my-3.5 border-t border-white/15" />
 
-                  {/* Bottom Row: Department on left + Small Social Buttons on right (Replaces "Profile ->") */}
+                  {/* Bottom Row: Department on left + Small Social Buttons on right */}
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xs font-medium text-slate-300 truncate">
                       {member.department}
                     </span>
 
-                    {/* Quick Social Redirect Buttons (Telegram, Instagram, LinkedIn) */}
+                    {/* Quick Social Redirect Buttons (Official Telegram, Instagram, LinkedIn) */}
                     <div className="flex shrink-0 items-center gap-1.5">
                       {member.socials?.telegram && (
                         <a
