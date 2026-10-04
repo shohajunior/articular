@@ -10,6 +10,7 @@ import { Register } from './components/sections/Register';
 import { Footer } from './components/layout/Footer';
 import { LegalPage } from './components/pages/LegalPage';
 import { LightboxModal, LightboxItem } from './components/ui/LightboxModal';
+import { BackToTop } from './components/ui/BackToTop';
 
 export const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'home' | 'privacy' | 'terms'>('home');
@@ -89,6 +90,9 @@ export const App: React.FC = () => {
         item={activeLightbox}
         onClose={() => setActiveLightbox(null)}
       />
+
+      {/* Floating Back to Top Button (Appears after scrolling past Hero) */}
+      <BackToTop />
     </div>
   );
 };
