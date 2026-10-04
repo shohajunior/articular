@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { siteData } from '../../data/site';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const confirmedRegions = [
   'Tashkent',
@@ -44,9 +44,9 @@ export const Hero: React.FC = () => {
 
             {/* Headline with Elegant Serif Accent */}
             <h1 className="mb-4 text-4xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
-              Science & space,{' '}
+              Where young minds{' '}
               <span className="font-serif-italic text-[var(--accent)]">
-                explained by students.
+                articulate the future.
               </span>
             </h1>
 
@@ -101,7 +101,7 @@ export const Hero: React.FC = () => {
                   />
                   <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--header-bg)] px-3 py-1 text-xs font-medium text-[var(--ink)] backdrop-blur-md">
                     <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                    <span>Grand Final · Tashkent</span>
+                    <span>Grand Final  Tashkent</span>
                   </div>
                 </div>
               </div>

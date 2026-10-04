@@ -25,7 +25,8 @@ export interface TeamMember {
 export const siteData = {
   name: "ArticularUZ",
   edition: "Season 2026",
-  tagline: "Science & space, explained by students",
+  tagline: "Where young minds articulate the future",
+  motto: "Learn. Think. Articulate.",
   shortDesc: "National youth aerospace tournament in Uzbekistan. Teams research a space topic, build a presentation, and defend engineering findings in English.",
   
   links: {
