@@ -32,17 +32,14 @@ export const BackToTop: React.FC = () => {
       type="button"
       onClick={scrollToTop}
       aria-label="Back to top"
-      className={`group fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--header-bg)] px-4 py-2.5 text-xs font-semibold text-[var(--ink)] shadow-lg backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-[var(--accent)] hover:bg-[var(--surface-elevated)] hover:text-[var(--accent)] hover:shadow-xl ${
+      title="Back to top"
+      className={`group fixed bottom-6 right-6 z-40 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-[var(--line)] bg-[var(--header-bg)] text-[var(--ink)] shadow-lg backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-[var(--accent)] hover:bg-[var(--surface-elevated)] hover:text-[var(--accent)] hover:shadow-xl ${
         isVisible
           ? 'translate-y-0 opacity-100 pointer-events-auto'
           : 'translate-y-5 opacity-0 pointer-events-none'
       }`}
     >
-      <span className="hidden sm:inline">Back to top</span>
-      <span className="sm:hidden font-mono text-[11px]">Top</span>
-      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent-tint)] text-[var(--accent)] transition-all duration-300 group-hover:-translate-y-0.5 group-hover:bg-[var(--accent)] group-hover:text-white">
-        <ArrowUp className="h-3 w-3" />
-      </div>
+      <ArrowUp className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
     </button>
   );
 };
