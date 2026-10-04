@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React from 'react';
 import { siteData } from '../../data/site';
 import { ArrowRight, Maximize2 } from 'lucide-react';
 import { LightboxItem } from '../ui/LightboxModal';
@@ -8,24 +8,7 @@ interface HeroProps {
   isRevealed?: boolean;
 }
 
-const confirmedRegions = [
-  'Tashkent',
-  'Bukhara',
-  'Fergana',
-  'Andijan',
-  'Tashkent Region'
-];
-
 export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) => {
-  const [currentRegionIndex, setCurrentRegionIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentRegionIndex((prev) => (prev + 1) % confirmedRegions.length);
-    }, 2400);
-    return () => clearInterval(interval);
-  }, []);
-
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -70,15 +53,6 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               isRevealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
             }`}
           >
-            {/* Dynamic Region Rotating Chip (Volontyorlar Style) */}
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3.5 py-1 text-xs text-[var(--ink-muted)]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-              <span>Events in</span>
-              <span className="font-semibold text-[var(--ink)] transition-opacity duration-300">
-                {confirmedRegions[currentRegionIndex]}
-              </span>
-            </div>
-
             {/* Headline with Original Slogan */}
             <h1 className="mb-4 text-4xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
               Where young minds{' '}
