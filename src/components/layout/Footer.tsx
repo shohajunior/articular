@@ -41,9 +41,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenLegal }) => {
             <p className="text-xs text-[var(--ink-muted)] leading-relaxed">
               {siteData.shortDesc}
             </p>
-            <div className="text-xs text-[var(--ink-dim)]">
-              Official Partners: Uzcosmos Agency &amp; Youth Volunteering Club
-            </div>
           </div>
 
           {/* Tournament Navigation */}
