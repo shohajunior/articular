@@ -13,8 +13,9 @@ export interface TeamMember {
   id: string;
   name: string;
   role: string;
-  initials: string;
-  bio: string;
+  department: string;
+  badge: string;
+  photo: string;
   socials?: {
     telegram?: string;
     instagram?: string;
@@ -209,14 +210,15 @@ export const siteData = {
     }
   ] as RegionEvent[],
 
-  // Provisional demo data as requested by user until real photos/bios are sent
+  // Volontyorlar.uz inspired team cards with real portrait photos
   team: [
     {
       id: "temurbek",
       name: "Temurbek Muslimov",
-      role: "Founder & Lead",
-      initials: "TM",
-      bio: "Tournament director, regulations lead, and primary liaison with Uzcosmos Agency.",
+      role: "Tournament Director",
+      department: "Organizing Council",
+      badge: "Lead & Founder",
+      photo: "./assets/team-temurbek.jpg",
       socials: {
         telegram: "https://t.me/articularuz",
         instagram: "https://instagram.com/articularuz",
@@ -224,11 +226,12 @@ export const siteData = {
       }
     },
     {
-      id: "tech-lead",
+      id: "alisher",
       name: "Alisher Nematov",
       role: "Technical Lead",
-      initials: "AN",
-      bio: "Aerospace tracks supervisor, telemetry data formats, and engineering rubrics.",
+      department: "Aerospace Track",
+      badge: "Engineering",
+      photo: "./assets/team-alisher.jpg",
       socials: {
         telegram: "https://t.me/articularuz",
         instagram: "https://instagram.com/articularuz",
@@ -236,11 +239,12 @@ export const siteData = {
       }
     },
     {
-      id: "academic-lead",
+      id: "madina",
       name: "Madina Karimova",
-      role: "Academic Lead",
-      initials: "MK",
-      bio: "English defense evaluation criteria, scientific inquiry standards, and mentor panel.",
+      role: "Academic Standards Lead",
+      department: "English Defense",
+      badge: "Academic Panel",
+      photo: "./assets/team-madina.jpg",
       socials: {
         telegram: "https://t.me/articularuz",
         instagram: "https://instagram.com/articularuz",
@@ -248,11 +252,12 @@ export const siteData = {
       }
     },
     {
-      id: "community-lead",
+      id: "jamshid",
       name: "Jamshid Aliev",
       role: "Regional Coordinator",
-      initials: "JA",
-      bio: "Regional chapters liaison, school partnerships, and volunteer operations with YVC.",
+      department: "Regional Operations",
+      badge: "YVC Liaison",
+      photo: "./assets/team-jamshid.jpg",
       socials: {
         telegram: "https://t.me/yvc_uz",
         instagram: "https://instagram.com/articularuz",
