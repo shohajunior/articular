@@ -2,8 +2,8 @@
 import { RocketIntro } from './components/intro/RocketIntro';
 import { Header } from './components/layout/Header';
 import { Hero } from './components/sections/Hero';
-import { Partners } from './components/sections/Partners';
 import { Stages } from './components/sections/Stages';
+import { Partners } from './components/sections/Partners';
 import { RegionsMap } from './components/sections/RegionsMap';
 import { Team } from './components/sections/Team';
 import { Register } from './components/sections/Register';
@@ -58,10 +58,19 @@ export const App: React.FC = () => {
           isRevealed={heroRevealed}
           onPhotoClick={(item) => setActiveLightbox(item)}
         />
-        <Partners />
+        {/* 4 Stages to National Defense */}
         <Stages />
+
+        {/* Partners Section placed after Stages */}
+        <Partners />
+
+        {/* 14 Regions of Uzbekistan */}
         <RegionsMap />
+
+        {/* Leadership Team */}
         <Team />
+
+        {/* Telegram-First Registration */}
         <Register onOpenLegal={handleOpenLegal} />
       </main>
 

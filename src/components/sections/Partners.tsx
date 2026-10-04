@@ -1,53 +1,59 @@
 ﻿import React from 'react';
-import { siteData } from '../../data/site';
 import { useTheme } from '../../lib/theme';
 
 export const Partners: React.FC = () => {
   const { theme } = useTheme();
 
   return (
-    <section id="partners" className="border-y border-[var(--line)] bg-[var(--surface)] py-12">
-      <div className="mx-auto max-w-[1140px] px-6">
-        <div className="mb-6 text-center">
+    <section id="partners" className="border-t border-[var(--line)] bg-[var(--surface)] py-16">
+      <div className="mx-auto max-w-[1040px] px-6">
+        <div className="mb-8 text-center">
           <span className="font-mono-tag text-xs font-semibold uppercase tracking-wider text-[var(--ink-dim)]">
-            Official Tournament Partners
+            Official Partners
           </span>
         </div>
 
-        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
-          {/* Uzcosmos Agency */}
-          <div className="flex items-center gap-4 rounded-2xl border border-[var(--line)] bg-[var(--bg)] p-4 transition-all duration-200 hover:border-[var(--line-strong)]">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white p-2">
-              <img
-                src={theme === 'dark' ? './assets/uzcosmos-white-logo.png' : './assets/uzcosmos-dark.png'}
-                alt="Uzcosmos Agency Logo"
-                className="max-h-full max-w-full object-contain"
-              />
-            </div>
-            <div>
-              <div className="text-sm font-bold text-[var(--ink)]">Uzcosmos Agency</div>
-              <div className="text-xs text-[var(--ink-muted)]">
-                Space Research & Technology Agency
-              </div>
-            </div>
-          </div>
+        {/* Full Logos Only, Centered and Prominent */}
+        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-6 sm:grid-cols-2">
+          {/* Uzcosmos Agency Full Logo */}
+          <a
+            href="https://uzspace.uz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex h-28 items-center justify-center rounded-3xl border border-[var(--line)] bg-[var(--bg)] p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--line-strong)] hover:shadow-md"
+            title="Uzcosmos Agency"
+            aria-label="Uzcosmos Agency"
+          >
+            <img
+              src={theme === 'dark' ? './assets/uzcosmos-white-logo.png' : './assets/uzcosmos-dark.png'}
+              alt="Uzcosmos Agency Official Logo"
+              className="max-h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+          </a>
 
-          {/* Youth Volunteering Club */}
-          <div className="flex items-center gap-4 rounded-2xl border border-[var(--line)] bg-[var(--bg)] p-4 transition-all duration-200 hover:border-[var(--line-strong)]">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white p-1.5 overflow-hidden">
-              <img
-                src="./assets/yvc.jpg"
-                alt="Youth Volunteering Club Logo"
-                className="max-h-full max-w-full object-contain"
-              />
+          {/* Youth Volunteering Club Full Logo */}
+          <a
+            href="https://t.me/yvc_uz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex h-28 items-center justify-center gap-4 rounded-3xl border border-[var(--line)] bg-[var(--bg)] p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--line-strong)] hover:shadow-md"
+            title="Youth Volunteering Club"
+            aria-label="Youth Volunteering Club"
+          >
+            <img
+              src="./assets/yvc.jpg"
+              alt="Youth Volunteering Club Emblem"
+              className="h-14 w-14 rounded-full object-cover shadow-sm transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="flex flex-col text-left">
+              <span className="font-mono-tag text-[11px] font-bold tracking-wider text-[var(--ink-dim)]">
+                YOUTH VOLUNTEERING
+              </span>
+              <span className="font-mono-tag text-base font-extrabold tracking-tight text-[var(--ink)]">
+                CLUB UZ
+              </span>
             </div>
-            <div>
-              <div className="text-sm font-bold text-[var(--ink)]">Youth Volunteering Club</div>
-              <div className="text-xs text-[var(--ink-muted)]">
-                Strategic Partner (@yvc_uz)
-              </div>
-            </div>
-          </div>
+          </a>
         </div>
       </div>
     </section>
