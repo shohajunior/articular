@@ -20,16 +20,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand info */}
           <div className="space-y-3 sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-2.5">
-              <img
-                src="./assets/logo.png"
-                alt="ArticularUZ Logo"
-                className="h-7 w-7 object-contain"
-              />
-              <span className="font-mono-tag text-sm font-bold tracking-wider text-[var(--ink)]">
+            <div className="flex items-center gap-2">
+              <span className="text-base sm:text-lg font-bold tracking-tight text-[var(--ink)]">
                 ARTICULAR
               </span>
-              <span className="rounded-full bg-[var(--accent)] px-2 py-0.5 text-[10px] font-bold text-[var(--accent-contrast)]">
+              <span className="rounded-full bg-[var(--accent)] px-2.5 py-0.5 text-[11px] font-bold text-white tracking-wide">
                 UZ
               </span>
             </div>

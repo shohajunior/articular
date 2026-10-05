@@ -48,18 +48,13 @@ export const Header: React.FC = () => {
         {/* Brand Logo */}
         <a
           href="#"
-          className="group flex items-center gap-2.5 transition-opacity hover:opacity-90"
+          className="group flex items-center gap-2 transition-opacity hover:opacity-90"
           aria-label="ArticularUZ Home"
         >
-          <img
-            src="./assets/logo.png"
-            alt="ArticularUZ Logo"
-            className="h-7 w-7 object-contain"
-          />
-          <span className="font-mono-tag text-sm font-bold tracking-wider text-[var(--ink)]">
+          <span className="text-base sm:text-lg font-bold tracking-tight text-[var(--ink)]">
             ARTICULAR
           </span>
-          <span className="rounded-full bg-[var(--accent)] px-2 py-0.5 text-[10px] font-bold text-[var(--accent-contrast)]">
+          <span className="rounded-full bg-[var(--accent)] px-2.5 py-0.5 text-[11px] font-bold text-white tracking-wide">
             UZ
           </span>
         </a>
