@@ -117,7 +117,7 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               <button
                 type="button"
                 onClick={() => scrollTo('regions')}
-                className="rounded-full border border-[var(--line)] bg-white dark:bg-[#0d1524] px-6 py-3 text-sm font-semibold text-[var(--ink)] shadow-sm transition-all hover:border-[var(--line-strong)] hover:shadow-md cursor-pointer"
+                className="rounded-full border border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] px-6 py-3 text-sm font-semibold text-[var(--ink)] shadow-sm transition-all hover:border-[var(--line-strong)] hover:shadow-md cursor-pointer"
               >
                 Explore 14 Regions
               </button>

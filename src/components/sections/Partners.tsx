@@ -1,159 +1,197 @@
-﻿import React from 'react';
+import React from 'react';
 
-interface DualLogoPartner {
+interface PartnerConfig {
+  id: string;
   name: string;
   url: string;
-  greySrc: string;
-  colorSrc: string;
-  singleSrc?: never;
+  type: 'yvc-full' | 'uzcosmos-full' | 'yvc-emblem' | 'uzcosmos-emblem';
 }
 
-interface SingleLogoPartner {
-  name: string;
-  url: string;
-  singleSrc: string;
-  greySrc?: never;
-  colorSrc?: never;
-}
-
-type PartnerItem = DualLogoPartner | SingleLogoPartner;
-
-const PARTNER_LIST: PartnerItem[] = [
-  // 1. Youth for Good (Official SVG from volontyorlar.uz)
+// ONLY the user's official partners, repeating smoothly in the carousel
+const PARTNERS: PartnerConfig[] = [
   {
-    name: 'Youth for Good',
-    url: 'https://volontyorlar.uz',
-    greySrc: './opportunity-sources/youth-for-good-grey.svg',
-    colorSrc: './opportunity-sources/youth-for-good.svg',
-  },
-  // 2. Youth Grants (Official SVG from volontyorlar.uz)
-  {
-    name: 'Youth Grants',
-    url: 'https://volontyorlar.uz',
-    greySrc: './opportunity-sources/youth-grants-grey.svg',
-    colorSrc: './opportunity-sources/youth-grants.svg',
-  },
-  // 3. ArticularUZ (Official SVG from volontyorlar.uz)
-  {
-    name: 'ArticularUZ',
-    url: '#',
-    greySrc: './opportunity-sources/articularuz-grey.svg',
-    colorSrc: './opportunity-sources/articularuz.svg',
-  },
-  // 4. Youth Volunteer Club (Official SVG from volontyorlar.uz)
-  {
-    name: 'Youth Volunteer Club',
-    url: 'https://t.me/yvc_uz',
-    greySrc: './opportunity-sources/youth-volunteer-club-grey.svg',
-    colorSrc: './opportunity-sources/youth-volunteer-club.svg',
-  },
-  // 5. Yashil Qo'llar (Green Hands)
-  {
-    name: "Yashil Qo'llar",
-    url: 'https://volontyorlar.uz',
-    greySrc: './opportunity-sources/yashil-qollar-grey.svg',
-    colorSrc: './opportunity-sources/yashil-qollar.svg',
-  },
-  // 6. Youth Run Club
-  {
-    name: 'Youth Run Club',
-    url: 'https://volontyorlar.uz',
-    greySrc: './opportunity-sources/youth-run-club-grey.svg',
-    colorSrc: './opportunity-sources/youth-run-club.svg',
-  },
-  // 7. Uzcosmos Agency (User uploaded logo)
-  {
+    id: 'uzcosmos-1',
     name: 'Uzcosmos Agency',
     url: 'https://uzspace.uz',
-    singleSrc: './assets/uzcosmoslogo.png',
+    type: 'uzcosmos-full',
   },
-  // 8. Youth Volunteer Club Emblem (User uploaded YVC transparent PNG)
   {
-    name: 'YVC Uzbekistan',
+    id: 'yvc-1',
+    name: 'Youth Volunteering Club',
     url: 'https://t.me/yvc_uz',
-    singleSrc: './assets/yvc-png.png',
+    type: 'yvc-full',
   },
-  // 9. Yoshlar Ishlari Agentligi
   {
-    name: 'Yoshlar Ishlari Agentligi',
-    url: 'https://yoshlar.gov.uz',
-    singleSrc: './assets/yoshlar-ishlari-agentligi-logo-png_seeklogo-491676.png',
+    id: 'uzcosmos-emblem-1',
+    name: 'Uzcosmos Official Agency',
+    url: 'https://uzspace.uz',
+    type: 'uzcosmos-emblem',
   },
-  // 10. IT Park Uzbekistan
   {
-    name: 'IT Park Uzbekistan',
-    url: 'https://it-park.uz',
-    singleSrc: './assets/Logo_IT_Park_Uzbekistan.svg.webp',
+    id: 'yvc-emblem-1',
+    name: 'YVC Uzbekistan Emblem',
+    url: 'https://t.me/yvc_uz',
+    type: 'yvc-emblem',
   },
-  // 11. C-Space Coworking
   {
-    name: 'C-Space Coworking',
-    url: 'https://cspace.uz',
-    singleSrc: './assets/cspace.png',
+    id: 'uzcosmos-2',
+    name: 'Uzcosmos Agency',
+    url: 'https://uzspace.uz',
+    type: 'uzcosmos-full',
   },
-  // 12. Ministry of Innovative Development
   {
-    name: 'Innovatsiya Vazirligi',
-    url: 'https://mininnovation.uz',
-    singleSrc: './assets/innovatsiya.png',
+    id: 'yvc-2',
+    name: 'Youth Volunteering Club',
+    url: 'https://t.me/yvc_uz',
+    type: 'yvc-full',
+  },
+  {
+    id: 'uzcosmos-emblem-2',
+    name: 'Uzcosmos Official Agency',
+    url: 'https://uzspace.uz',
+    type: 'uzcosmos-emblem',
+  },
+  {
+    id: 'yvc-emblem-2',
+    name: 'YVC Uzbekistan Emblem',
+    url: 'https://t.me/yvc_uz',
+    type: 'yvc-emblem',
   },
 ];
 
 export const Partners: React.FC = () => {
-  const renderTrackItems = (keyPrefix: string) => {
-    return PARTNER_LIST.map((partner, index) => {
-      const isDual = Boolean(partner.greySrc && partner.colorSrc);
-      return (
-        <li
-          key={`${keyPrefix}-${index}`}
-          className="marquee-logo-item h-12 sm:h-14 lg:h-16 px-4 sm:px-6"
-          tabIndex={0}
-        >
-          <a
-            href={partner.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative flex h-full items-center justify-center transition-transform duration-300"
-            title={partner.name}
-            aria-label={partner.name}
-          >
-            {isDual ? (
-              <>
-                <img
-                  src={partner.greySrc}
-                  alt={partner.name}
-                  loading="lazy"
-                  className="marquee-logo-grey block h-10 sm:h-12 lg:h-14 w-auto max-w-[210px] object-contain"
-                />
-                <img
-                  src={partner.colorSrc}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  className="marquee-logo-color absolute inset-0 block h-10 sm:h-12 lg:h-14 w-auto max-w-[210px] object-contain"
-                />
-              </>
-            ) : (
+  const renderPartnerLogo = (partner: PartnerConfig) => {
+    switch (partner.type) {
+      case 'yvc-full':
+        return (
+          <div className="relative flex items-center justify-center h-full">
+            <img
+              src="./opportunity-sources/youth-volunteer-club-grey.svg"
+              alt={partner.name}
+              loading="lazy"
+              className="marquee-logo-grey block h-10 sm:h-12 lg:h-13 w-auto max-w-[220px] object-contain dark:brightness-200 dark:contrast-125 dark:opacity-75"
+            />
+            <img
+              src="./opportunity-sources/youth-volunteer-club.svg"
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              className="marquee-logo-color absolute inset-0 block h-10 sm:h-12 lg:h-13 w-auto max-w-[220px] object-contain dark:brightness-110"
+            />
+          </div>
+        );
+
+      case 'uzcosmos-full':
+        return (
+          <div className="relative flex items-center justify-center h-full">
+            {/* Light Mode Uzcosmos */}
+            <div className="dark:hidden relative flex items-center justify-center h-full">
               <img
-                src={partner.singleSrc}
+                src="./assets/uzcosmos-dark.png"
                 alt={partner.name}
                 loading="lazy"
-                className="marquee-logo-single block h-10 sm:h-12 lg:h-14 w-auto max-w-[180px] object-contain"
+                className="marquee-logo-grey block h-9 sm:h-11 lg:h-12 w-auto max-w-[220px] object-contain"
               />
-            )}
-          </a>
-        </li>
-      );
-    });
+              <img
+                src="./assets/uzcosmos-dark.png"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="marquee-logo-color absolute inset-0 block h-9 sm:h-11 lg:h-12 w-auto max-w-[220px] object-contain"
+              />
+            </div>
+            {/* Dark Mode Uzcosmos with crisp white typography and glowing blue orbit */}
+            <div className="hidden dark:flex relative items-center justify-center h-full">
+              <img
+                src="./assets/uzcosmos-white-logo.png"
+                alt={partner.name}
+                loading="lazy"
+                className="marquee-logo-grey block h-9 sm:h-11 lg:h-12 w-auto max-w-[220px] object-contain opacity-65"
+              />
+              <img
+                src="./assets/uzcosmos-white-logo.png"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="marquee-logo-color absolute inset-0 block h-9 sm:h-11 lg:h-12 w-auto max-w-[220px] object-contain opacity-100"
+              />
+            </div>
+          </div>
+        );
+
+      case 'yvc-emblem':
+        return (
+          <div className="relative flex items-center gap-3 h-full px-2">
+            <img
+              src="./assets/yvc-png.png"
+              alt={partner.name}
+              loading="lazy"
+              className="marquee-logo-single block h-11 sm:h-13 lg:h-14 w-auto object-contain dark:brightness-150"
+            />
+            <div className="flex flex-col text-left transition-opacity duration-300">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Youth Volunteering
+              </span>
+              <span className="font-mono text-xs font-extrabold tracking-tight text-slate-800 dark:text-slate-200">
+                Club UZ
+              </span>
+            </div>
+          </div>
+        );
+
+      case 'uzcosmos-emblem':
+        return (
+          <div className="relative flex items-center gap-3 h-full px-2">
+            <img
+              src="./assets/uzcosmoslogo.png"
+              alt={partner.name}
+              loading="lazy"
+              className="marquee-logo-single block h-11 sm:h-13 lg:h-14 w-auto object-contain dark:brightness-0 dark:invert dark:opacity-75"
+            />
+            <div className="flex flex-col text-left transition-opacity duration-300">
+              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Space Agency
+              </span>
+              <span className="font-mono text-xs font-extrabold tracking-tight text-slate-800 dark:text-slate-200">
+                O'zkosmos
+              </span>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const renderTrackItems = (keyPrefix: string) => {
+    return PARTNERS.map((partner, index) => (
+      <li
+        key={`${keyPrefix}-${partner.id}-${index}`}
+        className="marquee-logo-item h-14 sm:h-16 lg:h-18 px-6 sm:px-8"
+        tabIndex={0}
+      >
+        <a
+          href={partner.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative flex h-full items-center justify-center transition-transform duration-300"
+          title={partner.name}
+          aria-label={partner.name}
+        >
+          {renderPartnerLogo(partner)}
+        </a>
+      </li>
+    ));
   };
 
   return (
     <section
       id="partners"
-      className="relative isolate scroll-mt-20 border-b border-[var(--line)] bg-[#edf4f9] dark:bg-[#0c1422] py-20 sm:py-24 lg:py-28 transition-colors duration-300"
+      className="relative isolate scroll-mt-20 border-b border-[var(--line)] bg-[#edf4f9] dark:bg-[#0c1422] py-20 sm:py-24 transition-colors duration-300"
     >
       <div className="mx-auto max-w-[1140px] px-6">
-        {/* Header Tag with Leading Line matching volontyorlar.uz Opportunity Sources */}
+        {/* Header matching volontyorlar.uz Opportunity sources */}
         <div className="max-w-2xl">
           <p className="flex items-center gap-2.5 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-blue-600 dark:text-blue-400">
             <span
@@ -166,7 +204,7 @@ export const Partners: React.FC = () => {
             Where the opportunities come from
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
-            Leading youth volunteer networks, national agencies, and scientific partners connecting students to aerospace and STEM challenges.
+            Official strategic partners collaborating to empower students in aerospace tournaments and youth volunteer initiatives across Uzbekistan.
           </p>
         </div>
       </div>
@@ -176,8 +214,8 @@ export const Partners: React.FC = () => {
         {/* Track 1 */}
         <ul
           role="group"
-          aria-label="Opportunity sources"
-          className="marquee-track gap-10 sm:gap-14 lg:gap-18 pr-10 sm:pr-14 lg:pr-18"
+          aria-label="Official Partners"
+          className="marquee-track gap-8 sm:gap-12 lg:gap-16 pr-8 sm:pr-12 lg:pr-16"
         >
           {renderTrackItems('track1')}
         </ul>
@@ -185,7 +223,7 @@ export const Partners: React.FC = () => {
         {/* Track 2 (Duplicate for Seamless Infinite Loop) */}
         <ul
           aria-hidden="true"
-          className="marquee-track gap-10 sm:gap-14 lg:gap-18 pr-10 sm:pr-14 lg:pr-18"
+          className="marquee-track gap-8 sm:gap-12 lg:gap-16 pr-8 sm:pr-12 lg:pr-16"
         >
           {renderTrackItems('track2')}
         </ul>
