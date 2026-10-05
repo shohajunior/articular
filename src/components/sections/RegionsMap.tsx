@@ -71,35 +71,6 @@ export const RegionsMap: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Select Region Pills Strip */}
-        <div className="mb-8 flex flex-wrap items-center gap-2">
-          <span className="mr-1 text-xs font-semibold uppercase tracking-wider text-[var(--ink-dim)]">
-            Quick Select:
-          </span>
-          {siteData.regions.map((reg) => {
-            const isSelected = reg.id === selectedRegionId;
-            return (
-              <button
-                key={reg.id}
-                type="button"
-                onClick={() => setSelectedRegionId(reg.id)}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200 ${
-                  isSelected
-                    ? 'bg-[var(--accent)] text-[var(--accent-contrast)] font-semibold shadow-sm'
-                    : reg.isConfirmed
-                    ? 'border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent-tint)]'
-                    : 'border border-[var(--line)] text-[var(--ink-muted)] hover:border-[var(--line-strong)] hover:text-[var(--ink)] bg-[var(--bg)]'
-                }`}
-              >
-                {reg.name}
-                {reg.isConfirmed && (
-                  <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-current" />
-                )}
-              </button>
-            );
-          })}
-        </div>
-
         {/* Anchored 3D Map Canvas: Completely free of box containers, mounted directly to website */}
         <div
           className="relative w-full py-4"
