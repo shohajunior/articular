@@ -1,3 +1,4 @@
+import { initSmoothScroll } from './lib/smoothScroll';
 ﻿import React, { useState, useEffect } from 'react';
 import { RocketIntro } from './components/intro/RocketIntro';
 import { Header } from './components/layout/Header';
@@ -17,6 +18,14 @@ export const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'home' | 'privacy' | 'terms'>('home');
   const [heroRevealed, setHeroRevealed] = useState(false);
   const [activeLightbox, setActiveLightbox] = useState<LightboxItem | null>(null);
+
+  // Initialize Lenis Buttery Smooth Momentum Scroll
+  useEffect(() => {
+    const lenis = initSmoothScroll();
+    return () => {
+      lenis?.destroy();
+    };
+  }, []);
 
   // Sync route with URL hash for standalone shareable pages (e.g. #/privacy, #/terms)
   useEffect(() => {

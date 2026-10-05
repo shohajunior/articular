@@ -14,7 +14,11 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if ((window as any).lenis) {
+        (window as any).lenis.scrollTo(el, { offset: -65, duration: 1.35 });
+      } else {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   };
 
