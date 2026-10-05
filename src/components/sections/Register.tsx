@@ -88,7 +88,7 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
               className="group inline-flex items-center gap-3 rounded-full bg-[var(--accent)] px-8 py-4 text-sm font-semibold text-[var(--accent-contrast)] shadow-sm transition-all hover:bg-[var(--accent-hover)] hover:shadow-md"
             >
               <TelegramIcon className="h-4 w-4" />
-              <span>Launch @articularuzbot</span>
+              <span>Register Now</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
 
@@ -99,7 +99,7 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
               className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 py-4 text-sm font-semibold text-[var(--ink)] transition-colors hover:border-[var(--line-strong)] hover:bg-[var(--surface-elevated)]"
             >
               <TelegramIcon className="h-4 w-4 text-[var(--ink-muted)]" />
-              <span>Channel @articularuz</span>
+              <span>Telegram Channel</span>
             </a>
           </div>
 
