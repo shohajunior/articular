@@ -101,24 +101,6 @@ export const RegionsMap: React.FC = () => {
           onMouseMove={handleMapMouseMove}
           onMouseLeave={handleMapMouseLeave}
         >
-          {/* Architectural Technical Coordinates */}
-          <div className="pointer-events-none absolute -top-1 left-2 flex items-center gap-2 font-mono text-[11px] font-semibold text-[var(--ink-dim)] opacity-60">
-            <span className="text-[var(--accent)] font-bold">+</span>
-            <span>[ LAT 41°18&apos;N // LNG 69°16&apos;E ]</span>
-          </div>
-          <div className="pointer-events-none absolute -top-1 right-2 flex items-center gap-2 font-mono text-[11px] font-semibold text-[var(--ink-dim)] opacity-60">
-            <span>[ 3D VOLUMETRIC TERRAIN RADAR ]</span>
-            <span className="text-[var(--accent)] font-bold">+</span>
-          </div>
-          <div className="pointer-events-none absolute -bottom-1 left-2 flex items-center gap-2 font-mono text-[11px] font-semibold text-[var(--ink-dim)] opacity-60">
-            <span className="text-[var(--accent)] font-bold">+</span>
-            <span>[ ELEVATION 24PX BEDROCK SLAB ]</span>
-          </div>
-          <div className="pointer-events-none absolute -bottom-1 right-2 flex items-center gap-2 font-mono text-[11px] font-semibold text-[var(--ink-dim)] opacity-60">
-            <span>[ INTERACTIVE HOLOGRAPHIC TILES ]</span>
-            <span className="text-[var(--accent)] font-bold">+</span>
-          </div>
-
           {/* 3D Tilted Map Stage with Dynamic Pitch/Roll */}
           <div
             className="relative mx-auto w-full max-w-[1240px] transition-transform duration-300 ease-out"
