@@ -1,499 +1,534 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Compass,
-  Radio,
-  CheckCircle2,
-  ChevronRight,
-  Shield,
-  Layers,
-  ArrowRight,
-  Sparkles
-} from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { CheckCircle2, Compass, ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
-interface Directive {
-  id: string;
+interface StoryBlock {
   step: string;
-  title: string;
-  code: string;
-  heading: string;
-  highlight: string;
-  summary: string;
-  statNumber: string;
-  statLabel: string;
-  telemetry: { label: string; value: string }[];
   tag: string;
+  title: string;
+  subtitle: string;
+  desc: string;
+  metric: string;
+  metricLabel: string;
+  activeThreshold: number;
 }
 
-const DIRECTIVES: Directive[] = [
+const STORY_BLOCKS: StoryBlock[] = [
   {
-    id: 'research',
     step: '01',
-    title: 'AUTONOMOUS RESEARCH',
-    code: 'SYS-ORB // 01',
-    heading: 'Beyond textbook formulas.',
-    highlight: 'Real orbital challenges.',
-    summary:
-      'High school teams formulate original aerospace engineering theses. No rote memorization — students calculate orbital trajectories, payload delta-v budgets, and CubeSat telemetry.',
-    statNumber: '48+',
-    statLabel: 'Orbital Theses Formulated',
-    telemetry: [
-      { label: 'MODE', value: 'INDEPENDENT THESIS' },
-      { label: 'SIMULATION', value: 'ORBITAL MECHANICS' },
-      { label: 'DATASET', value: 'OPEN NASA & ESA FEEDS' },
-      { label: 'CALCULATION', value: 'STK & PYTHON VERIFIED' },
-    ],
-    tag: 'Engineering Research',
+    tag: 'RESEARCH & CREATIVITY',
+    title: 'Calculate the Uncharted',
+    subtitle: 'Autonomous Scientific Theses',
+    desc: 'High school teams formulate original aerospace engineering theses across orbital mechanics, CubeSat telemetry, and deep-space trajectory calculations. No textbook templates.',
+    metric: '48+',
+    metricLabel: 'Orbital Theses Formulated',
+    activeThreshold: 0.15,
   },
   {
-    id: 'defense',
     step: '02',
-    title: 'ENGLISH STAGE DEFENSE',
-    code: 'DEF-VOX // 02',
-    heading: 'Global scientific voice.',
-    highlight: 'Live academic cross-examination.',
-    summary:
-      'Students defend calculations strictly in fluent English before academic juries and Uzcosmos engineers. Real questions, cross-examination, and direct academic debate.',
-    statNumber: '100%',
-    statLabel: 'English Stage Defense',
-    telemetry: [
-      { label: 'LANGUAGE', value: 'ENGLISH PROTOCOL' },
-      { label: 'JURY', value: 'UZCOSMOS & ACADEMICS' },
-      { label: 'FORMAT', value: '10-MIN PITCH + 5-MIN Q&A' },
-      { label: 'EVALUATION', value: 'RIGOROUS PEER REVIEW' },
-    ],
-    tag: 'Public Defense',
+    tag: 'ENGLISH STAGE DEFENSE',
+    title: 'Defend on the Global Stage',
+    subtitle: '100% English Public Defense',
+    desc: 'Students present calculations and defend engineering choices strictly in fluent English before academic juries and Uzcosmos Agency engineers. Real cross-examination and academic debate.',
+    metric: '100%',
+    metricLabel: 'English Defense Format',
+    activeThreshold: 0.5,
   },
   {
-    id: 'regions',
     step: '03',
-    title: 'NATIONWIDE CONSTELLATION',
-    code: 'NET-14R // 03',
-    heading: '14 administrative regions.',
-    highlight: 'One unified launchpad.',
-    summary:
-      'From Nukus to the Fergana Valley, Articular connects passionate youth and scientific mentors into a thriving nationwide aerospace innovation ecosystem.',
-    statNumber: '14',
-    statLabel: 'Regions Fully Synchronized',
-    telemetry: [
-      { label: 'COVERAGE', value: 'REPUBLIC-WIDE' },
-      { label: 'CHAPTERS', value: '14 REGIONAL NODES' },
-      { label: 'OPPORTUNITY', value: 'ZERO BARRIERS TO ENTRY' },
-      { label: 'COMMUNITY', value: 'HIGH SCHOOL STEM NETWORK' },
-    ],
-    tag: 'National Orbit',
-  },
-  {
-    id: 'uzcosmos',
-    step: '04',
-    title: 'STATE SPACE HONORS',
-    code: 'GOV-UZS // 04',
-    heading: 'Institutional validation.',
-    highlight: 'Credentials co-signed by Uzcosmos.',
-    summary:
-      'Direct state recognition. Finalists receive official tournament certificates and honors co-signed by Uzcosmos Agency leadership, unlocking international scientific pathways.',
-    statNumber: 'TOP 1%',
-    statLabel: 'State Agency Endorsed',
-    telemetry: [
-      { label: 'PARTNER', value: 'UZCOSMOS AGENCY' },
-      { label: 'CREDENTIAL', value: 'OFFICIAL CO-SIGNED AWARD' },
-      { label: 'PATHWAY', value: 'AEROSPACE INTERNSHIPS' },
-      { label: 'STATUS', value: 'STATE ACCREDITED' },
-    ],
-    tag: 'State Honors',
+    tag: 'STATE SPACE HONORS',
+    title: 'Launch Your Trajectory',
+    subtitle: 'Co-Signed Uzcosmos Credentials',
+    desc: 'Finalists receive official awards and certificates co-signed by Uzcosmos Agency leadership, unlocking international research pathways, internships, and university admissions.',
+    metric: 'Top 1%',
+    metricLabel: 'State Agency Endorsed',
+    activeThreshold: 0.82,
   },
 ];
 
 export const AboutUs: React.FC = () => {
-  const [activeIdx, setActiveIdx] = useState(0);
-  const activeDirective = DIRECTIVES[activeIdx];
+  const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
 
-  // Auto-cycle through directives with smooth pause on hover
-  const [isPaused, setIsPaused] = useState(false);
+  const wp1Ref = useRef<HTMLDivElement>(null);
+  const wp2Ref = useRef<HTMLDivElement>(null);
+  const wp3Ref = useRef<HTMLDivElement>(null);
+
+  const [pathData, setPathData] = useState('');
+  const [totalPathLength, setTotalPathLength] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [rocketPos, setRocketPos] = useState({ x: 0, y: 0, angle: 45 });
+
+  // 1. Recalculate zigzag flight path connecting the 3 waypoints
+  const updateTrajectory = () => {
+    if (!containerRef.current || !wp1Ref.current || !wp2Ref.current || !wp3Ref.current) return;
+
+    const cRect = containerRef.current.getBoundingClientRect();
+    const r1 = wp1Ref.current.getBoundingClientRect();
+    const r2 = wp2Ref.current.getBoundingClientRect();
+    const r3 = wp3Ref.current.getBoundingClientRect();
+
+    // Center coordinates of the 3 waypoints relative to container
+    const p1 = {
+      x: r1.left - cRect.left + r1.width / 2,
+      y: r1.top - cRect.top + r1.height / 2,
+    };
+    const p2 = {
+      x: r2.left - cRect.left + r2.width / 2,
+      y: r2.top - cRect.top + r2.height / 2,
+    };
+    const p3 = {
+      x: r3.left - cRect.left + r3.width / 2,
+      y: r3.top - cRect.top + r3.height / 2,
+    };
+
+    // Construct smooth flowing zigzag trajectory
+    const startX = Math.max(20, p1.x - 70);
+    const startY = Math.max(10, p1.y - 80);
+
+    const dx1 = p2.x - p1.x;
+    const dy1 = p2.y - p1.y;
+    const cp1x = p1.x + dx1 * 0.45;
+    const cp1y = p1.y + dy1 * 0.12;
+    const cp2x = p1.x + dx1 * 0.55;
+    const cp2y = p2.y - dy1 * 0.12;
+
+    const dx2 = p3.x - p2.x;
+    const dy2 = p3.y - p2.y;
+    const cp3x = p2.x + dx2 * 0.45;
+    const cp3y = p2.y + dy2 * 0.12;
+    const cp4x = p2.x + dx2 * 0.55;
+    const cp4y = p3.y - dy2 * 0.12;
+
+    const endX = p3.x - 20;
+    const endY = p3.y + 110;
+
+    const d = `M ${startX} ${startY} Q ${p1.x - 20} ${p1.y} ${p1.x} ${p1.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y} C ${cp3x} ${cp3y}, ${cp4x} ${cp4y}, ${p3.x} ${p3.y} Q ${p3.x + 20} ${p3.y + 70} ${endX} ${endY}`;
+
+    setPathData(d);
+  };
 
   useEffect(() => {
-    if (isPaused) return;
-    const timer = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % DIRECTIVES.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [isPaused]);
+    updateTrajectory();
+    const timer = setTimeout(updateTrajectory, 100);
+    const handleResize = () => updateTrajectory();
+    window.addEventListener('resize', handleResize);
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
+      ro = new ResizeObserver(() => updateTrajectory());
+      ro.observe(containerRef.current);
+    }
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
+  // Update total length whenever pathData changes
+  useEffect(() => {
+    if (pathRef.current) {
+      const len = pathRef.current.getTotalLength();
+      setTotalPathLength(len);
+    }
+  }, [pathData]);
+
+  // 2. Scroll listener to calculate scrollProgress (0.0 -> 1.0)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // Start animation smoothly as container approaches center of viewport
+      const startTrigger = windowHeight * 0.75;
+      const endTrigger = windowHeight * 0.25;
+      const totalScrollable = rect.height + startTrigger - endTrigger;
+      const currentScroll = startTrigger - rect.top;
+
+      const p = Math.max(0, Math.min(1, currentScroll / totalScrollable));
+      setScrollProgress(p);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    if ((window as any).lenis) {
+      (window as any).lenis.on('scroll', handleScroll);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if ((window as any).lenis) {
+        (window as any).lenis.off('scroll', handleScroll);
+      }
+    };
+  }, []);
+
+  // 3. Update Rocket (x, y, angle) directly on the trajectory path
+  useEffect(() => {
+    const path = pathRef.current;
+    if (!path || totalPathLength === 0) return;
+
+    const currentLen = scrollProgress * totalPathLength;
+    const pt = path.getPointAtLength(currentLen);
+
+    // Tangent angle in degrees with boundary guard to prevent flipping at the very end
+    let angleDeg = 45;
+    if (currentLen < totalPathLength - 2) {
+      const nextPt = path.getPointAtLength(currentLen + 2);
+      angleDeg = Math.atan2(nextPt.y - pt.y, nextPt.x - pt.x) * (180 / Math.PI);
+    } else {
+      const prevPt = path.getPointAtLength(Math.max(0, currentLen - 2));
+      angleDeg = Math.atan2(pt.y - prevPt.y, pt.x - prevPt.x) * (180 / Math.PI);
+    }
+
+    setRocketPos({
+      x: pt.x,
+      y: pt.y,
+      angle: angleDeg,
+    });
+  }, [scrollProgress, totalPathLength]);
 
   return (
     <section
       id="about"
-      className="relative overflow-hidden border-t border-[var(--line)] bg-[var(--surface)] py-24 sm:py-32 transition-colors duration-300 select-none"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      ref={sectionRef}
+      className="relative overflow-hidden border-t border-[var(--line)] bg-[var(--surface)] py-24 sm:py-32 transition-colors duration-300"
     >
       <div className="relative mx-auto max-w-[1240px] px-6 lg:px-8">
         {/* Section Header */}
-        <div className="max-w-3xl">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse" />
-            <span className="font-mono text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
-              MISSION MANIFESTO // ABOUT ARTICULAR
-            </span>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 sm:mb-20">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse" />
+              <span className="font-mono text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
+                MISSION TRAJECTORY // ABOUT ARTICULAR
+              </span>
+            </div>
+
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
+              Where young minds{' '}
+              <span className="font-serif-italic font-normal text-[var(--accent)]">
+                articulate the future.
+              </span>
+            </h2>
+
+            <p className="mt-4 text-base text-[var(--ink-muted)] sm:text-lg max-w-2xl leading-relaxed">
+              Scroll down to navigate the tournament trajectory. From autonomous hypotheses to state space credentials with Uzcosmos Agency.
+            </p>
           </div>
 
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
-            We don&apos;t teach space from textbooks.{' '}
-            <span className="font-serif-italic font-normal text-[var(--accent)]">
-              We launch minds into orbit.
-            </span>
-          </h2>
-
-          <p className="mt-4 text-base text-[var(--ink-muted)] sm:text-lg max-w-2xl leading-relaxed">
-            Uzbekistan&apos;s premier aerospace tournament uniting school-age innovators with State Space Agency mentors to solve genuine orbital and engineering challenges.
-          </p>
+          {/* Real-time Trajectory Telemetry HUD */}
+          <div className="shrink-0 flex items-center gap-3 self-start md:self-end rounded-2xl border border-[var(--line)] bg-[var(--bg)] px-4 py-2.5 shadow-sm font-mono text-xs">
+            <span className="text-lg">🚀</span>
+            <div>
+              <div className="text-[10px] text-[var(--ink-dim)] uppercase tracking-wider font-semibold">
+                Trajectory Flight Progress
+              </div>
+              <div className="flex items-center gap-2 font-bold text-[var(--ink)]">
+                <span>{Math.round(scrollProgress * 100)}%</span>
+                <span className="h-1.5 w-16 rounded-full bg-[var(--line)] overflow-hidden inline-block">
+                  <span
+                    className="h-full bg-[var(--accent)] block transition-all duration-150"
+                    style={{ width: `${Math.round(scrollProgress * 100)}%` }}
+                  />
+                </span>
+                <span className="text-[var(--accent)] text-[10px]">
+                  {scrollProgress < 0.3 ? 'STAGE 01' : scrollProgress < 0.7 ? 'STAGE 02' : 'STAGE 03'}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Step Navigation Pill Selector */}
-        <div className="mt-12 flex flex-wrap items-center gap-2 border-b border-[var(--line)] pb-4">
-          {DIRECTIVES.map((d, idx) => (
-            <button
-              key={d.id}
-              type="button"
-              onClick={() => setActiveIdx(idx)}
-              className={`flex items-center gap-2.5 rounded-full px-4 py-2 text-xs font-medium transition-all cursor-pointer ${
-                activeIdx === idx
-                  ? 'bg-[var(--accent)] text-white shadow-md'
-                  : 'bg-[var(--bg)] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-elevated)] border border-[var(--line)]'
+        {/* ======================================================== */}
+        {/* ZIGZAG FLIGHT ARENA (Interactive Scroll-Driven Trajectory) */}
+        {/* ======================================================== */}
+        <div
+          ref={containerRef}
+          className="relative w-full min-h-[1420px] sm:min-h-[1360px] select-none"
+        >
+          {/* SVG Canvas with Zigzag Trajectory Lines */}
+          <svg
+            className="absolute inset-0 h-full w-full pointer-events-none overflow-visible z-10"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              {/* Glowing Rocket Trail Gradient */}
+              <linearGradient id="rocketTrailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#1f5eea" stopOpacity="0.1" />
+                <stop offset="70%" stopColor="#0284c7" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#38bdf8" stopOpacity="1" />
+              </linearGradient>
+
+              {/* Glowing Waypoint Glow */}
+              <filter id="beaconGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#38bdf8" floodOpacity="0.8" />
+              </filter>
+            </defs>
+
+            {/* Base Dashed Trajectory Flight Plan (The Roadmap Zigzag) */}
+            {pathData && (
+              <path
+                d={pathData}
+                fill="none"
+                stroke="var(--line-strong)"
+                strokeWidth="2.5"
+                strokeDasharray="8 8"
+                className="opacity-50 dark:opacity-40"
+              />
+            )}
+
+            {/* Active Filled Flight Path (Fills in real-time behind the Rocket as you scroll) */}
+            {pathData && totalPathLength > 0 && (
+              <path
+                ref={pathRef}
+                d={pathData}
+                fill="none"
+                stroke="url(#rocketTrailGrad)"
+                strokeWidth="3.5"
+                strokeDasharray={totalPathLength}
+                strokeDashoffset={totalPathLength * (1 - scrollProgress)}
+                strokeLinecap="round"
+                style={{
+                  transition: 'stroke-dashoffset 0.05s linear',
+                  filter: 'drop-shadow(0 0 6px rgba(56, 189, 248, 0.5))',
+                }}
+              />
+            )}
+          </svg>
+
+          {/* ======================================================== */}
+          {/* SCROLL-DRIVEN FLYING ROCKET EMOJI (🚀)                    */}
+          {/* ======================================================== */}
+          {pathData && (
+            <div
+              className="absolute pointer-events-none z-30 transition-transform ease-out will-change-transform"
+              style={{
+                left: `${rocketPos.x}px`,
+                top: `${rocketPos.y}px`,
+                // Rocket emoji naturally points at 45deg top-right, so rotate(angle + 45deg) aligns nose with flight path
+                transform: `translate(-50%, -50%) rotate(${rocketPos.angle + 45}deg)`,
+              }}
+            >
+              <div className="relative flex items-center justify-center">
+                {/* Supersonic Plasma Engine Exhaust Flame */}
+                <div
+                  className="absolute -bottom-2 -left-2 h-4 w-4 rounded-full bg-cyan-400 blur-[3px] animate-pulse"
+                  style={{ transform: 'rotate(-45deg)' }}
+                />
+                <div
+                  className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-blue-600 blur-[6px] opacity-75"
+                />
+
+                {/* Rocket Emoji */}
+                <span className="text-3xl sm:text-4xl filter drop-shadow-[0_0_12px_rgba(56,189,248,0.85)] select-none">
+                  🚀
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 3 ZIGZAG TEXT STAGES (Top Left, Mid Right, Bottom Left)  */}
+          {/* ======================================================== */}
+
+          {/* Stage 01: Top Left */}
+          <div className="absolute top-4 sm:top-6 left-0 w-full sm:max-w-[480px] lg:max-w-[500px]">
+            <div
+              className={`rounded-3xl border p-7 sm:p-9 transition-all duration-500 relative backdrop-blur-sm ${
+                scrollProgress >= STORY_BLOCKS[0].activeThreshold
+                  ? 'border-[var(--accent)] bg-[var(--surface)] shadow-[0_0_35px_rgba(56,189,248,0.12)] scale-[1.02]'
+                  : 'border-[var(--line)] bg-[var(--bg)] shadow-sm'
               }`}
             >
-              <span
-                className={`font-mono text-[10px] font-bold ${
-                  activeIdx === idx ? 'text-white/80' : 'text-[var(--accent)]'
-                }`}
-              >
-                {d.step}
-              </span>
-              <span>{d.title}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Core Interactive Command Deck (Split Console: Dynamic SVG Telemetry + Mission Brief) */}
-        <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_1fr] items-stretch">
-          {/* Left Console: Directive Narrative & Live Telemetry Metrics */}
-          <div className="flex flex-col justify-between rounded-3xl border border-[var(--line)] bg-[var(--bg)] p-8 sm:p-10 shadow-sm relative overflow-hidden">
-            {/* Ambient subtle telemetry watermark */}
-            <div className="pointer-events-none absolute right-4 top-4 font-mono text-4xl font-extrabold text-[var(--ink)] opacity-[0.03]">
-              {activeDirective.code}
-            </div>
-
-            <div>
-              {/* Badge & Code */}
-              <div className="flex items-center justify-between gap-4 border-b border-[var(--line)] pb-4 mb-6">
-                <span className="rounded-full bg-[var(--accent-tint)] px-3 py-1 font-mono text-[11px] font-bold text-[var(--accent)]">
-                  {activeDirective.tag}
-                </span>
-                <span className="font-mono text-xs font-semibold text-[var(--ink-dim)]">
-                  {activeDirective.code}
-                </span>
-              </div>
-
-              {/* Main Headline */}
-              <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--ink)]">
-                {activeDirective.heading}{' '}
-                <span className="text-[var(--accent)] font-serif-italic font-normal block sm:inline">
-                  {activeDirective.highlight}
-                </span>
-              </h3>
-
-              {/* Summary Description */}
-              <p className="mt-4 text-sm sm:text-base text-[var(--ink-muted)] leading-relaxed">
-                {activeDirective.summary}
-              </p>
-            </div>
-
-            {/* Live Telemetry Matrix Grid (Zero Photos, 100% High-Tech Data) */}
-            <div className="mt-8 border-t border-[var(--line)] pt-6">
-              <div className="grid grid-cols-2 gap-4">
-                {activeDirective.telemetry.map((t) => (
-                  <div
-                    key={t.label}
-                    className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 transition-colors"
-                  >
-                    <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--ink-dim)]">
-                      {t.label}
-                    </div>
-                    <div className="mt-1 font-mono text-xs font-bold text-[var(--ink)] truncate">
-                      {t.value}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Big Impact Metric Counter */}
-              <div className="mt-6 flex items-center justify-between rounded-2xl bg-[var(--accent-tint)] px-5 py-4 border border-[var(--accent)]/15">
-                <div>
-                  <div className="font-mono text-3xl font-extrabold text-[var(--accent)] tracking-tight">
-                    {activeDirective.statNumber}
-                  </div>
-                  <div className="text-xs font-medium text-[var(--ink-muted)]">
-                    {activeDirective.statLabel}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--accent)]">
-                  <span>Directive Verified</span>
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Console: Pure Generative Aerospace SVG Visualizer (NO Photos) */}
-          <div className="rounded-3xl border border-[var(--line)] bg-[var(--bg)] p-6 sm:p-8 flex flex-col items-center justify-center relative min-h-[380px] overflow-hidden shadow-sm">
-            {/* Background Radar Rings */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-10">
-              <div className="h-80 w-80 rounded-full border border-current animate-ping" style={{ animationDuration: '8s' }} />
-              <div className="absolute h-60 w-60 rounded-full border border-current" />
-              <div className="absolute h-40 w-40 rounded-full border border-current" />
-              <div className="absolute h-20 w-20 rounded-full border border-dashed border-current" />
-            </div>
-
-            {/* Stage-Specific Vector Telemetry Art */}
-            {activeIdx === 0 && (
-              /* Step 01: Gyroscopic Orbital Transfer Ring */
-              <div className="relative flex flex-col items-center justify-center">
-                <svg viewBox="0 0 240 240" className="h-60 w-60 overflow-visible" fill="none">
-                  {/* Outer Counter-Rotating Ring */}
-                  <circle
-                    cx="120"
-                    cy="120"
-                    r="90"
-                    stroke="var(--accent)"
-                    strokeWidth="1.5"
-                    strokeDasharray="4 6"
-                    className="animate-spin"
-                    style={{ animationDuration: '24s' }}
-                  />
-                  {/* Middle Gimbal Ring */}
-                  <ellipse
-                    cx="120"
-                    cy="120"
-                    rx="80"
-                    ry="45"
-                    stroke="var(--line-strong)"
-                    strokeWidth="2"
-                    transform="rotate(30 120 120)"
-                  />
-                  {/* Tilted Inclination Ellipse */}
-                  <ellipse
-                    cx="120"
-                    cy="120"
-                    rx="80"
-                    ry="35"
-                    stroke="var(--accent)"
-                    strokeWidth="2"
-                    transform="rotate(-40 120 120)"
-                  />
-                  {/* Orbiting Satellite Node */}
-                  <circle cx="175" cy="80" r="5" fill="var(--accent)" className="animate-pulse" />
-                  <circle cx="175" cy="80" r="10" stroke="var(--accent)" strokeWidth="1" opacity="0.5" />
-                  
-                  {/* Center Core Earth/Orbital Target */}
-                  <circle cx="120" cy="120" r="28" fill="var(--surface)" stroke="var(--accent)" strokeWidth="2.5" />
-                  <circle cx="120" cy="120" r="12" fill="var(--accent)" />
-                  <line x1="120" y1="20" x2="120" y2="220" stroke="var(--line)" strokeWidth="1" strokeDasharray="3 3" />
-                  <line x1="20" y1="120" x2="220" y2="120" stroke="var(--line)" strokeWidth="1" strokeDasharray="3 3" />
-                </svg>
-                <div className="mt-4 font-mono text-[11px] font-semibold text-[var(--accent)] tracking-wider">
-                  [ SIMULATED ORBITAL TRAJECTORY // ΔV 3.42 KM/S ]
-                </div>
-              </div>
-            )}
-
-            {activeIdx === 1 && (
-              /* Step 02: Audio Waveform & Speech Signal Radar */
-              <div className="relative flex flex-col items-center justify-center w-full px-4">
-                <div className="flex items-center justify-center gap-1.5 h-36 w-full max-w-xs">
-                  {[20, 45, 75, 30, 90, 60, 100, 40, 85, 55, 95, 35, 80, 50, 70, 30, 88, 65, 45, 25].map((h, i) => (
-                    <div
-                      key={i}
-                      className="w-2 rounded-full bg-[var(--accent)] transition-all duration-300"
-                      style={{
-                        height: `${h}%`,
-                        opacity: 0.35 + (i % 3) * 0.3,
-                        transform: `scaleY(${0.8 + ((i * 7) % 5) * 0.1})`,
-                      }}
-                    />
-                  ))}
-                </div>
-                <div className="mt-6 flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-4 py-1.5">
-                  <Radio className="h-3.5 w-3.5 text-[var(--accent)] animate-pulse" />
-                  <span className="font-mono text-[11px] font-bold text-[var(--ink)]">
-                    DEFENSE CHANNEL: 1420.405 MHz (LIVE)
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {activeIdx === 2 && (
-              /* Step 03: 14 Regions Star Constellation Vector */
-              <div className="relative flex flex-col items-center justify-center">
-                <svg viewBox="0 0 240 200" className="h-56 w-64 overflow-visible" fill="none">
-                  {/* Interconnected Constellation Laser Vectors */}
-                  <polyline
-                    points="30,120 70,80 110,95 150,60 190,75 220,110 180,140 130,130 90,150 40,140"
-                    stroke="var(--accent)"
-                    strokeWidth="1.5"
-                    strokeDasharray="3 3"
-                  />
-                  <line x1="70" y1="80" x2="130" y2="130" stroke="var(--accent)" strokeWidth="1" opacity="0.4" />
-                  <line x1="110" y1="95" x2="180" y2="140" stroke="var(--accent)" strokeWidth="1" opacity="0.4" />
-                  <line x1="150" y1="60" x2="110" y2="95" stroke="var(--accent)" strokeWidth="1" opacity="0.6" />
-
-                  {/* 14 Star Nodes */}
-                  {[
-                    [30, 120, 'NUK'], [70, 80, 'URG'], [110, 95, 'BUK'], [90, 150, 'NAV'],
-                    [130, 130, 'SAM'], [150, 60, 'TAS'], [180, 140, 'QSH'], [190, 75, 'FER'],
-                    [220, 110, 'AND'], [165, 100, 'SIR'], [140, 160, 'SUR'], [120, 50, 'JIZ'],
-                    [205, 90, 'NAM'], [40, 140, 'KRP']
-                  ].map(([x, y, label]) => (
-                    <g key={label as string} transform={`translate(${x}, ${y})`}>
-                      <circle cx="0" cy="0" r="4.5" fill="var(--accent)" />
-                      <circle cx="0" cy="0" r="8" stroke="var(--accent)" strokeWidth="1" opacity="0.5" className="animate-ping" />
-                      <text x="0" y="-8" textAnchor="middle" fill="var(--ink-muted)" fontSize="7" fontFamily="monospace" fontWeight="bold">
-                        {label}
-                      </text>
-                    </g>
-                  ))}
-                </svg>
-                <div className="mt-2 font-mono text-[11px] font-semibold text-[var(--accent)] tracking-wider">
-                  [ 14 SYNCHRONIZED REGIONAL GROUND STATIONS ]
-                </div>
-              </div>
-            )}
-
-            {activeIdx === 3 && (
-              /* Step 04: Official Aerospace Seal & Thrust Chamber */
-              <div className="relative flex flex-col items-center justify-center">
-                <svg viewBox="0 0 200 200" className="h-56 w-56 overflow-visible" fill="none">
-                  {/* Outer Seal Gear / Compass */}
-                  <circle cx="100" cy="100" r="78" stroke="var(--line-strong)" strokeWidth="2" strokeDasharray="6 4" />
-                  <circle cx="100" cy="100" r="68" stroke="var(--accent)" strokeWidth="1.5" />
-                  {/* Central Diamond Rocket Symbol */}
-                  <polygon
-                    points="100,45 135,100 100,155 65,100"
-                    fill="var(--surface)"
-                    stroke="var(--accent)"
-                    strokeWidth="2.5"
-                  />
-                  {/* Supersonic Shock Node */}
-                  <circle cx="100" cy="100" r="14" fill="var(--accent)" className="animate-pulse" />
-                  {/* Star Rays */}
-                  <line x1="100" y1="20" x2="100" y2="40" stroke="var(--accent)" strokeWidth="2" />
-                  <line x1="100" y1="160" x2="100" y2="180" stroke="var(--accent)" strokeWidth="2" />
-                  <line x1="20" y1="100" x2="40" y2="100" stroke="var(--accent)" strokeWidth="2" />
-                  <line x1="160" y1="100" x2="180" y2="100" stroke="var(--accent)" strokeWidth="2" />
-                </svg>
-                <div className="mt-4 flex items-center gap-1.5 font-mono text-[11px] font-bold text-[var(--accent)] tracking-wider">
-                  <Shield className="h-3.5 w-3.5" />
-                  <span>UZCOSMOS STATE ACCREDITED VERIFICATION</span>
-                </div>
-              </div>
-            )}
-
-            {/* Interactive Timeline Stepper Buttons */}
-            <div className="mt-8 flex items-center justify-between w-full max-w-xs pt-4 border-t border-[var(--line)]">
-              <button
-                type="button"
-                onClick={() => setActiveIdx((prev) => (prev > 0 ? prev - 1 : DIRECTIVES.length - 1))}
-                className="text-xs font-mono font-bold text-[var(--ink-muted)] hover:text-[var(--accent)] px-3 py-1 rounded-full transition-colors cursor-pointer"
-              >
-                ← PREV
-              </button>
-              <div className="flex items-center gap-1.5">
-                {DIRECTIVES.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setActiveIdx(i)}
-                    className={`h-2 rounded-full transition-all cursor-pointer ${
-                      activeIdx === i ? 'w-6 bg-[var(--accent)]' : 'w-2 bg-[var(--line-strong)]'
-                    }`}
-                    aria-label={`Go to step ${i + 1}`}
-                  />
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveIdx((prev) => (prev + 1) % DIRECTIVES.length)}
-                className="text-xs font-mono font-bold text-[var(--ink-muted)] hover:text-[var(--accent)] px-3 py-1 rounded-full transition-colors cursor-pointer"
-              >
-                NEXT →
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Creative Comparison Matrix: Traditional Olympiads vs Articular Space Proving Ground */}
-        <div className="mt-16 rounded-3xl border border-[var(--line)] bg-[var(--bg)] p-8 sm:p-10 shadow-sm">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-[var(--line)] pb-6">
-            <div>
-              <div className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-                <Layers className="h-4 w-4" />
-                <span>THE ARCHITECTURAL DIFFERENCE</span>
-              </div>
-              <h3 className="mt-2 text-2xl font-bold tracking-tight text-[var(--ink)] sm:text-3xl">
-                How Articular breaks the traditional mold.
-              </h3>
-            </div>
-            <span className="font-mono text-xs text-[var(--ink-muted)]">
-              STANDARDS MATRIX // 2026 SEASON
-            </span>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              {
-                feature: 'Research Focus',
-                traditional: 'Multiple choice tests & memorized formulas',
-                articular: 'Real orbital thesis & CubeSat hardware design',
-              },
-              {
-                feature: 'Evaluation Standard',
-                traditional: 'School teachers grading standard bubble sheets',
-                articular: 'Active Uzcosmos engineers & aerospace jury',
-              },
-              {
-                feature: 'Stage Language',
-                traditional: 'Closed-door written paper tests',
-                articular: '100% public stage defense in English',
-              },
-              {
-                feature: 'Reach & Scope',
-                traditional: 'Isolated school classrooms',
-                articular: '14 regions connected in a national orbit',
-              },
-            ].map((col) => (
+              {/* Waypoint Docking Anchor (Connects directly to the zigzag trajectory) */}
               <div
-                key={col.feature}
-                className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 flex flex-col justify-between"
+                ref={wp1Ref}
+                className="absolute -right-3 top-1/2 -translate-y-1/2 flex items-center justify-center z-20"
               >
-                <div className="font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--accent)] mb-3">
-                  {col.feature}
-                </div>
-
-                <div className="space-y-3">
-                  <div className="rounded-xl bg-[var(--surface-elevated)] p-3 border border-[var(--line)]">
-                    <span className="block text-[10px] font-mono uppercase text-[var(--ink-dim)]">Traditional</span>
-                    <span className="text-xs text-[var(--ink-muted)] line-through decoration-red-400/50">
-                      {col.traditional}
-                    </span>
-                  </div>
-
-                  <div className="rounded-xl bg-[var(--accent-tint)] p-3 border border-[var(--accent)]/20">
-                    <span className="block text-[10px] font-mono uppercase font-bold text-[var(--accent)]">Articular Standard</span>
-                    <span className="text-xs font-bold text-[var(--ink)]">
-                      {col.articular}
-                    </span>
-                  </div>
+                <div
+                  className={`h-7 w-7 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${
+                    scrollProgress >= STORY_BLOCKS[0].activeThreshold
+                      ? 'border-[var(--accent)] bg-white dark:bg-[#090b10] shadow-[0_0_14px_#38bdf8] scale-110'
+                      : 'border-[var(--line-strong)] bg-[var(--surface)]'
+                  }`}
+                >
+                  <span
+                    className={`h-2.5 w-2.5 rounded-full ${
+                      scrollProgress >= STORY_BLOCKS[0].activeThreshold
+                        ? 'bg-[var(--accent)] animate-ping'
+                        : 'bg-[var(--line-strong)]'
+                    }`}
+                  />
                 </div>
               </div>
-            ))}
+
+              {/* Tag & Step */}
+              <div className="flex items-center justify-between mb-4 border-b border-[var(--line)] pb-3">
+                <span className="font-mono text-xs font-bold text-[var(--accent)] flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                  {STORY_BLOCKS[0].tag}
+                </span>
+                <span className="font-mono text-xs font-bold text-[var(--ink-dim)]">
+                  {STORY_BLOCKS[0].step} // 03
+                </span>
+              </div>
+
+              <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--ink)]">
+                {STORY_BLOCKS[0].title}
+              </h3>
+              <p className="mt-1 font-serif-italic text-sm text-[var(--accent)]">
+                {STORY_BLOCKS[0].subtitle}
+              </p>
+
+              <p className="mt-4 text-xs sm:text-sm text-[var(--ink-muted)] leading-relaxed">
+                {STORY_BLOCKS[0].desc}
+              </p>
+
+              {/* Metric Badge */}
+              <div className="mt-6 flex items-center justify-between rounded-2xl bg-[var(--surface-elevated)] px-4 py-3 border border-[var(--line)]">
+                <div className="font-mono text-xl font-extrabold text-[var(--ink)]">
+                  {STORY_BLOCKS[0].metric}
+                </div>
+                <div className="text-[11px] font-medium text-[var(--ink-muted)]">
+                  {STORY_BLOCKS[0].metricLabel}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stage 02: Middle Right (Zigzag Swoop to the Right) */}
+          <div className="absolute top-[460px] sm:top-[440px] right-0 w-full sm:max-w-[480px] lg:max-w-[500px]">
+            <div
+              className={`rounded-3xl border p-7 sm:p-9 transition-all duration-500 relative backdrop-blur-sm ${
+                scrollProgress >= STORY_BLOCKS[1].activeThreshold
+                  ? 'border-[var(--accent)] bg-[var(--surface)] shadow-[0_0_35px_rgba(56,189,248,0.12)] scale-[1.02]'
+                  : 'border-[var(--line)] bg-[var(--bg)] shadow-sm'
+              }`}
+            >
+              {/* Waypoint Docking Anchor on Left Edge */}
+              <div
+                ref={wp2Ref}
+                className="absolute -left-3 top-1/2 -translate-y-1/2 flex items-center justify-center z-20"
+              >
+                <div
+                  className={`h-7 w-7 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${
+                    scrollProgress >= STORY_BLOCKS[1].activeThreshold
+                      ? 'border-[var(--accent)] bg-white dark:bg-[#090b10] shadow-[0_0_14px_#38bdf8] scale-110'
+                      : 'border-[var(--line-strong)] bg-[var(--surface)]'
+                  }`}
+                >
+                  <span
+                    className={`h-2.5 w-2.5 rounded-full ${
+                      scrollProgress >= STORY_BLOCKS[1].activeThreshold
+                        ? 'bg-[var(--accent)] animate-ping'
+                        : 'bg-[var(--line-strong)]'
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {/* Tag & Step */}
+              <div className="flex items-center justify-between mb-4 border-b border-[var(--line)] pb-3">
+                <span className="font-mono text-xs font-bold text-[var(--accent)] flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                  {STORY_BLOCKS[1].tag}
+                </span>
+                <span className="font-mono text-xs font-bold text-[var(--ink-dim)]">
+                  {STORY_BLOCKS[1].step} // 03
+                </span>
+              </div>
+
+              <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--ink)]">
+                {STORY_BLOCKS[1].title}
+              </h3>
+              <p className="mt-1 font-serif-italic text-sm text-[var(--accent)]">
+                {STORY_BLOCKS[1].subtitle}
+              </p>
+
+              <p className="mt-4 text-xs sm:text-sm text-[var(--ink-muted)] leading-relaxed">
+                {STORY_BLOCKS[1].desc}
+              </p>
+
+              {/* Metric Badge */}
+              <div className="mt-6 flex items-center justify-between rounded-2xl bg-[var(--surface-elevated)] px-4 py-3 border border-[var(--line)]">
+                <div className="font-mono text-xl font-extrabold text-[var(--ink)]">
+                  {STORY_BLOCKS[1].metric}
+                </div>
+                <div className="text-[11px] font-medium text-[var(--ink-muted)]">
+                  {STORY_BLOCKS[1].metricLabel}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stage 03: Bottom Left (Zigzag Swoop back to the Left) */}
+          <div className="absolute top-[920px] sm:top-[880px] left-0 w-full sm:max-w-[480px] lg:max-w-[500px]">
+            <div
+              className={`rounded-3xl border p-7 sm:p-9 transition-all duration-500 relative backdrop-blur-sm ${
+                scrollProgress >= STORY_BLOCKS[2].activeThreshold
+                  ? 'border-[var(--accent)] bg-[var(--surface)] shadow-[0_0_35px_rgba(56,189,248,0.12)] scale-[1.02]'
+                  : 'border-[var(--line)] bg-[var(--bg)] shadow-sm'
+              }`}
+            >
+              {/* Waypoint Docking Anchor on Right Edge */}
+              <div
+                ref={wp3Ref}
+                className="absolute -right-3 top-1/2 -translate-y-1/2 flex items-center justify-center z-20"
+              >
+                <div
+                  className={`h-7 w-7 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${
+                    scrollProgress >= STORY_BLOCKS[2].activeThreshold
+                      ? 'border-[var(--accent)] bg-white dark:bg-[#090b10] shadow-[0_0_14px_#38bdf8] scale-110'
+                      : 'border-[var(--line-strong)] bg-[var(--surface)]'
+                  }`}
+                >
+                  <span
+                    className={`h-2.5 w-2.5 rounded-full ${
+                      scrollProgress >= STORY_BLOCKS[2].activeThreshold
+                        ? 'bg-[var(--accent)] animate-ping'
+                        : 'bg-[var(--line-strong)]'
+                    }`}
+                  />
+                </div>
+              </div>
+
+              {/* Tag & Step */}
+              <div className="flex items-center justify-between mb-4 border-b border-[var(--line)] pb-3">
+                <span className="font-mono text-xs font-bold text-[var(--accent)] flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                  {STORY_BLOCKS[2].tag}
+                </span>
+                <span className="font-mono text-xs font-bold text-[var(--ink-dim)]">
+                  {STORY_BLOCKS[2].step} // 03
+                </span>
+              </div>
+
+              <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--ink)]">
+                {STORY_BLOCKS[2].title}
+              </h3>
+              <p className="mt-1 font-serif-italic text-sm text-[var(--accent)]">
+                {STORY_BLOCKS[2].subtitle}
+              </p>
+
+              <p className="mt-4 text-xs sm:text-sm text-[var(--ink-muted)] leading-relaxed">
+                {STORY_BLOCKS[2].desc}
+              </p>
+
+              {/* Metric Badge */}
+              <div className="mt-6 flex items-center justify-between rounded-2xl bg-[var(--surface-elevated)] px-4 py-3 border border-[var(--line)]">
+                <div className="font-mono text-xl font-extrabold text-[var(--ink)]">
+                  {STORY_BLOCKS[2].metric}
+                </div>
+                <div className="text-[11px] font-medium text-[var(--ink-muted)]">
+                  {STORY_BLOCKS[2].metricLabel}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
