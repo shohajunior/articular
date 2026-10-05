@@ -1,4 +1,4 @@
-﻿export const legalContent = {
+export const legalContent = {
   privacy: {
     title: "Privacy Policy",
     subtitle: "ArticularUZ · Data Protection and Participant Privacy",
@@ -10,7 +10,7 @@
       },
       {
         heading: "2. Information We Collect",
-        body: "Registration is conducted primarily through the official Telegram service bot (@articularuz_tgbot). We collect only necessary details: full name, contact username or telephone number, educational institution (school, lyceum, college, university), region, and competition team roster."
+        body: "Registration is conducted primarily through the official Telegram service bot (@articularuzbot). We collect only necessary details: full name, contact username or telephone number, educational institution (school, lyceum, college, university), region, and competition team roster."
       },
       {
         heading: "3. Use of Personal Information",

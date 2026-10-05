@@ -1,4 +1,4 @@
-﻿export interface RegionEvent {
+export interface RegionEvent {
   id: string;
   name: string;
   uzName: string;
@@ -27,14 +27,14 @@ export const siteData = {
   name: "ArticularUZ",
   edition: "Season 2026",
   tagline: "Where young minds articulate the future",
-  motto: "Learn. Think. Articulate.",
-  shortDesc: "National youth aerospace tournament in Uzbekistan. Teams research a space topic, build a presentation, and defend engineering findings in English.",
+  motto: "Learn · Think · Articulate",
+  shortDesc: "ArticularUZ is Uzbekistan’s leading platform empowering youth to master critical thinking, speak with confidence, and defend bold scientific ideas on a national stage.",
   
   links: {
-    bot: "https://t.me/articularuz_tgbot",
+    bot: "https://t.me/articularuzbot",
     channel: "https://t.me/articularuz",
-    instagram: "https://instagram.com/articularuz",
-    linkedin: "https://linkedin.com/company/articularuz",
+    instagram: "https://www.instagram.com/articularuz",
+    linkedin: "https://www.linkedin.com",
     yvc: "https://t.me/yvc_uz"
   },
 

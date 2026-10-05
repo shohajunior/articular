@@ -103,7 +103,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
                   className="inline-flex items-center gap-1.5 transition-colors hover:text-[var(--accent)]"
                 >
                   <TelegramIcon className="h-3.5 w-3.5" />
-                  <span>@articularuz_tgbot (Registration)</span>
+                  <span>@articularuzbot (Registration)</span>
                 </a>
               </li>
               <li>

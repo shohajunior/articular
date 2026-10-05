@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { siteData } from '../../data/site';
 import { ArrowRight, ShieldCheck, Users, MapPin, Award } from 'lucide-react';
 import { TelegramIcon } from '../ui/SocialIcons';
@@ -88,7 +88,7 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
               className="group inline-flex items-center gap-3 rounded-full bg-[var(--accent)] px-8 py-4 text-sm font-semibold text-[var(--accent-contrast)] shadow-sm transition-all hover:bg-[var(--accent-hover)] hover:shadow-md"
             >
               <TelegramIcon className="h-4 w-4" />
-              <span>Launch @articularuz_tgbot</span>
+              <span>Launch @articularuzbot</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
 
