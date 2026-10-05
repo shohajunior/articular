@@ -15,7 +15,7 @@ const PARTNERS: Partner[] = [
     name: 'Uzcosmos Agency',
     url: 'https://uzspace.uz',
     logoLight: './assets/uzcosmoslogo.png',
-    logoDark: './assets/uzcosmoslogo.png',
+    logoDark: './assets/uzcosmos-white.png',
   },
   {
     id: 'yvc',
@@ -60,14 +60,14 @@ export const Partners: React.FC = () => {
               src={item.logoLight}
               alt={item.name}
               loading="lazy"
-              className="dark:hidden block h-11 sm:h-13 lg:h-16 w-auto max-w-[190px] object-contain transition-all duration-300 filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110"
+              className="dark:hidden block h-12 sm:h-14 lg:h-16 w-auto max-w-[190px] object-contain transition-all duration-300 filter grayscale opacity-65 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110"
             />
-            {/* Dark Mode Logo: ONLY the logo, no text */}
+            {/* Dark Mode Logo: Bright crisp white with high contrast & cyan hover glow */}
             <img
               src={item.logoDark}
               alt={item.name}
               loading="lazy"
-              className="hidden dark:block h-11 sm:h-13 lg:h-16 w-auto max-w-[190px] object-contain transition-all duration-300 filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110"
+              className="hidden dark:block h-12 sm:h-14 lg:h-16 w-auto max-w-[190px] object-contain transition-all duration-300 opacity-85 group-hover:opacity-100 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.25)] group-hover:drop-shadow-[0_0_16px_rgba(56,189,248,0.7)]"
             />
           </a>
         </li>
