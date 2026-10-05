@@ -215,3 +215,28 @@ body {
   transform: scale(1.06);
 }
 
+
+/* Word-by-word rise-in (plays once, triggered on viewport entry) */
+.reveal-word-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.reveal-word {
+  display: inline-block;
+  transform: translateY(110%);
+  opacity: 0;
+}
+.reveal-word-in {
+  animation: reveal-word-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes reveal-word-up {
+  from { transform: translateY(110%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-word { transform: none; opacity: 1; }
+  .reveal-word-in { animation: none; }
+}

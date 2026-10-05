@@ -3,6 +3,7 @@ import { siteData } from '../../data/site';
 import { ArrowRight, Maximize2 } from 'lucide-react';
 import { LightboxItem } from '../ui/LightboxModal';
 import { CountUp } from '../ui/CountUp';
+import { RevealWords } from '../ui/RevealWords';
 
 interface HeroProps {
   onPhotoClick: (item: LightboxItem) => void;
@@ -73,10 +74,14 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
           >
             {/* Headline with Original Slogan */}
             <h1 className="mb-4 text-4xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
-              Where young minds{' '}
-              <span className="font-serif-italic text-[var(--accent)]">
-                articulate the future.
-              </span>
+              <RevealWords
+                start={isRevealed}
+                delay={150}
+                parts={[
+                  { text: 'Where young minds' },
+                  { text: 'articulate the future.', className: 'font-serif-italic text-[var(--accent)]' },
+                ]}
+              />
             </h1>
 
             {/* Short punchy subtext */}

@@ -2,6 +2,7 @@ import React from 'react';
 import { siteData } from '../../data/site';
 import { ArrowRight, ShieldCheck, Users, MapPin, Award } from 'lucide-react';
 import { TelegramIcon } from '../ui/SocialIcons';
+import { RevealWords } from '../ui/RevealWords';
 
 interface RegisterProps {
   onNavigateLegal: (docKey: 'privacy' | 'terms') => void;
@@ -45,10 +46,12 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
 
           {/* Heading with Telegram bot cleanly on the second line */}
           <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl">
-            Register exclusively via <br />
-            <span className="inline-block whitespace-nowrap font-serif-italic text-[var(--accent)]">
-              Telegram bot
-            </span>
+            <RevealWords
+              parts={[
+                { text: 'Register exclusively via' },
+                { text: 'Telegram bot', className: 'font-serif-italic text-[var(--accent)]' },
+              ]}
+            />
           </h2>
 
           {/* Subtitle */}

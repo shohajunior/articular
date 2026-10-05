@@ -1,7 +1,8 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { siteData } from '../../data/site';
 import { TelegramIcon, InstagramIcon, LinkedinIcon } from '../ui/SocialIcons';
 import { User } from 'lucide-react';
+import { RevealWords } from '../ui/RevealWords';
 
 export const Team: React.FC = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -45,8 +46,12 @@ export const Team: React.FC = () => {
             Leadership
           </span>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
-            Meet the{' '}
-            <span className="font-serif-italic text-[var(--accent)]">organizers</span>
+            <RevealWords
+              parts={[
+                { text: 'Meet the' },
+                { text: 'organizers', className: 'font-serif-italic text-[var(--accent)]' },
+              ]}
+            />
           </h2>
           <p className="mt-2 text-sm text-[var(--ink-muted)]">
             Student directors, academic leaders, and regional chapter coordinators.

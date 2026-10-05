@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { siteData, RegionEvent } from '../../data/site';
 import { uzMapPaths } from '../../data/uzMap';
+import { RevealWords } from '../ui/RevealWords';
 import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Compass, CheckCircle2 } from 'lucide-react';
 
 interface CityBeacon {
@@ -118,8 +119,12 @@ export const RegionsMap: React.FC = () => {
               </span>
             </div>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
-              Tournament presence across{' '}
-              <span className="font-serif italic text-[var(--accent)]">Uzbekistan</span>
+              <RevealWords
+                parts={[
+                  { text: 'Tournament presence across' },
+                  { text: 'Uzbekistan', className: 'font-serif italic text-[var(--accent)]' },
+                ]}
+              />
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-[var(--ink-muted)]">
               Interactive 3D volumetric map. Explore verified aerospace event venues and active tournament chapters across all 14 regions.
