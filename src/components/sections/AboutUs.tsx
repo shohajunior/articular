@@ -7,6 +7,7 @@ interface StoryBlock {
   desc: string;
   metric: string;
   metricLabel: string;
+  activeThreshold: number;
 }
 
 const STORY_BLOCKS: StoryBlock[] = [
@@ -17,6 +18,7 @@ const STORY_BLOCKS: StoryBlock[] = [
     desc: 'Autonomous orbital calculations. No textbook templates.',
     metric: '48+',
     metricLabel: 'Orbital Theses',
+    activeThreshold: 0.15,
   },
   {
     step: '02',
@@ -25,6 +27,7 @@ const STORY_BLOCKS: StoryBlock[] = [
     desc: '100% English defense before Uzcosmos space agency engineers.',
     metric: '100%',
     metricLabel: 'English Defense Format',
+    activeThreshold: 0.48,
   },
   {
     step: '03',
@@ -33,20 +36,26 @@ const STORY_BLOCKS: StoryBlock[] = [
     desc: 'Uzcosmos co-signed credentials. Direct global academic trajectory.',
     metric: 'TOP 1%',
     metricLabel: 'State Space Honors',
+    activeThreshold: 0.80,
   },
 ];
 
 export const AboutUs: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
+
+  const b1Ref = useRef<HTMLDivElement>(null);
+  const b2Ref = useRef<HTMLDivElement>(null);
+  const b3Ref = useRef<HTMLDivElement>(null);
 
   const [pathData, setPathData] = useState('');
   const [totalPathLength, setTotalPathLength] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [rocketPos, setRocketPos] = useState({ x: 0, y: 0, angle: 45 });
+  const [waypoints, setWaypoints] = useState<{ x: number; y: number }[]>([]);
 
-  // Real-time calculation of rocket position along the SVG path for a given progress (0.0 to 1.0)
+  // Calculate rocket position along the SVG path for a given progress (0.0 to 1.0)
   const calcRocketAtProgress = (pathElement: SVGPathElement | null, progress: number, fallbackLen = 0) => {
     if (!pathElement) return;
     try {
@@ -71,40 +80,60 @@ export const AboutUs: React.FC = () => {
     }
   };
 
-  // 1. Recalculate zigzag flight path connecting left-wing, center, right-wing across the pinned stage
+  // 1. Recalculate zigzag flight path connecting the 3 centered blocks
   const updateTrajectory = () => {
-    if (!stageRef.current) return;
-    const sRect = stageRef.current.getBoundingClientRect();
-    const w = sRect.width;
-    const h = sRect.height;
-    if (w === 0 || h === 0) return;
+    if (!containerRef.current || !b1Ref.current || !b2Ref.current || !b3Ref.current) return;
 
-    // Amplitude of the zigzag wing swoops
-    const amp = Math.max(100, Math.min(w * 0.38, 440));
-    const centerX = w * 0.5;
-    const centerY = h * 0.5;
+    const cRect = containerRef.current.getBoundingClientRect();
+    if (cRect.width === 0) return;
 
-    // Waypoints for the zigzag across the pinned screen
-    const startX = Math.max(30, centerX - amp * 0.85);
-    const startY = h * 0.22;
+    const r1 = b1Ref.current.getBoundingClientRect();
+    const r2 = b2Ref.current.getBoundingClientRect();
+    const r3 = b3Ref.current.getBoundingClientRect();
 
-    const p1 = { x: centerX, y: centerY - 10 };
-    const rightApexX = centerX + amp;
-    const rightApexY = centerY + 10;
+    // Exact center coordinates of the 3 centered text blocks relative to container
+    const p1 = {
+      x: r1.left - cRect.left + r1.width / 2,
+      y: r1.top - cRect.top + r1.height * 0.42,
+    };
+    const p2 = {
+      x: r2.left - cRect.left + r2.width / 2,
+      y: r2.top - cRect.top + r2.height * 0.42,
+    };
+    const p3 = {
+      x: r3.left - cRect.left + r3.width / 2,
+      y: r3.top - cRect.top + r3.height * 0.42,
+    };
 
-    const p2 = { x: centerX, y: centerY };
-    const leftApexX = centerX - amp;
-    const leftApexY = centerY + 10;
+    setWaypoints([p1, p2, p3]);
 
-    const p3 = { x: centerX, y: centerY + 10 };
-    const endX = centerX + amp * 0.45;
-    const endY = h * 0.92;
+    const width = cRect.width;
+    // Amplitude of the zigzag wing swoops (adapts to mobile and desktop)
+    const amp = Math.max(90, Math.min(width * 0.38, 380));
 
-    // Smooth continuous S-curve zigzag Béziers
+    // Entry point: swoops in from upper left
+    const startX = Math.max(20, p1.x - amp * 0.85);
+    const startY = Math.max(10, p1.y - 160);
+
+    // Right wing apex (between Block 1 and Block 2)
+    const midY1 = (p1.y + p2.y) / 2;
+    const rightApexX = p1.x + amp;
+    const rightApexY = midY1;
+
+    // Left wing apex (between Block 2 and Block 3)
+    const midY2 = (p2.y + p3.y) / 2;
+    const leftApexX = p2.x - amp;
+    const leftApexY = midY2;
+
+    // Exit point (accelerates downwards out of Block 3)
+    const endX = p3.x + amp * 0.45;
+    const endY = p3.y + 200;
+
+    // Control points for smooth continuous S-curve zigzag
     const cp0x1 = startX + amp * 0.3;
-    const cp0y1 = startY + 60;
-    const cp0x2 = p1.x - amp * 0.3;
-    const cp0y2 = p1.y - 70;
+    const cp0y1 = startY + 50;
+    const cp0x2 = p1.x - amp * 0.25;
+    const cp0y2 = p1.y - 50;
 
     const cp1x1 = p1.x + amp * 0.6;
     const cp1y1 = p1.y + 70;
@@ -157,9 +186,9 @@ export const AboutUs: React.FC = () => {
     window.addEventListener('resize', handleResize);
 
     let ro: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== 'undefined' && stageRef.current) {
+    if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
       ro = new ResizeObserver(() => updateTrajectory());
-      ro.observe(stageRef.current);
+      ro.observe(containerRef.current);
     }
 
     return () => {
@@ -170,7 +199,7 @@ export const AboutUs: React.FC = () => {
     };
   }, []);
 
-  // Sync length whenever DOM path is mounted
+  // Update total path length from real DOM path whenever mounted or updated
   useEffect(() => {
     if (pathRef.current) {
       try {
@@ -185,31 +214,30 @@ export const AboutUs: React.FC = () => {
     }
   }, [pathData]);
 
-  // 2. High-performance scroll listener to scrub the pinned stage timeline
+  // 2. High-performance scroll listener to calculate scrollProgress and drive the rocket
   useEffect(() => {
     let ticking = false;
 
     const handleScroll = () => {
-      if (!sectionRef.current) return;
+      if (!containerRef.current) return;
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          if (!sectionRef.current) {
+          if (!containerRef.current) {
             ticking = false;
             return;
           }
-          const rect = sectionRef.current.getBoundingClientRect();
+          const rect = containerRef.current.getBoundingClientRect();
           const windowHeight = window.innerHeight;
-          const totalScrollable = rect.height - windowHeight;
-          if (totalScrollable <= 0) {
-            ticking = false;
-            return;
-          }
 
-          // Progress increases continuously while scrolling through the pinned section
-          const currentScroll = -rect.top;
-          const p = Math.max(0, Math.min(1, currentScroll / totalScrollable));
+          // Flight spans seamlessly as the container traverses through the viewport
+          const startTrigger = windowHeight * 0.75;
+          const totalDistance = rect.height;
+          const currentScrolled = startTrigger - rect.top;
+
+          const p = Math.max(0, Math.min(1, currentScrolled / totalDistance));
           setScrollProgress(p);
 
+          // Update rocket position in real time
           if (pathRef.current) {
             calcRocketAtProgress(pathRef.current, p);
           }
@@ -235,81 +263,22 @@ export const AboutUs: React.FC = () => {
     };
   }, [totalPathLength]);
 
-  // Dynamic style calculation for smooth stage cross-fade transitions in the exact center
-  const getStageStyle = (stageIndex: number, p: number) => {
-    let opacity = 0;
-    let translateY = 30;
-    let scale = 0.96;
-
-    if (stageIndex === 0) {
-      // Stage 1: Active 0.0 -> 0.35
-      if (p < 0.24) {
-        opacity = Math.min(1, p / 0.08);
-        translateY = Math.max(0, 20 * (1 - p / 0.08));
-        scale = 1 + 0.05 * Math.min(1, p / 0.12);
-      } else if (p < 0.36) {
-        const exitProgress = (p - 0.24) / 0.12;
-        opacity = Math.max(0, 1 - exitProgress);
-        translateY = -35 * exitProgress;
-        scale = 1.05 - 0.05 * exitProgress;
-      }
-    } else if (stageIndex === 1) {
-      // Stage 2: Active 0.34 -> 0.68
-      if (p >= 0.32 && p < 0.44) {
-        const enterProgress = (p - 0.32) / 0.12;
-        opacity = Math.min(1, enterProgress);
-        translateY = Math.max(0, 35 * (1 - enterProgress));
-        scale = 0.96 + 0.09 * enterProgress;
-      } else if (p >= 0.44 && p < 0.58) {
-        opacity = 1;
-        translateY = 0;
-        scale = 1.05;
-      } else if (p >= 0.58 && p < 0.70) {
-        const exitProgress = (p - 0.58) / 0.12;
-        opacity = Math.max(0, 1 - exitProgress);
-        translateY = -35 * exitProgress;
-        scale = 1.05 - 0.05 * exitProgress;
-      }
-    } else if (stageIndex === 2) {
-      // Stage 3: Active 0.66 -> 1.0
-      if (p >= 0.66 && p < 0.78) {
-        const enterProgress = (p - 0.66) / 0.12;
-        opacity = Math.min(1, enterProgress);
-        translateY = Math.max(0, 35 * (1 - enterProgress));
-        scale = 0.96 + 0.09 * enterProgress;
-      } else if (p >= 0.78) {
-        opacity = 1;
-        translateY = 0;
-        scale = 1.05;
-      }
-    }
-
-    return {
-      opacity,
-      transform: `translate3d(0, ${translateY}px, 0) scale(${scale})`,
-      pointerEvents: opacity > 0.5 ? ('auto' as const) : ('none' as const),
-    };
-  };
-
   return (
     <section
       id="about"
       ref={sectionRef}
-      className="relative h-[300vh] bg-[#06080d] text-white border-t border-[var(--line)]"
+      className="relative bg-[#06080d] text-white border-t border-[var(--line)] overflow-visible transition-colors duration-300"
     >
       {/* ======================================================== */}
-      {/* PINNED STAGE VIEWPORT (Fixed 100vh theatre while scrolling) */}
+      {/* 1. STATIONARY FIXED BACKGROUND (Stands still while scrolling) */}
       {/* ======================================================== */}
-      <div
-        ref={stageRef}
-        className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between select-none"
-      >
-        {/* Deep Space Background: 100% Stationary */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(14,30,58,0.5)_0%,_#06080d_80%)] pointer-events-none z-0" />
+      <div className="sticky top-0 h-screen w-full pointer-events-none overflow-hidden z-0">
+        {/* Deep Space Radial Vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(14,30,58,0.45)_0%,_#06080d_78%)]" />
 
-        {/* Stationary Tactical Space Coordinate Grid */}
+        {/* Stationary Tactical Coordinate Grid */}
         <div
-          className="absolute inset-0 opacity-[0.15] pointer-events-none z-0"
+          className="absolute inset-0 opacity-[0.14]"
           style={{
             backgroundImage: `
               linear-gradient(to right, rgba(56, 189, 248, 0.35) 1px, transparent 1px),
@@ -320,198 +289,302 @@ export const AboutUs: React.FC = () => {
         />
 
         {/* Stationary Concentric Orbital Radar Rings */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] rounded-full border border-sky-500/15 pointer-events-none z-0" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[820px] rounded-full border border-sky-500/10 pointer-events-none z-0" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1240px] h-[1240px] rounded-full border border-sky-500/5 pointer-events-none z-0" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] rounded-full border border-sky-500/15 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[820px] rounded-full border border-sky-500/10 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1240px] h-[1240px] rounded-full border border-sky-500/5 pointer-events-none" />
 
         {/* Crosshair Center Lines */}
-        <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-sky-500/10 pointer-events-none z-0" />
-        <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-sky-500/10 pointer-events-none z-0" />
+        <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-sky-500/10" />
+        <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-sky-500/10" />
 
-        {/* Static HUD Telemetry (Pinned Corners) */}
-        <div className="absolute top-6 left-6 font-mono text-[10px] text-sky-400/40 uppercase tracking-widest flex items-center gap-2 z-10 pointer-events-none">
+        {/* Static Aerospace HUD Telemetry (Pinned Corners) */}
+        <div className="absolute top-6 left-6 font-mono text-[10px] text-sky-400/40 uppercase tracking-widest flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
-          SYS // PINNED STAGE THEATRE
+          SYS // FIXED REFERENCE FRAME
         </div>
-        <div className="absolute top-6 right-6 font-mono text-[10px] text-sky-400/40 uppercase tracking-widest z-10 pointer-events-none">
+        <div className="absolute top-6 right-6 font-mono text-[10px] text-sky-400/40 uppercase tracking-widest">
           41.2995° N, 69.2401° E // UZCOSMOS
         </div>
-        <div className="absolute bottom-6 left-6 font-mono text-[10px] text-sky-400/30 uppercase tracking-widest z-10 pointer-events-none">
-          SCROLL TIMELINE: INTERACTIVE
+        <div className="absolute bottom-6 left-6 font-mono text-[10px] text-sky-400/30 uppercase tracking-widest">
+          ORBITAL MATRIX: STATIONARY
         </div>
-        <div className="absolute bottom-6 right-6 font-mono text-[10px] text-sky-400/30 uppercase tracking-widest z-10 pointer-events-none">
+        <div className="absolute bottom-6 right-6 font-mono text-[10px] text-sky-400/30 uppercase tracking-widest">
           ALT: 450 KM STABLE
         </div>
+      </div>
 
-        {/* 1. Header (Pinned at Top) */}
-        <div className="relative z-20 mx-auto max-w-4xl px-6 pt-16 sm:pt-20 text-center pointer-events-none">
-          <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/10 px-4 py-1.5 backdrop-blur-md mb-3">
+      {/* ======================================================== */}
+      {/* 2. SCROLLING MOVING CONTENT (Moves over stationary background) */}
+      {/* ======================================================== */}
+      <div className="relative z-10 -mt-[100vh]">
+        {/* Section Intro Header */}
+        <div className="mx-auto max-w-4xl px-6 pt-24 pb-14 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/10 px-4 py-1.5 backdrop-blur-md mb-6">
             <span className="h-2 w-2 rounded-full bg-sky-400 animate-pulse" />
             <span className="font-mono text-xs font-bold uppercase tracking-widest text-sky-400">
               MISSION TRAJECTORY // ABOUT ARTICULAR
             </span>
           </div>
 
-          <h2 className="text-2xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
             Where young minds{' '}
             <span className="font-serif-italic font-normal text-sky-400">
               articulate the future.
             </span>
           </h2>
+          <p className="mt-4 text-sm sm:text-base text-slate-400 max-w-lg mx-auto leading-relaxed">
+            Scroll down to pilot the rocket along the zigzag tournament trajectory.
+          </p>
         </div>
 
-        {/* 2. Interactive Center Theater with Cross-Fading Stages */}
-        <div className="relative z-20 flex-1 flex items-center justify-center w-full px-6">
-          {STORY_BLOCKS.map((block, idx) => {
-            const style = getStageStyle(idx, scrollProgress);
-            return (
-              <div
-                key={idx}
-                style={style}
-                className="absolute inset-0 flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-6 will-change-transform"
-              >
-                {/* Stage Pill */}
-                <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-950/60 px-4 py-1 backdrop-blur-md mb-4 shadow-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
-                  <span className="font-mono text-xs font-bold text-sky-400 tracking-wider">
-                    {block.step} // {block.tag}
-                  </span>
-                </div>
-
-                {/* Monumental Word */}
-                <h3 className="text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase text-white drop-shadow-[0_0_45px_rgba(56,189,248,0.7)] select-none">
-                  {block.word}
-                </h3>
-
-                {/* Short Statement */}
-                <p className="mt-4 text-base sm:text-2xl font-medium text-slate-200 max-w-lg mx-auto leading-relaxed">
-                  {block.desc}
-                </p>
-
-                {/* Metric Badge */}
-                <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-sky-500/25 bg-slate-900/90 px-6 py-2.5 backdrop-blur-md shadow-md">
-                  <span className="font-mono text-xl sm:text-2xl font-black text-sky-400">
-                    {block.metric}
-                  </span>
-                  <span className="text-xs text-slate-300 uppercase tracking-wider font-semibold">
-                    {block.metricLabel}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* 3. Sleek Vertical Step Progress Track (Right Edge) */}
-        <div className="absolute right-6 sm:right-10 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-6 pointer-events-none">
-          {STORY_BLOCKS.map((block, idx) => {
-            const isCurrent =
-              (idx === 0 && scrollProgress < 0.35) ||
-              (idx === 1 && scrollProgress >= 0.35 && scrollProgress < 0.68) ||
-              (idx === 2 && scrollProgress >= 0.68);
-            return (
-              <div key={idx} className="flex items-center gap-3 justify-end">
-                <span
-                  className={`font-mono text-[10px] tracking-widest transition-colors duration-300 hidden sm:block ${
-                    isCurrent ? 'text-sky-400 font-bold' : 'text-slate-600'
-                  }`}
-                >
-                  {block.step} {block.word}
-                </span>
-                <div
-                  className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
-                    isCurrent
-                      ? 'bg-sky-400 shadow-[0_0_14px_#38bdf8] scale-125'
-                      : 'bg-slate-700'
-                  }`}
-                />
-              </div>
-            );
-          })}
-        </div>
-
-        {/* 4. Full-Screen Zigzag Flight Trajectory SVG */}
-        <svg
-          className="absolute inset-0 h-full w-full pointer-events-none overflow-visible z-10"
-          xmlns="http://www.w3.org/2000/svg"
+        {/* ======================================================== */}
+        {/* ZIGZAG FLIGHT ARENA (Interactive Scroll-Driven Trajectory) */}
+        {/* ======================================================== */}
+        <div
+          ref={containerRef}
+          className="relative w-full max-w-[1240px] mx-auto min-h-[1600px] sm:min-h-[1800px] select-none flex flex-col justify-around py-12"
         >
-          <defs>
-            {/* Glowing Rocket Trail Gradient */}
-            <linearGradient id="rocketTrailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#1f5eea" stopOpacity="0.1" />
-              <stop offset="60%" stopColor="#0284c7" stopOpacity="0.85" />
-              <stop offset="100%" stopColor="#38bdf8" stopOpacity="1" />
-            </linearGradient>
-
-            {/* Waypoint Glow Filter */}
-            <filter id="beaconGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#38bdf8" floodOpacity="0.8" />
-            </filter>
-          </defs>
-
-          {/* Base Dashed Trajectory Flight Plan (Always rendered to guarantee path measurement) */}
-          {pathData && (
-            <path
-              ref={pathRef}
-              d={pathData}
-              fill="none"
-              stroke="rgba(56, 189, 248, 0.25)"
-              strokeWidth="2.5"
-              strokeDasharray="8 8"
-            />
-          )}
-
-          {/* Active Filled Flight Path (Fills in real-time behind the Rocket as you scroll) */}
-          {pathData && (
-            <path
-              d={pathData}
-              fill="none"
-              stroke="url(#rocketTrailGrad)"
-              strokeWidth="4"
-              strokeDasharray={totalPathLength || 3000}
-              strokeDashoffset={(totalPathLength || 3000) * (1 - scrollProgress)}
-              strokeLinecap="round"
-              style={{
-                filter: 'drop-shadow(0 0 8px rgba(56, 189, 248, 0.75))',
-              }}
-            />
-          )}
-        </svg>
-
-        {/* 5. Scroll-Driven Flying Rocket Emoji (🚀) */}
-        {pathData && (
-          <div
-            className="absolute pointer-events-none z-30 will-change-transform"
-            style={{
-              left: `${rocketPos.x}px`,
-              top: `${rocketPos.y}px`,
-              transform: `translate(-50%, -50%) rotate(${rocketPos.angle + 45}deg)`,
-              transition: 'left 0.05s ease-out, top 0.05s ease-out, transform 0.05s ease-out',
-            }}
+          {/* SVG Canvas with Zigzag Trajectory Lines */}
+          <svg
+            className="absolute inset-0 h-full w-full pointer-events-none overflow-visible z-10"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <div className="relative flex items-center justify-center">
-              {/* Supersonic Plasma Engine Exhaust Flame */}
-              <div
-                className="absolute -bottom-2 -left-2 h-5 w-5 rounded-full bg-cyan-400 blur-[3px] animate-pulse"
-                style={{ transform: 'rotate(-45deg)' }}
-              />
-              <div
-                className="absolute -bottom-3.5 -left-3.5 h-7 w-7 rounded-full bg-blue-600 blur-[6px] opacity-80"
-              />
+            <defs>
+              {/* Glowing Rocket Trail Gradient */}
+              <linearGradient id="rocketTrailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#1f5eea" stopOpacity="0.1" />
+                <stop offset="60%" stopColor="#0284c7" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#38bdf8" stopOpacity="1" />
+              </linearGradient>
 
-              {/* Rocket Emoji */}
-              <span className="text-4xl sm:text-5xl filter drop-shadow-[0_0_18px_rgba(56,189,248,0.95)] select-none">
-                🚀
+              {/* Waypoint Glow Filter */}
+              <filter id="beaconGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#38bdf8" floodOpacity="0.8" />
+              </filter>
+            </defs>
+
+            {/* Base Dashed Trajectory Flight Plan (Always rendered to guarantee path measurement) */}
+            {pathData && (
+              <path
+                ref={pathRef}
+                d={pathData}
+                fill="none"
+                stroke="rgba(56, 189, 248, 0.25)"
+                strokeWidth="2.5"
+                strokeDasharray="8 8"
+              />
+            )}
+
+            {/* Active Filled Flight Path (Fills in real-time behind the Rocket as you scroll) */}
+            {pathData && (
+              <path
+                d={pathData}
+                fill="none"
+                stroke="url(#rocketTrailGrad)"
+                strokeWidth="4"
+                strokeDasharray={totalPathLength || 3000}
+                strokeDashoffset={(totalPathLength || 3000) * (1 - scrollProgress)}
+                strokeLinecap="round"
+                style={{
+                  filter: 'drop-shadow(0 0 8px rgba(56, 189, 248, 0.7))',
+                }}
+              />
+            )}
+
+            {/* Waypoint docking beacons in the center */}
+            {waypoints.map((pt, idx) => {
+              const isActive = scrollProgress >= STORY_BLOCKS[idx].activeThreshold;
+              return (
+                <g key={idx} transform={`translate(${pt.x}, ${pt.y})`}>
+                  <circle
+                    r={isActive ? "20" : "10"}
+                    fill="none"
+                    stroke="#38bdf8"
+                    strokeWidth={isActive ? "2" : "1.5"}
+                    opacity={isActive ? "0.9" : "0.3"}
+                    className="transition-all duration-500"
+                  />
+                  {isActive && (
+                    <circle
+                      r="30"
+                      fill="none"
+                      stroke="#38bdf8"
+                      strokeWidth="1"
+                      opacity="0.3"
+                      className="animate-ping"
+                    />
+                  )}
+                  <circle
+                    r="4.5"
+                    fill={isActive ? "#38bdf8" : "rgba(56, 189, 248, 0.4)"}
+                    className="transition-all duration-300"
+                  />
+                </g>
+              );
+            })}
+          </svg>
+
+          {/* ======================================================== */}
+          {/* SCROLL-DRIVEN FLYING ROCKET EMOJI (🚀)                    */}
+          {/* ======================================================== */}
+          {pathData && (
+            <div
+              className="absolute pointer-events-none z-30 will-change-transform"
+              style={{
+                left: `${rocketPos.x}px`,
+                top: `${rocketPos.y}px`,
+                // Rocket emoji points up-right at 45deg, so rotate(angle + 45deg) aligns nose with flight path
+                transform: `translate(-50%, -50%) rotate(${rocketPos.angle + 45}deg)`,
+                transition: 'left 0.05s ease-out, top 0.05s ease-out, transform 0.05s ease-out',
+              }}
+            >
+              <div className="relative flex items-center justify-center">
+                {/* Supersonic Plasma Engine Exhaust Flame */}
+                <div
+                  className="absolute -bottom-2 -left-2 h-4 w-4 rounded-full bg-cyan-400 blur-[3px] animate-pulse"
+                  style={{ transform: 'rotate(-45deg)' }}
+                />
+                <div
+                  className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-blue-600 blur-[6px] opacity-80"
+                />
+
+                {/* Rocket Emoji */}
+                <span className="text-4xl sm:text-5xl filter drop-shadow-[0_0_16px_rgba(56,189,248,0.95)] select-none">
+                  🚀
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 3 CENTERED SHORT POWERFUL STAGES                         */}
+          {/* ======================================================== */}
+
+          {/* Block 01: Centered */}
+          <div
+            ref={b1Ref}
+            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
+          >
+            {/* Stage Pill */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
+              <span className={`h-1.5 w-1.5 rounded-full ${
+                scrollProgress >= STORY_BLOCKS[0].activeThreshold ? 'bg-sky-400 animate-pulse' : 'bg-slate-500'
+              }`} />
+              <span className="font-mono text-xs font-bold text-sky-400 tracking-wider">
+                {STORY_BLOCKS[0].step} // {STORY_BLOCKS[0].tag}
+              </span>
+            </div>
+
+            {/* Monumental Punchy Word */}
+            <h3
+              className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-700 ${
+                scrollProgress >= STORY_BLOCKS[0].activeThreshold
+                  ? 'text-white scale-105 drop-shadow-[0_0_45px_rgba(56,189,248,0.65)]'
+                  : 'text-slate-500 opacity-40 scale-100'
+              }`}
+            >
+              {STORY_BLOCKS[0].word}
+            </h3>
+
+            {/* Short Punchy Statement */}
+            <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
+              {STORY_BLOCKS[0].desc}
+            </p>
+
+            {/* Metric Badge */}
+            <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-sky-500/20 bg-slate-900/80 px-5 py-2 backdrop-blur-sm shadow-sm">
+              <span className="font-mono text-lg sm:text-xl font-black text-sky-400">
+                {STORY_BLOCKS[0].metric}
+              </span>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
+                {STORY_BLOCKS[0].metricLabel}
               </span>
             </div>
           </div>
-        )}
 
-        {/* Bottom Hint */}
-        <div className="relative z-20 pb-8 text-center pointer-events-none">
-          <p className="font-mono text-xs uppercase tracking-widest text-slate-500">
-            {scrollProgress < 0.95 ? '↓ SCROLL TO PILOT TRAJECTORY ↓' : '✓ TRAJECTORY COMPLETE'}
-          </p>
+          {/* Block 02: Centered */}
+          <div
+            ref={b2Ref}
+            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
+          >
+            {/* Stage Pill */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
+              <span className={`h-1.5 w-1.5 rounded-full ${
+                scrollProgress >= STORY_BLOCKS[1].activeThreshold ? 'bg-sky-400 animate-pulse' : 'bg-slate-500'
+              }`} />
+              <span className="font-mono text-xs font-bold text-sky-400 tracking-wider">
+                {STORY_BLOCKS[1].step} // {STORY_BLOCKS[1].tag}
+              </span>
+            </div>
+
+            {/* Monumental Punchy Word */}
+            <h3
+              className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-700 ${
+                scrollProgress >= STORY_BLOCKS[1].activeThreshold
+                  ? 'text-white scale-105 drop-shadow-[0_0_45px_rgba(56,189,248,0.65)]'
+                  : 'text-slate-500 opacity-40 scale-100'
+              }`}
+            >
+              {STORY_BLOCKS[1].word}
+            </h3>
+
+            {/* Short Punchy Statement */}
+            <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
+              {STORY_BLOCKS[1].desc}
+            </p>
+
+            {/* Metric Badge */}
+            <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-sky-500/20 bg-slate-900/80 px-5 py-2 backdrop-blur-sm shadow-sm">
+              <span className="font-mono text-lg sm:text-xl font-black text-sky-400">
+                {STORY_BLOCKS[1].metric}
+              </span>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
+                {STORY_BLOCKS[1].metricLabel}
+              </span>
+            </div>
+          </div>
+
+          {/* Block 03: Centered */}
+          <div
+            ref={b3Ref}
+            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
+          >
+            {/* Stage Pill */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
+              <span className={`h-1.5 w-1.5 rounded-full ${
+                scrollProgress >= STORY_BLOCKS[2].activeThreshold ? 'bg-sky-400 animate-pulse' : 'bg-slate-500'
+              }`} />
+              <span className="font-mono text-xs font-bold text-sky-400 tracking-wider">
+                {STORY_BLOCKS[2].step} // {STORY_BLOCKS[2].tag}
+              </span>
+            </div>
+
+            {/* Monumental Punchy Word */}
+            <h3
+              className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-700 ${
+                scrollProgress >= STORY_BLOCKS[2].activeThreshold
+                  ? 'text-white scale-105 drop-shadow-[0_0_45px_rgba(56,189,248,0.65)]'
+                  : 'text-slate-500 opacity-40 scale-100'
+              }`}
+            >
+              {STORY_BLOCKS[2].word}
+            </h3>
+
+            {/* Short Punchy Statement */}
+            <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
+              {STORY_BLOCKS[2].desc}
+            </p>
+
+            {/* Metric Badge */}
+            <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-sky-500/20 bg-slate-900/80 px-5 py-2 backdrop-blur-sm shadow-sm">
+              <span className="font-mono text-lg sm:text-xl font-black text-sky-400">
+                {STORY_BLOCKS[2].metric}
+              </span>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
+                {STORY_BLOCKS[2].metricLabel}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
