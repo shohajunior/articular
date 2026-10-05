@@ -14,8 +14,8 @@ const PARTNERS: Partner[] = [
     id: 'uzcosmos',
     name: 'Uzcosmos Agency',
     url: 'https://uzspace.uz',
-    logoLight: './assets/uzcosmoslogo.png',
-    logoDark: './assets/uzcosmos-white.png',
+    logoLight: './assets/uzcosmos-dark.svg',
+    logoDark: './assets/uzcosmos-white.svg',
   },
   {
     id: 'yvc',
