@@ -53,21 +53,29 @@ export const Partners: React.FC = () => {
             rel="noopener noreferrer"
             title={item.name}
             aria-label={item.name}
-            className="group relative flex h-16 sm:h-20 lg:h-24 w-auto items-center justify-center p-2 outline-none cursor-pointer"
+            className="group relative flex h-20 sm:h-24 lg:h-28 w-auto items-center justify-center p-2 outline-none cursor-pointer"
           >
             {/* Light Mode Logo: ONLY the logo, no text */}
             <img
               src={item.logoLight}
               alt={item.name}
               loading="lazy"
-              className="dark:hidden block h-12 sm:h-14 lg:h-16 w-auto max-w-[190px] object-contain transition-all duration-300 filter grayscale opacity-65 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110"
+              className={`dark:hidden block w-auto object-contain transition-all duration-300 filter grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 ${
+                item.id === 'uzcosmos'
+                  ? 'h-[70px] sm:h-[88px] lg:h-[105px] max-w-[280px] sm:max-w-[350px]'
+                  : 'h-10 sm:h-12 lg:h-14 max-w-[120px]'
+              }`}
             />
             {/* Dark Mode Logo: Bright crisp white with high contrast & cyan hover glow */}
             <img
               src={item.logoDark}
               alt={item.name}
               loading="lazy"
-              className="hidden dark:block h-12 sm:h-14 lg:h-16 w-auto max-w-[190px] object-contain transition-all duration-300 opacity-85 group-hover:opacity-100 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.25)] group-hover:drop-shadow-[0_0_16px_rgba(56,189,248,0.7)]"
+              className={`hidden dark:block w-auto object-contain transition-all duration-300 opacity-90 group-hover:opacity-100 group-hover:scale-110 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] group-hover:drop-shadow-[0_0_18px_rgba(56,189,248,0.8)] ${
+                item.id === 'uzcosmos'
+                  ? 'h-[70px] sm:h-[88px] lg:h-[105px] max-w-[280px] sm:max-w-[350px]'
+                  : 'h-10 sm:h-12 lg:h-14 max-w-[120px]'
+              }`}
             />
           </a>
         </li>
