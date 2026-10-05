@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { siteData } from '../../data/site';
 import { TelegramIcon, InstagramIcon, LinkedinIcon } from '../ui/SocialIcons';
 import { User } from 'lucide-react';
 import { RevealWords } from '../ui/RevealWords';
 
 export const Team: React.FC = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef(0);
+  const posRef = useRef({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+    posRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = 0;
+      const el = glowRef.current;
+      if (!el) return;
+      el.style.setProperty('--mx', `${posRef.current.x}px`);
+      el.style.setProperty('--my', `${posRef.current.y}px`);
     });
+  };
+
+  const setGlow = (on: boolean) => {
+    if (glowRef.current) glowRef.current.style.opacity = on ? '1' : '0';
   };
 
   return (
     <section
       id="team"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => setGlow(true)}
+      onMouseLeave={() => setGlow(false)}
       onMouseMove={handleMouseMove}
       className="relative overflow-hidden bg-[var(--surface)] py-24 transition-colors"
     >
@@ -29,14 +39,14 @@ export const Team: React.FC = () => {
 
       {/* 2. Interactive Glowing Dots: Only the dots themselves illuminate under the cursor */}
       <div
+        ref={glowRef}
         className="pointer-events-none absolute inset-0 transition-opacity duration-300"
         style={{
-          opacity: isHovered ? 1 : 0,
+          opacity: 0,
           backgroundImage: 'radial-gradient(var(--accent) 1.75px, transparent 1.75px)',
           backgroundSize: '24px 24px',
-          WebkitMaskImage: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, black 15%, transparent 100%)`,
-          maskImage: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, black 15%, transparent 100%)`,
-          filter: 'drop-shadow(0 0 2.5px var(--accent))',
+          WebkitMaskImage: 'radial-gradient(200px circle at var(--mx, 0px) var(--my, 0px), black 15%, transparent 100%)',
+          maskImage: 'radial-gradient(200px circle at var(--mx, 0px) var(--my, 0px), black 15%, transparent 100%)',
         }}
       />
 

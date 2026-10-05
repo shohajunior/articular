@@ -1,4 +1,4 @@
-﻿import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import './CursorGrid.css';
 
 export interface CursorGridProps {
@@ -100,6 +100,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     let running = false;
     let lastFrame = 0;
     let lastSweepStart = performance.now() - 3000;
+    let visible = true;
 
     const rebuild = () => {
       const p = propsRef.current;
@@ -158,6 +159,10 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     };
 
     const draw = (now: number) => {
+      if (!visible) {
+        running = false;
+        return;
+      }
       const p = propsRef.current;
       const cSize = p.cellSize || 70;
       const dt = Math.min(now - lastFrame, 50);
@@ -272,9 +277,6 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
         anyVisible = true;
 
         const [cx, cy] = cellCenter(i);
-        const gradient = ctx.createRadialGradient(cx, cy, half * 0.1, cx, cy, cSize);
-        gradient.addColorStop(0, `rgba(${cr}, ${cg}, ${cb}, ${a})`);
-        gradient.addColorStop(1, `rgba(${cr}, ${cg}, ${cb}, 0)`);
 
         const x = cx - half + 0.5;
         const y = cy - half + 0.5;
@@ -290,7 +292,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
           ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${a * fillOpacity})`;
           ctx.fill();
         }
-        ctx.strokeStyle = gradient;
+        ctx.strokeStyle = `rgba(${cr}, ${cg}, ${cb}, ${a * 0.6})`;
         ctx.lineWidth = lineWidth;
         ctx.stroke();
       }
@@ -306,7 +308,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
     };
 
     const wake = () => {
-      if (running) return;
+      if (running || !visible) return;
       running = true;
       lastFrame = performance.now();
       raf = requestAnimationFrame(draw);
@@ -346,6 +348,11 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
       wake();
     });
     ro.observe(container);
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) wake();
+    });
+    io.observe(container);
     rebuild();
     wake();
 
@@ -366,6 +373,7 @@ export const CursorGrid: React.FC<CursorGridProps> = ({
       cancelAnimationFrame(raf);
       if (sweepTimer) clearInterval(sweepTimer);
       ro.disconnect();
+      io.disconnect();
       targetElement.removeEventListener('pointerenter', onPointerEnter as EventListener);
       targetElement.removeEventListener('pointermove', onPointerMove as EventListener);
       targetElement.removeEventListener('pointerdown', onPointerDown as EventListener);

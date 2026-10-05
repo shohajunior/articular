@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { siteData } from '../../data/site';
 import { useTheme } from '../../lib/theme';
 import { Sun, Moon, Menu, X } from 'lucide-react';
@@ -45,7 +45,7 @@ export const Header: React.FC = () => {
       <div
         className={`mx-auto flex items-center justify-between transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isFloating
-            ? 'max-w-[920px] rounded-full border border-[var(--line)] bg-[var(--header-bg)] px-5 py-2 shadow-md backdrop-blur-xl'
+            ? 'max-w-[920px] rounded-full border border-[var(--line)] bg-[var(--header-bg)] px-5 py-2 shadow-md backdrop-blur-md'
             : 'max-w-[1140px] bg-transparent py-1'
         }`}
       >

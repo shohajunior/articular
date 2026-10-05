@@ -37,7 +37,7 @@ export const BackToTop: React.FC = () => {
       onClick={scrollToTop}
       aria-label="Back to top"
       title="Back to top"
-      className={`group fixed bottom-6 right-6 z-40 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-[var(--line)] bg-[var(--header-bg)] text-[var(--ink)] shadow-lg backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-[var(--accent)] hover:bg-[var(--surface-elevated)] hover:text-[var(--accent)] hover:shadow-xl ${
+      className={`group fixed bottom-6 right-6 z-40 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-[var(--line)] bg-[var(--header-bg)] text-[var(--ink)] shadow-lg backdrop-blur-md transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-[var(--accent)] hover:bg-[var(--surface-elevated)] hover:text-[var(--accent)] hover:shadow-xl ${
         isVisible
           ? 'translate-y-0 opacity-100 pointer-events-auto'
           : 'translate-y-5 opacity-0 pointer-events-none'

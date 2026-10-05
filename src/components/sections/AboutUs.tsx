@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { OrbitalRocketVessel } from '../ui/OrbitalRocketVessel';
 import { RevealWords } from '../ui/RevealWords';
 
@@ -216,9 +216,10 @@ export const AboutUs: React.FC = () => {
   // 2. High-performance direct-DOM scroll listener running at native display refresh rate
   useEffect(() => {
     let ticking = false;
+    let active = false;
 
     const handleScroll = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || !active) return;
       if (!ticking) {
         window.requestAnimationFrame(() => {
           if (!containerRef.current) {
@@ -264,18 +265,22 @@ export const AboutUs: React.FC = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    // Only run while the section is near the viewport; window scroll already fires with Lenis
+    const section = sectionRef.current;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        active = entry.isIntersecting;
+        if (active) handleScroll();
+      },
+      { rootMargin: '200px 0px' }
+    );
+    if (section) io.observe(section);
 
-    if ((window as any).lenis) {
-      (window as any).lenis.on('scroll', handleScroll);
-    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
+      io.disconnect();
       window.removeEventListener('scroll', handleScroll);
-      if ((window as any).lenis) {
-        (window as any).lenis.off('scroll', handleScroll);
-      }
     };
   }, [totalPathLength]);
 
@@ -479,7 +484,7 @@ export const AboutUs: React.FC = () => {
             <h3
               className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-500 ${
                 activeStages[0]
-                  ? 'text-white scale-105 drop-shadow-[0_0_45px_rgba(56,189,248,0.65)]'
+                  ? 'text-white scale-105 [text-shadow:0_0_28px_rgba(56,189,248,0.55)]'
                   : 'text-slate-500 opacity-40 scale-100'
               }`}
             >
@@ -511,7 +516,7 @@ export const AboutUs: React.FC = () => {
             <h3
               className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-500 ${
                 activeStages[1]
-                  ? 'text-white scale-105 drop-shadow-[0_0_45px_rgba(56,189,248,0.65)]'
+                  ? 'text-white scale-105 [text-shadow:0_0_28px_rgba(56,189,248,0.55)]'
                   : 'text-slate-500 opacity-40 scale-100'
               }`}
             >
@@ -543,7 +548,7 @@ export const AboutUs: React.FC = () => {
             <h3
               className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-500 ${
                 activeStages[2]
-                  ? 'text-white scale-105 drop-shadow-[0_0_45px_rgba(56,189,248,0.65)]'
+                  ? 'text-white scale-105 [text-shadow:0_0_28px_rgba(56,189,248,0.55)]'
                   : 'text-slate-500 opacity-40 scale-100'
               }`}
             >
