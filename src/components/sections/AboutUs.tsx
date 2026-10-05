@@ -5,8 +5,6 @@ interface StoryBlock {
   tag: string;
   word: string;
   desc: string;
-  metric: string;
-  metricLabel: string;
   activeThreshold: number;
 }
 
@@ -16,8 +14,6 @@ const STORY_BLOCKS: StoryBlock[] = [
     tag: 'THE HYPOTHESIS',
     word: 'CALCULATE.',
     desc: 'Autonomous orbital calculations. No textbook templates.',
-    metric: '48+',
-    metricLabel: 'Orbital Theses',
     activeThreshold: 0.15,
   },
   {
@@ -25,8 +21,6 @@ const STORY_BLOCKS: StoryBlock[] = [
     tag: 'THE DEFENSE',
     word: 'DEFEND.',
     desc: '100% English defense before Uzcosmos space agency engineers.',
-    metric: '100%',
-    metricLabel: 'English Defense Format',
     activeThreshold: 0.48,
   },
   {
@@ -34,8 +28,6 @@ const STORY_BLOCKS: StoryBlock[] = [
     tag: 'THE APOGEE',
     word: 'LAUNCH.',
     desc: 'Uzcosmos co-signed credentials. Direct global academic trajectory.',
-    metric: 'TOP 1%',
-    metricLabel: 'State Space Honors',
     activeThreshold: 0.80,
   },
 ];
@@ -730,16 +722,6 @@ export const AboutUs: React.FC = () => {
             <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
               {STORY_BLOCKS[0].desc}
             </p>
-
-            {/* Metric Badge */}
-            <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-sky-500/20 bg-slate-900/80 px-5 py-2 backdrop-blur-sm shadow-sm">
-              <span className="font-mono text-lg sm:text-xl font-black text-sky-400">
-                {STORY_BLOCKS[0].metric}
-              </span>
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
-                {STORY_BLOCKS[0].metricLabel}
-              </span>
-            </div>
           </div>
 
           {/* Block 02: Centered */}
@@ -772,16 +754,6 @@ export const AboutUs: React.FC = () => {
             <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
               {STORY_BLOCKS[1].desc}
             </p>
-
-            {/* Metric Badge */}
-            <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-sky-500/20 bg-slate-900/80 px-5 py-2 backdrop-blur-sm shadow-sm">
-              <span className="font-mono text-lg sm:text-xl font-black text-sky-400">
-                {STORY_BLOCKS[1].metric}
-              </span>
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
-                {STORY_BLOCKS[1].metricLabel}
-              </span>
-            </div>
           </div>
 
           {/* Block 03: Centered */}
@@ -814,16 +786,6 @@ export const AboutUs: React.FC = () => {
             <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
               {STORY_BLOCKS[2].desc}
             </p>
-
-            {/* Metric Badge */}
-            <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-sky-500/20 bg-slate-900/80 px-5 py-2 backdrop-blur-sm shadow-sm">
-              <span className="font-mono text-lg sm:text-xl font-black text-sky-400">
-                {STORY_BLOCKS[2].metric}
-              </span>
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
-                {STORY_BLOCKS[2].metricLabel}
-              </span>
-            </div>
           </div>
         </div>
       </div>
