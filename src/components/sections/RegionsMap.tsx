@@ -1,39 +1,76 @@
 ﻿import React, { useState } from 'react';
 import { siteData, RegionEvent } from '../../data/site';
 import { uzMapPaths } from '../../data/uzMap';
-import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Compass, CheckCircle2 } from 'lucide-react';
+import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Compass, CheckCircle2, RotateCcw, Box } from 'lucide-react';
+
+interface CityBeacon {
+  id: string;
+  name: string;
+  regionId: string;
+  x: number;
+  y: number;
+  isConfirmed: boolean;
+}
+
+const CITY_BEACONS: CityBeacon[] = [
+  { id: 'b-tashkent', name: 'Tashkent', regionId: 'tashkent', x: 748, y: 346, isConfirmed: true },
+  { id: 'b-bukhara', name: 'Bukhara', regionId: 'bukhara', x: 530, y: 468, isConfirmed: true },
+  { id: 'b-samarkand', name: 'Samarkand', regionId: 'samarkand', x: 652, y: 467, isConfirmed: true },
+  { id: 'b-fergana', name: 'Fergana', regionId: 'fergana', x: 882, y: 434, isConfirmed: true },
+  { id: 'b-andijan', name: 'Andijan', regionId: 'andijan', x: 905, y: 398, isConfirmed: true },
+];
+
+// Vertical step offsets for true 3D extruded volume (depth down to 22px)
+const EXTRUSION_STEPS = [22, 18, 14, 10, 6, 2];
+const SELECTED_EXTRUSION_STEPS = [10, 8, 6, 4, 2];
 
 export const RegionsMap: React.FC = () => {
   const [selectedRegionId, setSelectedRegionId] = useState<string>('tashkent');
   const [hoveredRegionId, setHoveredRegionId] = useState<string | null>(null);
-  const [tilt, setTilt] = useState({ rotX: 14, rotY: -3 });
+  const [viewPreset, setViewPreset] = useState<'isometric' | 'angled' | 'top'>('isometric');
+
+  // Mouse tilt tracking
+  const [tilt, setTilt] = useState({ rotX: 38, rotY: -4, rotZ: -3 });
   const [isHoveredMap, setIsHoveredMap] = useState(false);
 
   const selectedRegion =
     siteData.regions.find((r) => r.id === selectedRegionId) || siteData.regions[0];
 
-  // Helper to map SVG data-id to siteData region id
   const getMappedRegion = (svgId: string): RegionEvent | undefined => {
     if (svgId === 'tashkent-city') return siteData.regions.find((r) => r.id === 'tashkent');
     if (svgId === 'tashkent-reg') return siteData.regions.find((r) => r.id === 'tashkent-region');
     return siteData.regions.find((r) => r.id === svgId);
   };
 
-  // Interactive 3D mouse parallax tilt
   const handleMapMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (viewPreset !== 'isometric') return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
     const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
     setTilt({
-      rotX: 14 - y * 8, // gentle pitch: 10deg to 18deg
-      rotY: -3 + x * 6, // gentle roll: -6deg to 0deg
+      rotX: 38 - y * 12, // 32deg to 44deg
+      rotY: -4 + x * 10, // -9deg to 1deg
+      rotZ: -3 + x * 2,
     });
   };
 
   const handleMapMouseLeave = () => {
     setIsHoveredMap(false);
-    setTilt({ rotX: 14, rotY: -3 });
+    if (viewPreset === 'isometric') {
+      setTilt({ rotX: 38, rotY: -4, rotZ: -3 });
+    }
     setHoveredRegionId(null);
+  };
+
+  const setPreset = (preset: 'isometric' | 'angled' | 'top') => {
+    setViewPreset(preset);
+    if (preset === 'isometric') {
+      setTilt({ rotX: 38, rotY: -4, rotZ: -3 });
+    } else if (preset === 'angled') {
+      setTilt({ rotX: 48, rotY: -6, rotZ: -5 });
+    } else {
+      setTilt({ rotX: 10, rotY: 0, rotZ: 0 });
+    }
   };
 
   return (
@@ -44,142 +81,381 @@ export const RegionsMap: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <Compass className="h-4 w-4 text-[var(--accent)]" />
-              <span className="font-mono-tag text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
+              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
                 Regional Chapters // Nationwide Presence
               </span>
             </div>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
               Tournament presence across{' '}
-              <span className="font-serif-italic text-[var(--accent)]">Uzbekistan</span>
+              <span className="font-serif italic text-[var(--accent)]">Uzbekistan</span>
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-[var(--ink-muted)]">
-              Explore verified event venues and active tournament chapters across all 14 administrative subdivisions.
+              Interactive 3D volumetric map. Explore verified aerospace event venues and active tournament chapters across all 14 regions.
             </p>
           </div>
 
-          {/* Quick Legend */}
-          <div className="flex flex-wrap items-center gap-4 rounded-full border border-[var(--line)] bg-[var(--bg)] px-4 py-2 text-xs text-[var(--ink-muted)] shadow-sm">
-            <span className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-[var(--accent)] shadow-sm" />
-              <span className="font-medium text-[var(--ink)]">5 Confirmed Rounds</span>
-            </span>
-            <span className="h-3 w-px bg-[var(--line)]" />
-            <span className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full border border-[var(--line-strong)] bg-[var(--surface)]" />
-              <span>9 Open Chapters</span>
-            </span>
+          {/* Quick Legend & 3D Controls */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* 3D View Angle Switcher */}
+            <div className="flex items-center gap-1 rounded-full border border-[var(--line)] bg-[var(--bg)] p-1 text-xs shadow-sm">
+              <button
+                type="button"
+                onClick={() => setPreset('isometric')}
+                className={`flex items-center gap-1.5 rounded-full px-3 py-1 font-medium transition-all ${
+                  viewPreset === 'isometric'
+                    ? 'bg-[var(--accent)] text-white shadow-sm'
+                    : 'text-[var(--ink-muted)] hover:text-[var(--ink)]'
+                }`}
+              >
+                <Box className="h-3.5 w-3.5" />
+                <span>3D Isometric</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreset('angled')}
+                className={`flex items-center gap-1.5 rounded-full px-3 py-1 font-medium transition-all ${
+                  viewPreset === 'angled'
+                    ? 'bg-[var(--accent)] text-white shadow-sm'
+                    : 'text-[var(--ink-muted)] hover:text-[var(--ink)]'
+                }`}
+              >
+                <span>3D Deep Tilt</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreset('top')}
+                className={`flex items-center gap-1.5 rounded-full px-3 py-1 font-medium transition-all ${
+                  viewPreset === 'top'
+                    ? 'bg-[var(--accent)] text-white shadow-sm'
+                    : 'text-[var(--ink-muted)] hover:text-[var(--ink)]'
+                }`}
+              >
+                <span>Top Elevation</span>
+              </button>
+            </div>
+
+            {/* Quick Legend */}
+            <div className="flex items-center gap-3 rounded-full border border-[var(--line)] bg-[var(--bg)] px-3.5 py-1.5 text-xs text-[var(--ink-muted)] shadow-sm">
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-[var(--accent)] shadow-sm" />
+                <span className="font-medium text-[var(--ink)]">5 Confirmed Rounds</span>
+              </span>
+              <span className="h-3 w-px bg-[var(--line)]" />
+              <span className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full border border-[var(--line-strong)] bg-[var(--surface)]" />
+                <span>9 Open Chapters</span>
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Anchored 3D Map Canvas: Completely free of box containers, mounted directly to website */}
+        {/* Anchored 3D Map Canvas with High-Depth Perspective Container */}
         <div
-          className="relative w-full py-4"
-          style={{ perspective: '1400px' }}
+          className="relative w-full py-8 sm:py-12 select-none"
+          style={{ perspective: '1200px' }}
           onMouseEnter={() => setIsHoveredMap(true)}
           onMouseMove={handleMapMouseMove}
           onMouseLeave={handleMapMouseLeave}
         >
-          {/* Architectural Technical Anchor Crosshairs & Lat/Lng Coordinates */}
+          {/* Architectural Technical Coordinates */}
           <div className="pointer-events-none absolute -top-1 left-2 flex items-center gap-2 font-mono text-[11px] font-semibold text-[var(--ink-dim)] opacity-60">
             <span className="text-[var(--accent)] font-bold">+</span>
             <span>[ LAT 41°18&apos;N // LNG 69°16&apos;E ]</span>
           </div>
           <div className="pointer-events-none absolute -top-1 right-2 flex items-center gap-2 font-mono text-[11px] font-semibold text-[var(--ink-dim)] opacity-60">
-            <span>[ RADAR GRID // 14 SECTORS ]</span>
+            <span>[ 3D VOLUMETRIC TERRAIN RADAR ]</span>
             <span className="text-[var(--accent)] font-bold">+</span>
           </div>
           <div className="pointer-events-none absolute -bottom-1 left-2 flex items-center gap-2 font-mono text-[11px] font-semibold text-[var(--ink-dim)] opacity-60">
             <span className="text-[var(--accent)] font-bold">+</span>
-            <span>[ TERRAIN RELIEF ANCHOR ]</span>
+            <span>[ ELEVATION 24PX BEDROCK SLAB ]</span>
           </div>
           <div className="pointer-events-none absolute -bottom-1 right-2 flex items-center gap-2 font-mono text-[11px] font-semibold text-[var(--ink-dim)] opacity-60">
-            <span>[ SEASON 2026 OFFICIAL ]</span>
+            <span>[ INTERACTIVE HOLOGRAPHIC TILES ]</span>
             <span className="text-[var(--accent)] font-bold">+</span>
           </div>
 
-          {/* 3D Tilted Map Stage */}
+          {/* 3D Tilted Map Stage with Dynamic Pitch/Roll */}
           <div
             className="relative mx-auto w-full max-w-[1240px] transition-transform duration-300 ease-out"
             style={{
               transformStyle: 'preserve-3d',
-              transform: `rotateX(${tilt.rotX}deg) rotateY(${tilt.rotY}deg) rotateZ(0.5deg)`,
+              transform: `rotateX(${tilt.rotX}deg) rotateY(${tilt.rotY}deg) rotateZ(${tilt.rotZ}deg)`,
             }}
           >
-            {/* Ground Bedrock Ambient Shadow beneath the 3D Map */}
+            {/* Ground Bedrock Ambient Drop Shadow beneath the 3D Slab */}
             <div
-              className="pointer-events-none absolute inset-0 -bottom-10 rounded-[48px] opacity-70 blur-2xl transition-opacity duration-300"
+              className="pointer-events-none absolute inset-x-8 -bottom-14 h-48 rounded-[64px] opacity-75 blur-3xl transition-opacity duration-300"
               style={{
-                background: 'radial-gradient(ellipse at 50% 60%, rgba(31, 94, 234, 0.16) 0%, rgba(0, 0, 0, 0.12) 55%, transparent 75%)',
-                transform: 'translateZ(-40px) scale(0.95)',
+                background: 'radial-gradient(ellipse at 50% 50%, rgba(31, 94, 234, 0.22) 0%, rgba(15, 23, 42, 0.35) 45%, transparent 75%)',
+                transform: 'translateZ(-50px) scale(0.96)',
               }}
             />
 
-            {/* Massive SVG Vector Map */}
-            <div className="relative aspect-[1000/560] w-full">
+            {/* Massive Volumetric SVG Vector Map */}
+            <div className="relative aspect-[1000/580] w-full">
               <svg
-                viewBox="0 0 1000 652"
-                className="h-full w-full select-none"
+                viewBox="0 0 1000 660"
+                className="h-full w-full select-none overflow-visible"
                 xmlns="http://www.w3.org/2000/svg"
-                style={{
-                  filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.12)) drop-shadow(0 8px 12px rgba(31,94,234,0.14))',
-                }}
               >
                 <defs>
-                  {/* Subtle 3D Depth Layer */}
-                  <filter id="active-region-glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#1f5eea" floodOpacity="0.4" />
+                  {/* Subtle 3D Surface Lighting Gradient */}
+                  <linearGradient id="map-light-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                    <stop offset="60%" stopColor="#f8fafc" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#eef4f9" stopOpacity="1" />
+                  </linearGradient>
+
+                  {/* Dark Mode Surface Lighting Gradient */}
+                  <linearGradient id="map-dark-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#1e293b" stopOpacity="1" />
+                    <stop offset="60%" stopColor="#151f2e" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#0f172a" stopOpacity="1" />
+                  </linearGradient>
+
+                  {/* Active Selected Region 3D Gradient */}
+                  <linearGradient id="active-region-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="1" />
+                    <stop offset="100%" stopColor="#1d4ed8" stopOpacity="1" />
+                  </linearGradient>
+
+                  {/* 3D Bedrock Edge Shading Filter */}
+                  <filter id="bedrock-shadow" x="-10%" y="-10%" width="120%" height="130%">
+                    <feDropShadow dx="0" dy="16" stdDeviation="12" floodColor="#0f172a" floodOpacity="0.28" />
+                  </filter>
+
+                  {/* Floating Pin Glow */}
+                  <filter id="pin-glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#1f5eea" floodOpacity="0.6" />
                   </filter>
                 </defs>
 
+                {/* ========================================================= */}
+                {/* 1. PHYSICAL 3D EXTRUDED BEDROCK BASE (Volumetric Side Skirts) */}
+                {/* ========================================================= */}
+                <g id="extruded-bedrock" filter="url(#bedrock-shadow)">
+                  {EXTRUSION_STEPS.map((stepY, idx) => {
+                    // Darker gradient on the lowest layers creates photorealistic cliff depth
+                    const darknessRatio = idx / (EXTRUSION_STEPS.length - 1);
+                    return (
+                      <g key={`bedrock-step-${stepY}`} transform={`translate(0, ${stepY})`}>
+                        {uzMapPaths.map((p) => (
+                          <path
+                            key={`${p.pathId}-bedrock-${stepY}`}
+                            d={p.d}
+                            className="transition-colors duration-300 pointer-events-none"
+                            style={{
+                              fill: `color-mix(in srgb, var(--surface) ${Math.round(70 - darknessRatio * 35)}%, #64748b)`,
+                              stroke: `color-mix(in srgb, var(--line-strong) 60%, #334155)`,
+                              strokeWidth: 1,
+                              opacity: 0.9,
+                            }}
+                          />
+                        ))}
+                      </g>
+                    );
+                  })}
+                </g>
+
+                {/* ========================================================= */}
+                {/* 2. BASE TOP SURFACE WITH CRISP BORDERS (Elevation = 0)     */}
+                {/* ========================================================= */}
+                <g id="map-surface">
+                  {uzMapPaths.map((p) => {
+                    const reg = getMappedRegion(p.id);
+                    const isConfirmed = reg?.isConfirmed ?? false;
+                    const isSelected =
+                      (p.id === 'tashkent-city' && selectedRegionId === 'tashkent') ||
+                      (p.id === 'tashkent-reg' && selectedRegionId === 'tashkent-region') ||
+                      p.id === selectedRegionId;
+                    const isHovered = hoveredRegionId === p.id;
+
+                    // If selected, we render it elevated in step 3 so it pops up in 3D!
+                    if (isSelected) return null;
+
+                    return (
+                      <path
+                        key={p.pathId}
+                        id={p.pathId}
+                        d={p.d}
+                        onClick={() => {
+                          if (reg) setSelectedRegionId(reg.id);
+                        }}
+                        onMouseEnter={() => setHoveredRegionId(p.id)}
+                        onMouseLeave={() => setHoveredRegionId(null)}
+                        className="cursor-pointer transition-all duration-200"
+                        style={{
+                          fill: isHovered
+                            ? 'var(--accent-tint)'
+                            : isConfirmed
+                            ? 'rgba(31, 94, 234, 0.08)'
+                            : 'var(--surface)',
+                          stroke: isHovered
+                            ? 'var(--accent)'
+                            : isConfirmed
+                            ? 'rgba(31, 94, 234, 0.5)'
+                            : 'var(--line-strong)',
+                          strokeWidth: isHovered ? 2 : isConfirmed ? 1.5 : 1,
+                          opacity: 1,
+                        }}
+                      >
+                        <title>{p.name} {isConfirmed ? '— Confirmed Round' : '— Open Chapter'}</title>
+                      </path>
+                    );
+                  })}
+                </g>
+
+                {/* ========================================================= */}
+                {/* 3. ELEVATED SELECTED REGION (Physically rises 12px in 3D!) */}
+                {/* ========================================================= */}
                 {uzMapPaths.map((p) => {
                   const reg = getMappedRegion(p.id);
-                  const isConfirmed = reg?.isConfirmed ?? false;
                   const isSelected =
                     (p.id === 'tashkent-city' && selectedRegionId === 'tashkent') ||
                     (p.id === 'tashkent-reg' && selectedRegionId === 'tashkent-region') ||
                     p.id === selectedRegionId;
-                  const isHovered = hoveredRegionId === p.id;
+
+                  if (!isSelected) return null;
 
                   return (
-                    <path
-                      key={p.pathId}
-                      id={p.pathId}
-                      d={p.d}
-                      onClick={() => {
-                        if (reg) setSelectedRegionId(reg.id);
-                      }}
-                      onMouseEnter={() => setHoveredRegionId(p.id)}
-                      onMouseLeave={() => setHoveredRegionId(null)}
-                      className="cursor-pointer transition-all duration-200"
-                      style={{
-                        fill: isSelected
-                          ? 'var(--accent)'
-                          : isHovered
-                          ? 'var(--accent-hover)'
-                          : isConfirmed
-                          ? 'var(--accent-tint)'
-                          : 'var(--surface)',
-                        stroke: isSelected
-                          ? '#ffffff'
-                          : isConfirmed
-                          ? 'var(--accent)'
-                          : 'var(--line-strong)',
-                        strokeWidth: isSelected ? 2.5 : isHovered ? 2 : 1,
-                        opacity: isSelected ? 1 : 0.95,
-                        filter: isSelected ? 'url(#active-region-glow)' : 'none',
-                        transformOrigin: 'center center',
-                      }}
-                    >
-                      <title>{p.name} {isConfirmed ? '— Confirmed Round' : '— Open Chapter'}</title>
-                    </path>
+                    <g key={`elevated-${p.pathId}`} className="transition-transform duration-300">
+                      {/* 3.1 Drop shadow of the elevated 3D piece */}
+                      <path
+                        d={p.d}
+                        transform="translate(0, 10)"
+                        className="pointer-events-none"
+                        style={{
+                          fill: '#0f172a',
+                          opacity: 0.35,
+                          filter: 'blur(8px)',
+                        }}
+                      />
+
+                      {/* 3.2 Extruded blue side-skirt thickness for the rising piece */}
+                      {SELECTED_EXTRUSION_STEPS.map((offsetY) => (
+                        <path
+                          key={`selected-extrusion-${offsetY}`}
+                          d={p.d}
+                          transform={`translate(0, ${-offsetY})`}
+                          className="pointer-events-none"
+                          style={{
+                            fill: `color-mix(in srgb, #1e40af ${offsetY * 10}%, #1d4ed8)`,
+                            stroke: '#1e3a8a',
+                            strokeWidth: 1,
+                            opacity: 0.95,
+                          }}
+                        />
+                      ))}
+
+                      {/* 3.3 Top floating surface of the selected region */}
+                      <path
+                        id={`${p.pathId}-top`}
+                        d={p.d}
+                        transform="translate(0, -12)"
+                        onClick={() => {
+                          if (reg) setSelectedRegionId(reg.id);
+                        }}
+                        className="cursor-pointer transition-all duration-300"
+                        style={{
+                          fill: 'url(#active-region-grad)',
+                          stroke: '#ffffff',
+                          strokeWidth: 2.5,
+                          filter: 'drop-shadow(0 4px 12px rgba(31, 94, 234, 0.5))',
+                        }}
+                      >
+                        <title>{p.name} (Active Tournament Host)</title>
+                      </path>
+                    </g>
                   );
                 })}
+
+                {/* ========================================================= */}
+                {/* 4. 3D FLOATING HOLOGRAPHIC BEACONS (Sticking into 3D Space) */}
+                {/* ========================================================= */}
+                <g id="holographic-beacons" className="pointer-events-auto">
+                  {CITY_BEACONS.map((b) => {
+                    const isCurrent = selectedRegionId === b.regionId;
+                    const beaconElevationY = isCurrent ? b.y - 12 : b.y;
+
+                    return (
+                      <g
+                        key={b.id}
+                        transform={`translate(${b.x}, ${beaconElevationY})`}
+                        className="cursor-pointer transition-transform duration-300"
+                        onClick={() => setSelectedRegionId(b.regionId)}
+                      >
+                        {/* 4.1 Ground Ripple Wave */}
+                        <circle
+                          cx="0"
+                          cy="0"
+                          r="6"
+                          className="text-blue-500 fill-blue-500/20 stroke-blue-500"
+                          strokeWidth="1.5"
+                        />
+                        <circle
+                          cx="0"
+                          cy="0"
+                          r="12"
+                          className="animate-ping fill-none stroke-blue-400 opacity-60"
+                          strokeWidth="1"
+                        />
+
+                        {/* 4.2 Vertical Neon 3D Stem Line pointing up into the air */}
+                        <line
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="-26"
+                          stroke={isCurrent ? '#60a5fa' : '#3b82f6'}
+                          strokeWidth="2"
+                          strokeDasharray={isCurrent ? 'none' : '2 2'}
+                        />
+
+                        {/* 4.3 Floating 3D Badge Head at the top of the pin */}
+                        <g transform="translate(0, -28)" filter="url(#pin-glow)">
+                          {/* Diamond Head */}
+                          <polygon
+                            points="0,-6 6,0 0,6 -6,0"
+                            fill={isCurrent ? '#ffffff' : '#3b82f6'}
+                            stroke={isCurrent ? '#1d4ed8' : '#ffffff'}
+                            strokeWidth="1.5"
+                          />
+                          {/* Floating Pill Label */}
+                          <rect
+                            x="-34"
+                            y="-24"
+                            width="68"
+                            height="18"
+                            rx="9"
+                            fill={isCurrent ? '#1d4ed8' : 'var(--surface)'}
+                            stroke={isCurrent ? '#ffffff' : 'var(--line-strong)'}
+                            strokeWidth="1"
+                            className="shadow-sm"
+                          />
+                          <text
+                            x="0"
+                            y="-11.5"
+                            textAnchor="middle"
+                            fill={isCurrent ? '#ffffff' : 'var(--ink)'}
+                            fontSize="9"
+                            fontWeight="700"
+                            fontFamily="var(--font-mono, monospace)"
+                            letterSpacing="0.02em"
+                          >
+                            {b.name}
+                          </text>
+                        </g>
+                      </g>
+                    );
+                  })}
+                </g>
               </svg>
             </div>
           </div>
         </div>
 
-        {/* Selected Region Technical HUD: Horizontal dock that doesn't box the map */}
+        {/* Selected Region Technical HUD */}
         <div className="mt-8 rounded-3xl border border-[var(--line)] bg-[var(--bg)] p-6 shadow-sm">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
             {/* Left: Region identification */}
