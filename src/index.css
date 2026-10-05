@@ -215,38 +215,3 @@ body {
   transform: scale(1.06);
 }
 
-/* Soft Character Typing Animation (Volontyorlar style) */
-@keyframes soft-char-in {
-  0% {
-    opacity: 0;
-    transform: translateY(5px) scale(0.96);
-    filter: blur(3px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0px);
-  }
-}
-
-@keyframes soft-caret-pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scaleY(1);
-  }
-  50% {
-    opacity: 0.15;
-    transform: scaleY(0.92);
-  }
-}
-
-.animate-soft-char-in {
-  animation: soft-char-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity, filter;
-}
-
-.animate-soft-caret {
-  animation: soft-caret-pulse 0.95s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  will-change: opacity, transform;
-}
-
