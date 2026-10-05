@@ -20,17 +20,81 @@ const CITY_BEACONS: CityBeacon[] = [
   { id: 'b-andijan', name: 'Andijan', regionId: 'andijan', x: 905, y: 398, isConfirmed: true },
 ];
 
-// Vertical step offsets for true 3D extruded volume (depth down to 22px)
-const EXTRUSION_STEPS = [22, 18, 14, 10, 6, 2];
-const SELECTED_EXTRUSION_STEPS = [10, 8, 6, 4, 2];
+// Vertical step offsets for true 3D extruded volume (depth down to 18px)
+const EXTRUSION_STEPS = [16, 8, 2];
+const SELECTED_EXTRUSION_STEPS = [8, 4, 1];
 
 export const RegionsMap: React.FC = () => {
   const [selectedRegionId, setSelectedRegionId] = useState<string>('tashkent');
   const [hoveredRegionId, setHoveredRegionId] = useState<string | null>(null);
 
-  // Mouse tilt tracking locked to 3D Isometric base
-  const [tilt, setTilt] = useState({ rotX: 38, rotY: -4, rotZ: -3 });
-  const [isHoveredMap, setIsHoveredMap] = useState(false);
+  // High-performance Direct-DOM 3D Tilt Stage with RAF Inertia (Zero React re-renders on mousemove)
+  const mapStageRef = useRef<HTMLDivElement>(null);
+  const targetRotRef = useRef({ rotX: 38, rotY: -4, rotZ: -3 });
+  const currentRotRef = useRef({ rotX: 38, rotY: -4, rotZ: -3 });
+  const animFrameRef = useRef<number | null>(null);
+  const isAnimatingRef = useRef(false);
+  const isHoveredRef = useRef(false);
+  const cachedRectRef = useRef<DOMRect | null>(null);
+
+  const startTiltLoop = () => {
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
+
+    const loop = () => {
+      const cur = currentRotRef.current;
+      const target = targetRotRef.current;
+      const lerp = 0.12;
+
+      cur.rotX += (target.rotX - cur.rotX) * lerp;
+      cur.rotY += (target.rotY - cur.rotY) * lerp;
+      cur.rotZ += (target.rotZ - cur.rotZ) * lerp;
+
+      if (mapStageRef.current) {
+        mapStageRef.current.style.transform = `rotateX(${cur.rotX.toFixed(2)}deg) rotateY(${cur.rotY.toFixed(2)}deg) rotateZ(${cur.rotZ.toFixed(2)}deg)`;
+      }
+
+      const diff =
+        Math.abs(target.rotX - cur.rotX) +
+        Math.abs(target.rotY - cur.rotY) +
+        Math.abs(target.rotZ - cur.rotZ);
+
+      if (diff > 0.02 || isHoveredRef.current) {
+        animFrameRef.current = requestAnimationFrame(loop);
+      } else {
+        isAnimatingRef.current = false;
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(loop);
+  };
+
+  const handleMapMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    cachedRectRef.current = e.currentTarget.getBoundingClientRect();
+    isHoveredRef.current = true;
+    startTiltLoop();
+  };
+
+  const handleMapMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cachedRectRef.current || e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
+
+    targetRotRef.current = {
+      rotX: 38 - y * 12, // 32deg to 44deg
+      rotY: -4 + x * 10, // -9deg to 1deg
+      rotZ: -3 + x * 2,
+    };
+
+    startTiltLoop();
+  };
+
+  const handleMapMouseLeave = () => {
+    isHoveredRef.current = false;
+    targetRotRef.current = { rotX: 38, rotY: -4, rotZ: -3 };
+    startTiltLoop();
+    setHoveredRegionId(null);
+  };
 
   const selectedRegion =
     siteData.regions.find((r) => r.id === selectedRegionId) || siteData.regions[0];
@@ -39,23 +103,6 @@ export const RegionsMap: React.FC = () => {
     if (svgId === 'tashkent-city') return siteData.regions.find((r) => r.id === 'tashkent');
     if (svgId === 'tashkent-reg') return siteData.regions.find((r) => r.id === 'tashkent-region');
     return siteData.regions.find((r) => r.id === svgId);
-  };
-
-  const handleMapMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
-    const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
-    setTilt({
-      rotX: 38 - y * 12, // 32deg to 44deg
-      rotY: -4 + x * 10, // -9deg to 1deg
-      rotZ: -3 + x * 2,
-    });
-  };
-
-  const handleMapMouseLeave = () => {
-    setIsHoveredMap(false);
-    setTilt({ rotX: 38, rotY: -4, rotZ: -3 });
-    setHoveredRegionId(null);
   };
 
   return (
@@ -97,16 +144,18 @@ export const RegionsMap: React.FC = () => {
         <div
           className="relative w-full py-8 sm:py-12 select-none"
           style={{ perspective: '1200px' }}
-          onMouseEnter={() => setIsHoveredMap(true)}
+          onMouseEnter={handleMapMouseEnter}
           onMouseMove={handleMapMouseMove}
           onMouseLeave={handleMapMouseLeave}
         >
-          {/* 3D Tilted Map Stage with Dynamic Pitch/Roll */}
+          {/* 3D Tilted Map Stage with Dynamic Inertial Pitch/Roll via RAF */}
           <div
-            className="relative mx-auto w-full max-w-[1240px] transition-transform duration-300 ease-out"
+            ref={mapStageRef}
+            className="relative mx-auto w-full max-w-[1240px]"
             style={{
               transformStyle: 'preserve-3d',
-              transform: `rotateX(${tilt.rotX}deg) rotateY(${tilt.rotY}deg) rotateZ(${tilt.rotZ}deg)`,
+              willChange: 'transform',
+              transform: 'rotateX(38deg) rotateY(-4deg) rotateZ(-3deg)',
             }}
           >
             {/* Ground Bedrock Ambient Drop Shadow beneath the 3D Slab */}
@@ -146,11 +195,6 @@ export const RegionsMap: React.FC = () => {
                     <stop offset="100%" stopColor="#1d4ed8" stopOpacity="1" />
                   </linearGradient>
 
-                  {/* 3D Bedrock Edge Shading Filter */}
-                  <filter id="bedrock-shadow" x="-10%" y="-10%" width="120%" height="130%">
-                    <feDropShadow dx="0" dy="16" stdDeviation="12" floodColor="#0f172a" floodOpacity="0.28" />
-                  </filter>
-
                   {/* Floating Pin Glow */}
                   <filter id="pin-glow" x="-50%" y="-50%" width="200%" height="200%">
                     <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#1f5eea" floodOpacity="0.6" />
@@ -160,7 +204,7 @@ export const RegionsMap: React.FC = () => {
                 {/* ========================================================= */}
                 {/* 1. PHYSICAL 3D EXTRUDED BEDROCK BASE (Volumetric Side Skirts) */}
                 {/* ========================================================= */}
-                <g id="extruded-bedrock" filter="url(#bedrock-shadow)">
+                <g id="extruded-bedrock">
                   {EXTRUSION_STEPS.map((stepY, idx) => {
                     // Darker gradient on the lowest layers creates photorealistic cliff depth
                     const darknessRatio = idx / (EXTRUSION_STEPS.length - 1);

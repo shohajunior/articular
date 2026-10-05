@@ -61,12 +61,15 @@
 }
 
 html {
-  scroll-behavior: smooth;
   font-family: var(--font-sans);
   background-color: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html.lenis, html.lenis-smooth {
+  scroll-behavior: auto !important;
 }
 
 body {

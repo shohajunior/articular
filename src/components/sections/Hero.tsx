@@ -129,12 +129,14 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               {/* Card 1 (Base Anchor Left): Grand Final Tashkent */}
               <div
                 onClick={() => onPhotoClick(galleryItems[0])}
-                className="group absolute left-0 top-8 z-10 w-[68%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.03] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-3"
+                className="group absolute left-0 top-8 z-10 w-[68%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.03] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-3 will-change-transform"
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden">
                   <img
                     src={galleryItems[0].src}
                     alt={galleryItems[0].alt}
+                    loading="eager"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md shadow-sm">
@@ -150,12 +152,14 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               {/* Card 2 (Top-Right): Team Jupiter Presentation */}
               <div
                 onClick={() => onPhotoClick(galleryItems[1])}
-                className="group absolute right-0 top-0 z-20 w-[58%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-lg transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] rotate-3"
+                className="group absolute right-0 top-0 z-20 w-[58%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-lg transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] rotate-3 will-change-transform"
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <img
                     src={galleryItems[1].src}
                     alt={galleryItems[1].alt}
+                    loading="eager"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-2.5 py-0.5 text-[10px] font-semibold text-white backdrop-blur-md shadow-sm">
@@ -170,12 +174,14 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               {/* Card 3 (Center-Right): Uzcosmos Awards */}
               <div
                 onClick={() => onPhotoClick(galleryItems[2])}
-                className="group absolute right-2 top-40 z-25 w-[62%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-1"
+                className="group absolute right-2 top-40 z-25 w-[62%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-1 will-change-transform"
               >
                 <div className="relative aspect-[16/11] w-full overflow-hidden">
                   <img
                     src={galleryItems[2].src}
                     alt={galleryItems[2].alt}
+                    loading="eager"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md shadow-sm">
@@ -191,12 +197,14 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               {/* Card 4 (Center-Left): Aerospace Workshop */}
               <div
                 onClick={() => onPhotoClick(galleryItems[3])}
-                className="group absolute left-2 top-52 z-22 w-[52%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] rotate-4"
+                className="group absolute left-2 top-52 z-22 w-[52%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] rotate-4 will-change-transform"
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <img
                     src={galleryItems[3].src}
                     alt={galleryItems[3].alt}
+                    loading="eager"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-2.5 py-0.5 text-[10px] font-semibold text-white backdrop-blur-md shadow-sm">
@@ -212,12 +220,14 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               {/* Card 5 (Bottom-Right): Mentoring & Jury */}
               <div
                 onClick={() => onPhotoClick(galleryItems[4])}
-                className="group absolute right-4 bottom-2 z-30 w-[54%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-2xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-2"
+                className="group absolute right-4 bottom-2 z-30 w-[54%] cursor-pointer overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] shadow-2xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-[1.04] hover:shadow-2xl hover:border-[var(--line-strong)] -rotate-2 will-change-transform"
               >
                 <div className="relative aspect-[16/11] w-full overflow-hidden">
                   <img
                     src={galleryItems[4].src}
                     alt={galleryItems[4].alt}
+                    loading="eager"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/65 px-2.5 py-0.5 text-[10px] font-semibold text-white backdrop-blur-md shadow-sm">
@@ -233,12 +243,14 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               {/* Card 6 (Bottom-Left): Pitching Defense */}
               <div
                 onClick={() => onPhotoClick(galleryItems[5])}
-                className="group absolute -left-2 bottom-3 z-28 w-[45%] cursor-pointer overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-105 hover:shadow-2xl hover:border-[var(--line-strong)] rotate-2"
+                className="group absolute -left-2 bottom-3 z-28 w-[45%] cursor-pointer overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-xl transition-all duration-300 ease-out hover:z-40 hover:-translate-y-2 hover:rotate-0 hover:scale-105 hover:shadow-2xl hover:border-[var(--line-strong)] rotate-2 will-change-transform"
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <img
                     src={galleryItems[5].src}
                     alt={galleryItems[5].alt}
+                    loading="eager"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute bottom-1.5 left-1.5 rounded-full border border-white/20 bg-black/65 px-2 py-0.5 text-[9px] font-medium text-white backdrop-blur-sm shadow-sm">
