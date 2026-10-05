@@ -125,19 +125,6 @@ export const RegionsMap: React.FC = () => {
               Interactive 3D volumetric map. Explore verified aerospace event venues and active tournament chapters across all 14 regions.
             </p>
           </div>
-
-          {/* Quick Legend */}
-          <div className="flex items-center gap-3 rounded-full border border-[var(--line)] bg-[var(--bg)] px-4 py-2 text-xs text-[var(--ink-muted)] shadow-sm">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[var(--accent)] shadow-sm" />
-              <span className="font-medium text-[var(--ink)]">5 Confirmed Rounds</span>
-            </span>
-            <span className="h-3 w-px bg-[var(--line)]" />
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full border border-[var(--line-strong)] bg-[var(--surface)]" />
-              <span>9 Open Chapters</span>
-            </span>
-          </div>
         </div>
 
         {/* Anchored 3D Map Canvas with High-Depth Perspective Container */}

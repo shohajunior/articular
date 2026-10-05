@@ -3,6 +3,7 @@ import { siteData } from '../../data/site';
 import { ArrowRight, Maximize2 } from 'lucide-react';
 import { LightboxItem } from '../ui/LightboxModal';
 import { CountUp } from '../ui/CountUp';
+import { SoftTypingText } from '../ui/SoftTypingText';
 
 interface HeroProps {
   onPhotoClick: (item: LightboxItem) => void;
@@ -71,11 +72,37 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               isRevealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
             }`}
           >
-            {/* Headline with Original Slogan */}
-            <h1 className="mb-4 text-4xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
+            {/* Volontyorlar-Style Tournament Season Chip */}
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface-elevated)]/90 px-3.5 py-1 text-xs font-semibold text-[var(--ink)] shadow-xs backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-75"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--accent)]"></span>
+              </span>
+              <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--ink-muted)]">
+                Season 2026 //
+              </span>
+              <span className="font-medium text-[var(--ink)]">
+                Aerospace Science Tournament
+              </span>
+            </div>
+
+            {/* Headline with Soft Typing Animation */}
+            <h1 className="mb-4 text-4xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl min-h-[2.4em] sm:min-h-[2em]">
               Where young minds{' '}
+              <br className="hidden sm:inline" />
               <span className="font-serif-italic text-[var(--accent)]">
-                articulate the future.
+                <SoftTypingText
+                  phrases={[
+                    'articulate the future.',
+                    'engineer orbital systems.',
+                    'defend before Uzcosmos.',
+                    'launch real satellites.',
+                    'master aerospace theses.'
+                  ]}
+                  typingSpeed={65}
+                  deletingSpeed={32}
+                  pauseDuration={2400}
+                />
               </span>
             </h1>
 
