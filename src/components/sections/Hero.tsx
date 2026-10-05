@@ -1,9 +1,8 @@
-﻿import React from 'react';
+import React from 'react';
 import { siteData } from '../../data/site';
 import { ArrowRight, Maximize2 } from 'lucide-react';
 import { LightboxItem } from '../ui/LightboxModal';
 import { CountUp } from '../ui/CountUp';
-import { CursorGrid } from '../ui/CursorGrid';
 
 interface HeroProps {
   onPhotoClick: (item: LightboxItem) => void;
@@ -63,28 +62,6 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
 
   return (
     <section className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">
-      {/* Ambient Interactive CursorGrid Background with Right-to-Left Laser Scanline */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <CursorGrid
-          cellSize={65}
-          color="#1f5eea"
-          radius={160}
-          falloff="smooth"
-          holdTime={400}
-          fadeDuration={850}
-          lineWidth={1.2}
-          maxOpacity={0.45}
-          fillOpacity={0.08}
-          gridOpacity={0.05}
-          cellRadius={3}
-          clickPulse={true}
-          pulseSpeed={550}
-          sweepLine={true}
-          sweepInterval={6500}
-          sweepDuration={2600}
-          className="h-full w-full"
-        />
-      </div>
 
       <div className="relative z-10 mx-auto max-w-[1140px] px-6">
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_1fr]">
