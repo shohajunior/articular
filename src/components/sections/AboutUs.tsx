@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CheckCircle2, Compass, ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
 interface StoryBlock {
   step: string;
   tag: string;
-  title: string;
-  subtitle: string;
+  word: string;
   desc: string;
   metric: string;
   metricLabel: string;
@@ -15,33 +13,30 @@ interface StoryBlock {
 const STORY_BLOCKS: StoryBlock[] = [
   {
     step: '01',
-    tag: 'RESEARCH & CREATIVITY',
-    title: 'Calculate the Uncharted',
-    subtitle: 'Autonomous Scientific Theses',
-    desc: 'High school teams formulate original aerospace engineering theses across orbital mechanics, CubeSat telemetry, and deep-space trajectory calculations. No textbook templates.',
+    tag: 'THE HYPOTHESIS',
+    word: 'CALCULATE.',
+    desc: 'Autonomous orbital calculations. No textbook templates.',
     metric: '48+',
-    metricLabel: 'Orbital Theses Formulated',
-    activeThreshold: 0.15,
+    metricLabel: 'Orbital Theses',
+    activeThreshold: 0.16,
   },
   {
     step: '02',
-    tag: 'ENGLISH STAGE DEFENSE',
-    title: 'Defend on the Global Stage',
-    subtitle: '100% English Public Defense',
-    desc: 'Students present calculations and defend engineering choices strictly in fluent English before academic juries and Uzcosmos Agency engineers. Real cross-examination and academic debate.',
+    tag: 'THE DEFENSE',
+    word: 'DEFEND.',
+    desc: '100% English defense before Uzcosmos space agency engineers.',
     metric: '100%',
     metricLabel: 'English Defense Format',
-    activeThreshold: 0.5,
+    activeThreshold: 0.50,
   },
   {
     step: '03',
-    tag: 'STATE SPACE HONORS',
-    title: 'Launch Your Trajectory',
-    subtitle: 'Co-Signed Uzcosmos Credentials',
-    desc: 'Finalists receive official awards and certificates co-signed by Uzcosmos Agency leadership, unlocking international research pathways, internships, and university admissions.',
-    metric: 'Top 1%',
-    metricLabel: 'State Agency Endorsed',
-    activeThreshold: 0.82,
+    tag: 'THE APOGEE',
+    word: 'LAUNCH.',
+    desc: 'Uzcosmos co-signed credentials. Direct global academic trajectory.',
+    metric: 'TOP 1%',
+    metricLabel: 'State Space Honors',
+    activeThreshold: 0.80,
   },
 ];
 
@@ -50,67 +45,102 @@ export const AboutUs: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
 
-  const wp1Ref = useRef<HTMLDivElement>(null);
-  const wp2Ref = useRef<HTMLDivElement>(null);
-  const wp3Ref = useRef<HTMLDivElement>(null);
+  const b1Ref = useRef<HTMLDivElement>(null);
+  const b2Ref = useRef<HTMLDivElement>(null);
+  const b3Ref = useRef<HTMLDivElement>(null);
 
   const [pathData, setPathData] = useState('');
   const [totalPathLength, setTotalPathLength] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [rocketPos, setRocketPos] = useState({ x: 0, y: 0, angle: 45 });
+  const [waypoints, setWaypoints] = useState<{ x: number; y: number }[]>([]);
 
-  // 1. Recalculate zigzag flight path connecting the 3 waypoints
+  // 1. Recalculate zigzag flight path connecting the 3 centered blocks
   const updateTrajectory = () => {
-    if (!containerRef.current || !wp1Ref.current || !wp2Ref.current || !wp3Ref.current) return;
+    if (!containerRef.current || !b1Ref.current || !b2Ref.current || !b3Ref.current) return;
 
     const cRect = containerRef.current.getBoundingClientRect();
-    const r1 = wp1Ref.current.getBoundingClientRect();
-    const r2 = wp2Ref.current.getBoundingClientRect();
-    const r3 = wp3Ref.current.getBoundingClientRect();
+    const r1 = b1Ref.current.getBoundingClientRect();
+    const r2 = b2Ref.current.getBoundingClientRect();
+    const r3 = b3Ref.current.getBoundingClientRect();
 
-    // Center coordinates of the 3 waypoints relative to container
+    // Exact center coordinates of the 3 centered text blocks relative to container
     const p1 = {
       x: r1.left - cRect.left + r1.width / 2,
-      y: r1.top - cRect.top + r1.height / 2,
+      y: r1.top - cRect.top + r1.height * 0.42,
     };
     const p2 = {
       x: r2.left - cRect.left + r2.width / 2,
-      y: r2.top - cRect.top + r2.height / 2,
+      y: r2.top - cRect.top + r2.height * 0.42,
     };
     const p3 = {
       x: r3.left - cRect.left + r3.width / 2,
-      y: r3.top - cRect.top + r3.height / 2,
+      y: r3.top - cRect.top + r3.height * 0.42,
     };
 
-    // Construct smooth flowing zigzag trajectory
-    const startX = Math.max(20, p1.x - 70);
-    const startY = Math.max(10, p1.y - 80);
+    setWaypoints([p1, p2, p3]);
 
-    const dx1 = p2.x - p1.x;
-    const dy1 = p2.y - p1.y;
-    const cp1x = p1.x + dx1 * 0.45;
-    const cp1y = p1.y + dy1 * 0.12;
-    const cp2x = p1.x + dx1 * 0.55;
-    const cp2y = p2.y - dy1 * 0.12;
+    const width = cRect.width;
+    // Amplitude of the zigzag wing swoops (adapts smoothly to mobile and desktop)
+    const amp = Math.max(90, Math.min(width * 0.38, 380));
 
-    const dx2 = p3.x - p2.x;
-    const dy2 = p3.y - p2.y;
-    const cp3x = p2.x + dx2 * 0.45;
-    const cp3y = p2.y + dy2 * 0.12;
-    const cp4x = p2.x + dx2 * 0.55;
-    const cp4y = p3.y - dy2 * 0.12;
+    // Entry point: swoops in from upper left
+    const startX = Math.max(20, p1.x - amp * 0.85);
+    const startY = Math.max(10, p1.y - 160);
 
-    const endX = p3.x - 20;
-    const endY = p3.y + 110;
+    // Right wing apex (between Block 1 and Block 2)
+    const midY1 = (p1.y + p2.y) / 2;
+    const rightApexX = p1.x + amp;
+    const rightApexY = midY1;
 
-    const d = `M ${startX} ${startY} Q ${p1.x - 20} ${p1.y} ${p1.x} ${p1.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y} C ${cp3x} ${cp3y}, ${cp4x} ${cp4y}, ${p3.x} ${p3.y} Q ${p3.x + 20} ${p3.y + 70} ${endX} ${endY}`;
+    // Left wing apex (between Block 2 and Block 3)
+    const midY2 = (p2.y + p3.y) / 2;
+    const leftApexX = p2.x - amp;
+    const leftApexY = midY2;
+
+    // Exit point (accelerates downwards out of Block 3)
+    const endX = p3.x + amp * 0.45;
+    const endY = p3.y + 200;
+
+    // Control points for smooth continuous S-curve zigzag
+    const cp0x1 = startX + amp * 0.3;
+    const cp0y1 = startY + 50;
+    const cp0x2 = p1.x - amp * 0.25;
+    const cp0y2 = p1.y - 50;
+
+    const cp1x1 = p1.x + amp * 0.6;
+    const cp1y1 = p1.y + 70;
+    const cp1x2 = rightApexX;
+    const cp1y2 = rightApexY - 90;
+
+    const cp2x1 = rightApexX;
+    const cp2y1 = rightApexY + 90;
+    const cp2x2 = p2.x + amp * 0.55;
+    const cp2y2 = p2.y - 70;
+
+    const cp3x1 = p2.x - amp * 0.6;
+    const cp3y1 = p2.y + 70;
+    const cp3x2 = leftApexX;
+    const cp3y2 = leftApexY - 90;
+
+    const cp4x1 = leftApexX;
+    const cp4y1 = leftApexY + 90;
+    const cp4x2 = p3.x - amp * 0.55;
+    const cp4y2 = p3.y - 70;
+
+    const cp5x1 = p3.x + amp * 0.2;
+    const cp5y1 = p3.y + 80;
+    const cp5x2 = endX;
+    const cp5y2 = endY - 60;
+
+    const d = `M ${startX} ${startY} C ${cp0x1} ${cp0y1}, ${cp0x2} ${cp0y2}, ${p1.x} ${p1.y} C ${cp1x1} ${cp1y1}, ${cp1x2} ${cp1y2}, ${rightApexX} ${rightApexY} C ${cp2x1} ${cp2y1}, ${cp2x2} ${cp2y2}, ${p2.x} ${p2.y} C ${cp3x1} ${cp3y1}, ${cp3x2} ${cp3y2}, ${leftApexX} ${leftApexY} C ${cp4x1} ${cp4y1}, ${cp4x2} ${cp4y2}, ${p3.x} ${p3.y} C ${cp5x1} ${cp5y1}, ${cp5x2} ${cp5y2}, ${endX} ${endY}`;
 
     setPathData(d);
   };
 
   useEffect(() => {
     updateTrajectory();
-    const timer = setTimeout(updateTrajectory, 100);
+    const timer = setTimeout(updateTrajectory, 120);
     const handleResize = () => updateTrajectory();
     window.addEventListener('resize', handleResize);
 
@@ -127,7 +157,7 @@ export const AboutUs: React.FC = () => {
     };
   }, []);
 
-  // Update total length whenever pathData changes
+  // Update total path length whenever pathData changes
   useEffect(() => {
     if (pathRef.current) {
       const len = pathRef.current.getTotalLength();
@@ -142,7 +172,7 @@ export const AboutUs: React.FC = () => {
       const rect = containerRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
-      // Start animation smoothly as container approaches center of viewport
+      // Start flight when top of arena approaches center, finish when bottom approaches center
       const startTrigger = windowHeight * 0.75;
       const endTrigger = windowHeight * 0.25;
       const totalScrollable = rect.height + startTrigger - endTrigger;
@@ -175,13 +205,13 @@ export const AboutUs: React.FC = () => {
     const currentLen = scrollProgress * totalPathLength;
     const pt = path.getPointAtLength(currentLen);
 
-    // Tangent angle in degrees with boundary guard to prevent flipping at the very end
+    // Tangent angle in degrees with guard to avoid flipping at ends
     let angleDeg = 45;
-    if (currentLen < totalPathLength - 2) {
-      const nextPt = path.getPointAtLength(currentLen + 2);
+    if (currentLen < totalPathLength - 3) {
+      const nextPt = path.getPointAtLength(currentLen + 3);
       angleDeg = Math.atan2(nextPt.y - pt.y, nextPt.x - pt.x) * (180 / Math.PI);
     } else {
-      const prevPt = path.getPointAtLength(Math.max(0, currentLen - 2));
+      const prevPt = path.getPointAtLength(Math.max(0, currentLen - 3));
       angleDeg = Math.atan2(pt.y - prevPt.y, pt.x - prevPt.x) * (180 / Math.PI);
     }
 
@@ -196,50 +226,85 @@ export const AboutUs: React.FC = () => {
     <section
       id="about"
       ref={sectionRef}
-      className="relative overflow-hidden border-t border-[var(--line)] bg-[var(--surface)] py-24 sm:py-32 transition-colors duration-300"
+      className="relative bg-[#06080d] text-white border-t border-[var(--line)] overflow-visible transition-colors duration-300"
     >
-      <div className="relative mx-auto max-w-[1240px] px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 sm:mb-20">
-          <div className="max-w-2xl">
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse" />
-              <span className="font-mono text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
-                MISSION TRAJECTORY // ABOUT ARTICULAR
-              </span>
-            </div>
+      {/* ======================================================== */}
+      {/* 1. STATIONARY FIXED BACKGROUND (Stands still while scrolling) */}
+      {/* ======================================================== */}
+      <div className="sticky top-0 h-screen w-full pointer-events-none overflow-hidden z-0">
+        {/* Deep Space Radial Vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(14,30,58,0.45)_0%,_#06080d_78%)]" />
 
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
-              Where young minds{' '}
-              <span className="font-serif-italic font-normal text-[var(--accent)]">
-                articulate the future.
-              </span>
-            </h2>
+        {/* Stationary Tactical Coordinate Grid (Visual proof that background is fixed) */}
+        <div
+          className="absolute inset-0 opacity-[0.14]"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(56, 189, 248, 0.35) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(56, 189, 248, 0.35) 1px, transparent 1px)
+            `,
+            backgroundSize: '80px 80px',
+          }}
+        />
 
-            <p className="mt-4 text-base text-[var(--ink-muted)] sm:text-lg max-w-2xl leading-relaxed">
-              Scroll down to navigate the tournament trajectory. From autonomous hypotheses to state space credentials with Uzcosmos Agency.
-            </p>
+        {/* Stationary Concentric Orbital Radar Rings */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] rounded-full border border-sky-500/15 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[820px] rounded-full border border-sky-500/10 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1240px] h-[1240px] rounded-full border border-sky-500/5 pointer-events-none" />
+
+        {/* Crosshair Center Lines */}
+        <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-sky-500/10" />
+        <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-sky-500/10" />
+
+        {/* Static Aerospace HUD Telemetry (Pinned Corners) */}
+        <div className="absolute top-6 left-6 font-mono text-[10px] text-sky-400/40 uppercase tracking-widest flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
+          SYS // FIXED REFERENCE FRAME
+        </div>
+        <div className="absolute top-6 right-6 font-mono text-[10px] text-sky-400/40 uppercase tracking-widest">
+          41.2995° N, 69.2401° E // UZCOSMOS
+        </div>
+        <div className="absolute bottom-6 left-6 font-mono text-[10px] text-sky-400/30 uppercase tracking-widest">
+          ORBITAL MATRIX: STATIONARY
+        </div>
+        <div className="absolute bottom-6 right-6 font-mono text-[10px] text-sky-400/30 uppercase tracking-widest">
+          ALT: 450 KM STABLE
+        </div>
+      </div>
+
+      {/* ======================================================== */}
+      {/* 2. SCROLLING MOVING CONTENT (Moves over stationary background) */}
+      {/* ======================================================== */}
+      <div className="relative z-10 -mt-[100vh]">
+        {/* Section Intro Header */}
+        <div className="mx-auto max-w-4xl px-6 pt-24 pb-14 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/10 px-4 py-1.5 backdrop-blur-md mb-6">
+            <span className="h-2 w-2 rounded-full bg-sky-400 animate-pulse" />
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-sky-400">
+              MISSION TRAJECTORY // ABOUT ARTICULAR
+            </span>
           </div>
 
-          {/* Real-time Trajectory Telemetry HUD */}
-          <div className="shrink-0 flex items-center gap-3 self-start md:self-end rounded-2xl border border-[var(--line)] bg-[var(--bg)] px-4 py-2.5 shadow-sm font-mono text-xs">
-            <span className="text-lg">🚀</span>
-            <div>
-              <div className="text-[10px] text-[var(--ink-dim)] uppercase tracking-wider font-semibold">
-                Trajectory Flight Progress
-              </div>
-              <div className="flex items-center gap-2 font-bold text-[var(--ink)]">
-                <span>{Math.round(scrollProgress * 100)}%</span>
-                <span className="h-1.5 w-16 rounded-full bg-[var(--line)] overflow-hidden inline-block">
-                  <span
-                    className="h-full bg-[var(--accent)] block transition-all duration-150"
-                    style={{ width: `${Math.round(scrollProgress * 100)}%` }}
-                  />
-                </span>
-                <span className="text-[var(--accent)] text-[10px]">
-                  {scrollProgress < 0.3 ? 'STAGE 01' : scrollProgress < 0.7 ? 'STAGE 02' : 'STAGE 03'}
-                </span>
-              </div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+            Where young minds{' '}
+            <span className="font-serif-italic font-normal text-sky-400">
+              articulate the future.
+            </span>
+          </h2>
+          <p className="mt-4 text-sm sm:text-base text-slate-400 max-w-lg mx-auto leading-relaxed">
+            Scroll down to pilot the rocket along the zigzag tournament trajectory.
+          </p>
+
+          {/* Real-time Telemetry HUD indicator */}
+          <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-white/10 bg-black/40 px-5 py-2 backdrop-blur-md font-mono text-xs">
+            <span className="text-base">🚀</span>
+            <span className="text-slate-400 uppercase tracking-wider text-[11px]">FLIGHT PROGRESS:</span>
+            <span className="font-bold text-sky-400">{Math.round(scrollProgress * 100)}%</span>
+            <div className="h-1.5 w-16 rounded-full bg-white/10 overflow-hidden">
+              <div
+                className="h-full bg-sky-400 transition-all duration-100"
+                style={{ width: `${Math.round(scrollProgress * 100)}%` }}
+              />
             </div>
           </div>
         </div>
@@ -249,7 +314,7 @@ export const AboutUs: React.FC = () => {
         {/* ======================================================== */}
         <div
           ref={containerRef}
-          className="relative w-full min-h-[1420px] sm:min-h-[1360px] select-none"
+          className="relative w-full max-w-[1240px] mx-auto min-h-[1900px] sm:min-h-[2200px] select-none flex flex-col justify-around py-16"
         >
           {/* SVG Canvas with Zigzag Trajectory Lines */}
           <svg
@@ -260,11 +325,11 @@ export const AboutUs: React.FC = () => {
               {/* Glowing Rocket Trail Gradient */}
               <linearGradient id="rocketTrailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#1f5eea" stopOpacity="0.1" />
-                <stop offset="70%" stopColor="#0284c7" stopOpacity="0.8" />
+                <stop offset="60%" stopColor="#0284c7" stopOpacity="0.8" />
                 <stop offset="100%" stopColor="#38bdf8" stopOpacity="1" />
               </linearGradient>
 
-              {/* Glowing Waypoint Glow */}
+              {/* Waypoint Glow Filter */}
               <filter id="beaconGlow" x="-50%" y="-50%" width="200%" height="200%">
                 <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#38bdf8" floodOpacity="0.8" />
               </filter>
@@ -275,10 +340,9 @@ export const AboutUs: React.FC = () => {
               <path
                 d={pathData}
                 fill="none"
-                stroke="var(--line-strong)"
+                stroke="rgba(56, 189, 248, 0.25)"
                 strokeWidth="2.5"
                 strokeDasharray="8 8"
-                className="opacity-50 dark:opacity-40"
               />
             )}
 
@@ -289,16 +353,48 @@ export const AboutUs: React.FC = () => {
                 d={pathData}
                 fill="none"
                 stroke="url(#rocketTrailGrad)"
-                strokeWidth="3.5"
+                strokeWidth="4"
                 strokeDasharray={totalPathLength}
                 strokeDashoffset={totalPathLength * (1 - scrollProgress)}
                 strokeLinecap="round"
                 style={{
                   transition: 'stroke-dashoffset 0.05s linear',
-                  filter: 'drop-shadow(0 0 6px rgba(56, 189, 248, 0.5))',
+                  filter: 'drop-shadow(0 0 8px rgba(56, 189, 248, 0.7))',
                 }}
               />
             )}
+
+            {/* Waypoint docking beacons in the center */}
+            {waypoints.map((pt, idx) => {
+              const isActive = scrollProgress >= STORY_BLOCKS[idx].activeThreshold;
+              return (
+                <g key={idx} transform={`translate(${pt.x}, ${pt.y})`}>
+                  <circle
+                    r={isActive ? "20" : "10"}
+                    fill="none"
+                    stroke="#38bdf8"
+                    strokeWidth={isActive ? "2" : "1.5"}
+                    opacity={isActive ? "0.9" : "0.3"}
+                    className="transition-all duration-500"
+                  />
+                  {isActive && (
+                    <circle
+                      r="30"
+                      fill="none"
+                      stroke="#38bdf8"
+                      strokeWidth="1"
+                      opacity="0.3"
+                      className="animate-ping"
+                    />
+                  )}
+                  <circle
+                    r="4.5"
+                    fill={isActive ? "#38bdf8" : "rgba(56, 189, 248, 0.4)"}
+                    className="transition-all duration-300"
+                  />
+                </g>
+              );
+            })}
           </svg>
 
           {/* ======================================================== */}
@@ -306,12 +402,13 @@ export const AboutUs: React.FC = () => {
           {/* ======================================================== */}
           {pathData && (
             <div
-              className="absolute pointer-events-none z-30 transition-transform ease-out will-change-transform"
+              className="absolute pointer-events-none z-30 will-change-transform"
               style={{
                 left: `${rocketPos.x}px`,
                 top: `${rocketPos.y}px`,
-                // Rocket emoji naturally points at 45deg top-right, so rotate(angle + 45deg) aligns nose with flight path
+                // Rocket emoji points up-right at 45deg, so rotate(angle + 45deg) aligns nose with flight path
                 transform: `translate(-50%, -50%) rotate(${rocketPos.angle + 45}deg)`,
+                transition: 'transform 0.04s linear',
               }}
             >
               <div className="relative flex items-center justify-center">
@@ -321,11 +418,11 @@ export const AboutUs: React.FC = () => {
                   style={{ transform: 'rotate(-45deg)' }}
                 />
                 <div
-                  className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-blue-600 blur-[6px] opacity-75"
+                  className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-blue-600 blur-[6px] opacity-80"
                 />
 
                 {/* Rocket Emoji */}
-                <span className="text-3xl sm:text-4xl filter drop-shadow-[0_0_12px_rgba(56,189,248,0.85)] select-none">
+                <span className="text-4xl sm:text-5xl filter drop-shadow-[0_0_16px_rgba(56,189,248,0.95)] select-none">
                   🚀
                 </span>
               </div>
@@ -333,201 +430,132 @@ export const AboutUs: React.FC = () => {
           )}
 
           {/* ======================================================== */}
-          {/* 3 ZIGZAG TEXT STAGES (Top Left, Mid Right, Bottom Left)  */}
+          {/* 3 CENTERED SHORT POWERFUL STAGES                         */}
           {/* ======================================================== */}
 
-          {/* Stage 01: Top Left */}
-          <div className="absolute top-4 sm:top-6 left-0 w-full sm:max-w-[480px] lg:max-w-[500px]">
-            <div
-              className={`rounded-3xl border p-7 sm:p-9 transition-all duration-500 relative backdrop-blur-sm ${
+          {/* Block 01: Centered */}
+          <div
+            ref={b1Ref}
+            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-20 sm:py-28"
+          >
+            {/* Stage Pill */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
+              <span className={`h-1.5 w-1.5 rounded-full ${
+                scrollProgress >= STORY_BLOCKS[0].activeThreshold ? 'bg-sky-400 animate-pulse' : 'bg-slate-500'
+              }`} />
+              <span className="font-mono text-xs font-bold text-sky-400 tracking-wider">
+                {STORY_BLOCKS[0].step} // {STORY_BLOCKS[0].tag}
+              </span>
+            </div>
+
+            {/* Monumental Punchy Word */}
+            <h3
+              className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-700 ${
                 scrollProgress >= STORY_BLOCKS[0].activeThreshold
-                  ? 'border-[var(--accent)] bg-[var(--surface)] shadow-[0_0_35px_rgba(56,189,248,0.12)] scale-[1.02]'
-                  : 'border-[var(--line)] bg-[var(--bg)] shadow-sm'
+                  ? 'text-white scale-105 drop-shadow-[0_0_45px_rgba(56,189,248,0.65)]'
+                  : 'text-slate-500 opacity-40 scale-100'
               }`}
             >
-              {/* Waypoint Docking Anchor (Connects directly to the zigzag trajectory) */}
-              <div
-                ref={wp1Ref}
-                className="absolute -right-3 top-1/2 -translate-y-1/2 flex items-center justify-center z-20"
-              >
-                <div
-                  className={`h-7 w-7 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${
-                    scrollProgress >= STORY_BLOCKS[0].activeThreshold
-                      ? 'border-[var(--accent)] bg-white dark:bg-[#090b10] shadow-[0_0_14px_#38bdf8] scale-110'
-                      : 'border-[var(--line-strong)] bg-[var(--surface)]'
-                  }`}
-                >
-                  <span
-                    className={`h-2.5 w-2.5 rounded-full ${
-                      scrollProgress >= STORY_BLOCKS[0].activeThreshold
-                        ? 'bg-[var(--accent)] animate-ping'
-                        : 'bg-[var(--line-strong)]'
-                    }`}
-                  />
-                </div>
-              </div>
+              {STORY_BLOCKS[0].word}
+            </h3>
 
-              {/* Tag & Step */}
-              <div className="flex items-center justify-between mb-4 border-b border-[var(--line)] pb-3">
-                <span className="font-mono text-xs font-bold text-[var(--accent)] flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                  {STORY_BLOCKS[0].tag}
-                </span>
-                <span className="font-mono text-xs font-bold text-[var(--ink-dim)]">
-                  {STORY_BLOCKS[0].step} // 03
-                </span>
-              </div>
+            {/* Short Punchy Statement */}
+            <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
+              {STORY_BLOCKS[0].desc}
+            </p>
 
-              <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--ink)]">
-                {STORY_BLOCKS[0].title}
-              </h3>
-              <p className="mt-1 font-serif-italic text-sm text-[var(--accent)]">
-                {STORY_BLOCKS[0].subtitle}
-              </p>
-
-              <p className="mt-4 text-xs sm:text-sm text-[var(--ink-muted)] leading-relaxed">
-                {STORY_BLOCKS[0].desc}
-              </p>
-
-              {/* Metric Badge */}
-              <div className="mt-6 flex items-center justify-between rounded-2xl bg-[var(--surface-elevated)] px-4 py-3 border border-[var(--line)]">
-                <div className="font-mono text-xl font-extrabold text-[var(--ink)]">
-                  {STORY_BLOCKS[0].metric}
-                </div>
-                <div className="text-[11px] font-medium text-[var(--ink-muted)]">
-                  {STORY_BLOCKS[0].metricLabel}
-                </div>
-              </div>
+            {/* Metric Badge */}
+            <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-sky-500/20 bg-slate-900/80 px-5 py-2 backdrop-blur-sm shadow-sm">
+              <span className="font-mono text-lg sm:text-xl font-black text-sky-400">
+                {STORY_BLOCKS[0].metric}
+              </span>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
+                {STORY_BLOCKS[0].metricLabel}
+              </span>
             </div>
           </div>
 
-          {/* Stage 02: Middle Right (Zigzag Swoop to the Right) */}
-          <div className="absolute top-[460px] sm:top-[440px] right-0 w-full sm:max-w-[480px] lg:max-w-[500px]">
-            <div
-              className={`rounded-3xl border p-7 sm:p-9 transition-all duration-500 relative backdrop-blur-sm ${
+          {/* Block 02: Centered */}
+          <div
+            ref={b2Ref}
+            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-20 sm:py-28"
+          >
+            {/* Stage Pill */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
+              <span className={`h-1.5 w-1.5 rounded-full ${
+                scrollProgress >= STORY_BLOCKS[1].activeThreshold ? 'bg-sky-400 animate-pulse' : 'bg-slate-500'
+              }`} />
+              <span className="font-mono text-xs font-bold text-sky-400 tracking-wider">
+                {STORY_BLOCKS[1].step} // {STORY_BLOCKS[1].tag}
+              </span>
+            </div>
+
+            {/* Monumental Punchy Word */}
+            <h3
+              className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-700 ${
                 scrollProgress >= STORY_BLOCKS[1].activeThreshold
-                  ? 'border-[var(--accent)] bg-[var(--surface)] shadow-[0_0_35px_rgba(56,189,248,0.12)] scale-[1.02]'
-                  : 'border-[var(--line)] bg-[var(--bg)] shadow-sm'
+                  ? 'text-white scale-105 drop-shadow-[0_0_45px_rgba(56,189,248,0.65)]'
+                  : 'text-slate-500 opacity-40 scale-100'
               }`}
             >
-              {/* Waypoint Docking Anchor on Left Edge */}
-              <div
-                ref={wp2Ref}
-                className="absolute -left-3 top-1/2 -translate-y-1/2 flex items-center justify-center z-20"
-              >
-                <div
-                  className={`h-7 w-7 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${
-                    scrollProgress >= STORY_BLOCKS[1].activeThreshold
-                      ? 'border-[var(--accent)] bg-white dark:bg-[#090b10] shadow-[0_0_14px_#38bdf8] scale-110'
-                      : 'border-[var(--line-strong)] bg-[var(--surface)]'
-                  }`}
-                >
-                  <span
-                    className={`h-2.5 w-2.5 rounded-full ${
-                      scrollProgress >= STORY_BLOCKS[1].activeThreshold
-                        ? 'bg-[var(--accent)] animate-ping'
-                        : 'bg-[var(--line-strong)]'
-                    }`}
-                  />
-                </div>
-              </div>
+              {STORY_BLOCKS[1].word}
+            </h3>
 
-              {/* Tag & Step */}
-              <div className="flex items-center justify-between mb-4 border-b border-[var(--line)] pb-3">
-                <span className="font-mono text-xs font-bold text-[var(--accent)] flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                  {STORY_BLOCKS[1].tag}
-                </span>
-                <span className="font-mono text-xs font-bold text-[var(--ink-dim)]">
-                  {STORY_BLOCKS[1].step} // 03
-                </span>
-              </div>
+            {/* Short Punchy Statement */}
+            <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
+              {STORY_BLOCKS[1].desc}
+            </p>
 
-              <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--ink)]">
-                {STORY_BLOCKS[1].title}
-              </h3>
-              <p className="mt-1 font-serif-italic text-sm text-[var(--accent)]">
-                {STORY_BLOCKS[1].subtitle}
-              </p>
-
-              <p className="mt-4 text-xs sm:text-sm text-[var(--ink-muted)] leading-relaxed">
-                {STORY_BLOCKS[1].desc}
-              </p>
-
-              {/* Metric Badge */}
-              <div className="mt-6 flex items-center justify-between rounded-2xl bg-[var(--surface-elevated)] px-4 py-3 border border-[var(--line)]">
-                <div className="font-mono text-xl font-extrabold text-[var(--ink)]">
-                  {STORY_BLOCKS[1].metric}
-                </div>
-                <div className="text-[11px] font-medium text-[var(--ink-muted)]">
-                  {STORY_BLOCKS[1].metricLabel}
-                </div>
-              </div>
+            {/* Metric Badge */}
+            <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-sky-500/20 bg-slate-900/80 px-5 py-2 backdrop-blur-sm shadow-sm">
+              <span className="font-mono text-lg sm:text-xl font-black text-sky-400">
+                {STORY_BLOCKS[1].metric}
+              </span>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
+                {STORY_BLOCKS[1].metricLabel}
+              </span>
             </div>
           </div>
 
-          {/* Stage 03: Bottom Left (Zigzag Swoop back to the Left) */}
-          <div className="absolute top-[920px] sm:top-[880px] left-0 w-full sm:max-w-[480px] lg:max-w-[500px]">
-            <div
-              className={`rounded-3xl border p-7 sm:p-9 transition-all duration-500 relative backdrop-blur-sm ${
+          {/* Block 03: Centered */}
+          <div
+            ref={b3Ref}
+            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-20 sm:py-28"
+          >
+            {/* Stage Pill */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
+              <span className={`h-1.5 w-1.5 rounded-full ${
+                scrollProgress >= STORY_BLOCKS[2].activeThreshold ? 'bg-sky-400 animate-pulse' : 'bg-slate-500'
+              }`} />
+              <span className="font-mono text-xs font-bold text-sky-400 tracking-wider">
+                {STORY_BLOCKS[2].step} // {STORY_BLOCKS[2].tag}
+              </span>
+            </div>
+
+            {/* Monumental Punchy Word */}
+            <h3
+              className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-700 ${
                 scrollProgress >= STORY_BLOCKS[2].activeThreshold
-                  ? 'border-[var(--accent)] bg-[var(--surface)] shadow-[0_0_35px_rgba(56,189,248,0.12)] scale-[1.02]'
-                  : 'border-[var(--line)] bg-[var(--bg)] shadow-sm'
+                  ? 'text-white scale-105 drop-shadow-[0_0_45px_rgba(56,189,248,0.65)]'
+                  : 'text-slate-500 opacity-40 scale-100'
               }`}
             >
-              {/* Waypoint Docking Anchor on Right Edge */}
-              <div
-                ref={wp3Ref}
-                className="absolute -right-3 top-1/2 -translate-y-1/2 flex items-center justify-center z-20"
-              >
-                <div
-                  className={`h-7 w-7 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${
-                    scrollProgress >= STORY_BLOCKS[2].activeThreshold
-                      ? 'border-[var(--accent)] bg-white dark:bg-[#090b10] shadow-[0_0_14px_#38bdf8] scale-110'
-                      : 'border-[var(--line-strong)] bg-[var(--surface)]'
-                  }`}
-                >
-                  <span
-                    className={`h-2.5 w-2.5 rounded-full ${
-                      scrollProgress >= STORY_BLOCKS[2].activeThreshold
-                        ? 'bg-[var(--accent)] animate-ping'
-                        : 'bg-[var(--line-strong)]'
-                    }`}
-                  />
-                </div>
-              </div>
+              {STORY_BLOCKS[2].word}
+            </h3>
 
-              {/* Tag & Step */}
-              <div className="flex items-center justify-between mb-4 border-b border-[var(--line)] pb-3">
-                <span className="font-mono text-xs font-bold text-[var(--accent)] flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                  {STORY_BLOCKS[2].tag}
-                </span>
-                <span className="font-mono text-xs font-bold text-[var(--ink-dim)]">
-                  {STORY_BLOCKS[2].step} // 03
-                </span>
-              </div>
+            {/* Short Punchy Statement */}
+            <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
+              {STORY_BLOCKS[2].desc}
+            </p>
 
-              <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--ink)]">
-                {STORY_BLOCKS[2].title}
-              </h3>
-              <p className="mt-1 font-serif-italic text-sm text-[var(--accent)]">
-                {STORY_BLOCKS[2].subtitle}
-              </p>
-
-              <p className="mt-4 text-xs sm:text-sm text-[var(--ink-muted)] leading-relaxed">
-                {STORY_BLOCKS[2].desc}
-              </p>
-
-              {/* Metric Badge */}
-              <div className="mt-6 flex items-center justify-between rounded-2xl bg-[var(--surface-elevated)] px-4 py-3 border border-[var(--line)]">
-                <div className="font-mono text-xl font-extrabold text-[var(--ink)]">
-                  {STORY_BLOCKS[2].metric}
-                </div>
-                <div className="text-[11px] font-medium text-[var(--ink-muted)]">
-                  {STORY_BLOCKS[2].metricLabel}
-                </div>
-              </div>
+            {/* Metric Badge */}
+            <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-sky-500/20 bg-slate-900/80 px-5 py-2 backdrop-blur-sm shadow-sm">
+              <span className="font-mono text-lg sm:text-xl font-black text-sky-400">
+                {STORY_BLOCKS[2].metric}
+              </span>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">
+                {STORY_BLOCKS[2].metricLabel}
+              </span>
             </div>
           </div>
         </div>
