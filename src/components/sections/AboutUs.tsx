@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { OrbitalRocketVessel } from '../ui/OrbitalRocketVessel';
+import { RevealWords } from '../ui/RevealWords';
 
 interface StoryBlock {
   step: string;
@@ -342,10 +343,12 @@ export const AboutUs: React.FC = () => {
           </div>
 
           <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Where young minds{' '}
-            <span className="font-serif-italic font-normal text-sky-400">
-              articulate the future.
-            </span>
+            <RevealWords
+              parts={[
+                { text: 'Where young minds' },
+                { text: 'articulate the future.', className: 'font-serif-italic font-normal text-sky-400' },
+              ]}
+            />
           </h2>
           <p className="mt-4 text-sm sm:text-base text-slate-400 max-w-lg mx-auto leading-relaxed">
             Scroll down to pilot the spacecraft along the zigzag tournament trajectory.

@@ -1,4 +1,5 @@
 import React from 'react';
+import { RevealWords } from '../ui/RevealWords';
 
 interface Partner {
   id: string;
@@ -99,7 +100,7 @@ export const Partners: React.FC = () => {
             OPPORTUNITY SOURCES
           </p>
           <h2 className="mt-4 font-serif text-3xl font-normal tracking-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
-            Where the opportunities come from
+            <RevealWords parts={[{ text: 'Where the opportunities come from' }]} />
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
             Official strategic partners collaborating to empower students in aerospace tournaments and youth volunteer initiatives across Uzbekistan.

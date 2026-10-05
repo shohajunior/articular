@@ -1,8 +1,9 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { legalContent } from '../../data/legal';
 import { ArrowLeft, ShieldCheck, FileText } from 'lucide-react';
 import { siteData } from '../../data/site';
 import { TelegramIcon } from '../ui/SocialIcons';
+import { RevealWords } from '../ui/RevealWords';
 
 interface LegalPageProps {
   docKey: 'privacy' | 'terms';
@@ -69,7 +70,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ docKey, onNavigate }) => {
           </div>
 
           <h1 className="text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl">
-            {content.title}
+            <RevealWords key={docKey} parts={[{ text: content.title }]} />
           </h1>
 
           <p className="mt-3 text-sm text-[var(--ink-muted)] sm:text-base">
