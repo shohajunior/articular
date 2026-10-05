@@ -67,10 +67,10 @@ export const Header: React.FC = () => {
         <nav className="hidden items-center gap-6 md:flex">
           <button
             type="button"
-            onClick={() => scrollTo('stages')}
+            onClick={() => scrollTo('about')}
             className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
           >
-            Stages
+            About
           </button>
           <button
             type="button"

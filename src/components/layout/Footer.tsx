@@ -42,7 +42,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
               <li>
                 <button
                   type="button"
-                  onClick={() => scrollTo('stages')}
+                  onClick={() => scrollTo('about')}
                   className="cursor-pointer transition-colors hover:text-[var(--accent)]"
                 >
                   Tournament Stages
