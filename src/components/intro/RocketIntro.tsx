@@ -27,6 +27,14 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Safety fallback: guarantee Hero is revealed even if RAF is throttled in background tab
+    const safetyTimer = setTimeout(() => {
+      if (!hasTriggeredReveal.current) {
+        hasTriggeredReveal.current = true;
+        onComplete?.();
+      }
+    }, 150);
+
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
@@ -273,6 +281,7 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
     animFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
+      clearTimeout(safetyTimer);
       window.removeEventListener('resize', handleResize);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };

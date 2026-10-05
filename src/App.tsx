@@ -1,5 +1,5 @@
+import React, { useState, useEffect } from 'react';
 import { initSmoothScroll } from './lib/smoothScroll';
-﻿import React, { useState, useEffect } from 'react';
 import { RocketIntro } from './components/intro/RocketIntro';
 import { Header } from './components/layout/Header';
 import { Hero } from './components/sections/Hero';

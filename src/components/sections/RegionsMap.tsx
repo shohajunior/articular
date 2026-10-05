@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { siteData, RegionEvent } from '../../data/site';
 import { uzMapPaths } from '../../data/uzMap';
 import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Compass, CheckCircle2 } from 'lucide-react';
