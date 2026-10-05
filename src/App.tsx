@@ -42,11 +42,6 @@ export const App: React.FC = () => {
     syncPageFromHash();
     window.addEventListener('hashchange', syncPageFromHash);
 
-    // If intro was already seen in this session, reveal hero immediately
-    if (sessionStorage.getItem('articular-rocket-played')) {
-      setHeroRevealed(true);
-    }
-
     return () => window.removeEventListener('hashchange', syncPageFromHash);
   }, []);
 

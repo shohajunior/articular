@@ -14,13 +14,8 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
   const hasTriggeredReveal = useRef(false);
 
   useEffect(() => {
-    // Check if already played in this tab session
-    const played = sessionStorage.getItem('articular-rocket-played');
-    if (played) {
-      setActive(false);
-      onComplete?.();
-      return;
-    }
+    // Welcome screen always plays on every page load as requested
+    sessionStorage.removeItem('articular-rocket-played');
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -274,7 +269,6 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
         animFrameRef.current = requestAnimationFrame(animate);
       } else {
         setActive(false);
-        sessionStorage.setItem('articular-rocket-played', 'true');
       }
     };
 
@@ -289,7 +283,6 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
 
   const handleSkip = () => {
     setActive(false);
-    sessionStorage.setItem('articular-rocket-played', 'true');
     onComplete?.();
   };
 
