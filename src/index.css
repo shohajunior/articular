@@ -125,22 +125,28 @@ body {
 \n\n
 
 /* ==========================================================================
-   Partners Infinite Marquee Carousel (volontyorlar.uz style)
+   Partners Infinite Marquee Carousel (volontyorlar.uz style, single row)
    ========================================================================== */
 .marquee-container {
   width: 100%;
-  display: flex;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center;
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
   mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
 
 .marquee-track {
-  display: flex;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
   width: max-content;
   align-items: center;
-  flex: none;
+  flex-shrink: 0;
   animation: marquee-roll var(--marquee-duration, 28s) linear infinite;
   will-change: transform;
 }

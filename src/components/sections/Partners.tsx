@@ -1,194 +1,84 @@
 import React from 'react';
 
-interface PartnerConfig {
+interface Partner {
   id: string;
   name: string;
   url: string;
-  type: 'yvc-full' | 'uzcosmos-full' | 'yvc-emblem' | 'uzcosmos-emblem';
+  logoLight: string;
+  logoDark: string;
 }
 
-// ONLY the user's official partners, repeating smoothly in the carousel
-const PARTNERS: PartnerConfig[] = [
+// ONLY the official partners provided by the user in the project root
+const PARTNERS: Partner[] = [
   {
-    id: 'uzcosmos-1',
+    id: 'uzcosmos',
     name: 'Uzcosmos Agency',
     url: 'https://uzspace.uz',
-    type: 'uzcosmos-full',
+    logoLight: './assets/uzcosmoslogo.png',
+    logoDark: './assets/uzcosmoslogo.png',
   },
   {
-    id: 'yvc-1',
+    id: 'yvc',
     name: 'Youth Volunteering Club',
     url: 'https://t.me/yvc_uz',
-    type: 'yvc-full',
-  },
-  {
-    id: 'uzcosmos-emblem-1',
-    name: 'Uzcosmos Official Agency',
-    url: 'https://uzspace.uz',
-    type: 'uzcosmos-emblem',
-  },
-  {
-    id: 'yvc-emblem-1',
-    name: 'YVC Uzbekistan Emblem',
-    url: 'https://t.me/yvc_uz',
-    type: 'yvc-emblem',
-  },
-  {
-    id: 'uzcosmos-2',
-    name: 'Uzcosmos Agency',
-    url: 'https://uzspace.uz',
-    type: 'uzcosmos-full',
-  },
-  {
-    id: 'yvc-2',
-    name: 'Youth Volunteering Club',
-    url: 'https://t.me/yvc_uz',
-    type: 'yvc-full',
-  },
-  {
-    id: 'uzcosmos-emblem-2',
-    name: 'Uzcosmos Official Agency',
-    url: 'https://uzspace.uz',
-    type: 'uzcosmos-emblem',
-  },
-  {
-    id: 'yvc-emblem-2',
-    name: 'YVC Uzbekistan Emblem',
-    url: 'https://t.me/yvc_uz',
-    type: 'yvc-emblem',
+    logoLight: './assets/yvc-png.png',
+    logoDark: './assets/yvc-white.png',
   },
 ];
 
+// Repeating alternating partners to create a smooth, continuous infinite stream
+const REPEATED_ITEMS = Array.from({ length: 8 }).flatMap((_, cycleIdx) =>
+  PARTNERS.map((partner) => ({
+    ...partner,
+    key: `${partner.id}-${cycleIdx}`,
+  }))
+);
+
 export const Partners: React.FC = () => {
-  const renderPartnerLogo = (partner: PartnerConfig) => {
-    switch (partner.type) {
-      case 'yvc-full':
-        return (
-          <div className="relative flex items-center justify-center h-full">
-            <img
-              src="./opportunity-sources/youth-volunteer-club-grey.svg"
-              alt={partner.name}
-              loading="lazy"
-              className="marquee-logo-grey block h-10 sm:h-12 lg:h-13 w-auto max-w-[220px] object-contain dark:brightness-200 dark:contrast-125 dark:opacity-75"
-            />
-            <img
-              src="./opportunity-sources/youth-volunteer-club.svg"
-              alt=""
-              aria-hidden="true"
-              loading="lazy"
-              className="marquee-logo-color absolute inset-0 block h-10 sm:h-12 lg:h-13 w-auto max-w-[220px] object-contain dark:brightness-110"
-            />
-          </div>
-        );
-
-      case 'uzcosmos-full':
-        return (
-          <div className="relative flex items-center justify-center h-full">
-            {/* Light Mode Uzcosmos */}
-            <div className="dark:hidden relative flex items-center justify-center h-full">
-              <img
-                src="./assets/uzcosmos-dark.png"
-                alt={partner.name}
-                loading="lazy"
-                className="marquee-logo-grey block h-9 sm:h-11 lg:h-12 w-auto max-w-[220px] object-contain"
-              />
-              <img
-                src="./assets/uzcosmos-dark.png"
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                className="marquee-logo-color absolute inset-0 block h-9 sm:h-11 lg:h-12 w-auto max-w-[220px] object-contain"
-              />
-            </div>
-            {/* Dark Mode Uzcosmos with crisp white typography and glowing blue orbit */}
-            <div className="hidden dark:flex relative items-center justify-center h-full">
-              <img
-                src="./assets/uzcosmos-white-logo.png"
-                alt={partner.name}
-                loading="lazy"
-                className="marquee-logo-grey block h-9 sm:h-11 lg:h-12 w-auto max-w-[220px] object-contain opacity-65"
-              />
-              <img
-                src="./assets/uzcosmos-white-logo.png"
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                className="marquee-logo-color absolute inset-0 block h-9 sm:h-11 lg:h-12 w-auto max-w-[220px] object-contain opacity-100"
-              />
-            </div>
-          </div>
-        );
-
-      case 'yvc-emblem':
-        return (
-          <div className="relative flex items-center gap-3 h-full px-2">
-            <img
-              src="./assets/yvc-png.png"
-              alt={partner.name}
-              loading="lazy"
-              className="marquee-logo-single block h-11 sm:h-13 lg:h-14 w-auto object-contain dark:brightness-150"
-            />
-            <div className="flex flex-col text-left transition-opacity duration-300">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Youth Volunteering
-              </span>
-              <span className="font-mono text-xs font-extrabold tracking-tight text-slate-800 dark:text-slate-200">
-                Club UZ
-              </span>
-            </div>
-          </div>
-        );
-
-      case 'uzcosmos-emblem':
-        return (
-          <div className="relative flex items-center gap-3 h-full px-2">
-            <img
-              src="./assets/uzcosmoslogo.png"
-              alt={partner.name}
-              loading="lazy"
-              className="marquee-logo-single block h-11 sm:h-13 lg:h-14 w-auto object-contain dark:brightness-0 dark:invert dark:opacity-75"
-            />
-            <div className="flex flex-col text-left transition-opacity duration-300">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Space Agency
-              </span>
-              <span className="font-mono text-xs font-extrabold tracking-tight text-slate-800 dark:text-slate-200">
-                O'zkosmos
-              </span>
-            </div>
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  const renderTrackItems = (keyPrefix: string) => {
-    return PARTNERS.map((partner, index) => (
-      <li
-        key={`${keyPrefix}-${partner.id}-${index}`}
-        className="marquee-logo-item h-14 sm:h-16 lg:h-18 px-6 sm:px-8"
-        tabIndex={0}
-      >
-        <a
-          href={partner.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative flex h-full items-center justify-center transition-transform duration-300"
-          title={partner.name}
-          aria-label={partner.name}
+  const renderTrack = (trackId: string, ariaHidden = false) => (
+    <ul
+      role={ariaHidden ? undefined : 'group'}
+      aria-label={ariaHidden ? undefined : 'Official Partners'}
+      aria-hidden={ariaHidden || undefined}
+      className="marquee-track flex flex-row flex-nowrap shrink-0 items-center gap-12 sm:gap-16 lg:gap-24 pr-12 sm:pr-16 lg:pr-24"
+    >
+      {REPEATED_ITEMS.map((item) => (
+        <li
+          key={`${trackId}-${item.key}`}
+          className="marquee-logo-item flex shrink-0 items-center justify-center"
         >
-          {renderPartnerLogo(partner)}
-        </a>
-      </li>
-    ));
-  };
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={item.name}
+            aria-label={item.name}
+            className="group relative flex h-16 sm:h-20 lg:h-24 w-auto items-center justify-center p-2 outline-none cursor-pointer"
+          >
+            {/* Light Mode Logo: ONLY the logo, no text */}
+            <img
+              src={item.logoLight}
+              alt={item.name}
+              loading="lazy"
+              className="dark:hidden block h-11 sm:h-13 lg:h-16 w-auto max-w-[190px] object-contain transition-all duration-300 filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110"
+            />
+            {/* Dark Mode Logo: ONLY the logo, no text */}
+            <img
+              src={item.logoDark}
+              alt={item.name}
+              loading="lazy"
+              className="hidden dark:block h-11 sm:h-13 lg:h-16 w-auto max-w-[190px] object-contain transition-all duration-300 filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110"
+            />
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <section
       id="partners"
-      className="relative isolate scroll-mt-20 border-b border-[var(--line)] bg-[#edf4f9] dark:bg-[#0c1422] py-20 sm:py-24 transition-colors duration-300"
+      className="relative isolate scroll-mt-20 border-b border-[var(--line)] bg-[#edf4f9] dark:bg-[#0c1422] py-20 sm:py-24 transition-colors duration-300 overflow-hidden"
     >
       <div className="mx-auto max-w-[1140px] px-6">
         {/* Header matching volontyorlar.uz Opportunity sources */}
@@ -209,25 +99,12 @@ export const Partners: React.FC = () => {
         </div>
       </div>
 
-      {/* Infinite Looping Marquee Carousel with Fade Edge Masks */}
-      <div className="marquee-container mt-12 sm:mt-16 py-4">
-        {/* Track 1 */}
-        <ul
-          role="group"
-          aria-label="Official Partners"
-          className="marquee-track gap-8 sm:gap-12 lg:gap-16 pr-8 sm:pr-12 lg:pr-16"
-        >
-          {renderTrackItems('track1')}
-        </ul>
-
-        {/* Track 2 (Duplicate for Seamless Infinite Loop) */}
-        <ul
-          aria-hidden="true"
-          className="marquee-track gap-8 sm:gap-12 lg:gap-16 pr-8 sm:pr-12 lg:pr-16"
-        >
-          {renderTrackItems('track2')}
-        </ul>
+      {/* Infinite Looping Marquee Carousel: STRICTLY ONE SINGLE HORIZONTAL LINE */}
+      <div className="marquee-container flex flex-row flex-nowrap overflow-hidden w-full whitespace-nowrap mt-12 sm:mt-16 py-6 select-none">
+        {renderTrack('track1')}
+        {renderTrack('track2', true)}
       </div>
     </section>
   );
 };
+
