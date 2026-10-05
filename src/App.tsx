@@ -4,7 +4,6 @@ import { RocketIntro } from './components/intro/RocketIntro';
 import { Header } from './components/layout/Header';
 import { Hero } from './components/sections/Hero';
 import { AboutUs } from './components/sections/AboutUs';
-import { WhereWeAreNow } from './components/sections/WhereWeAreNow';
 import { Partners } from './components/sections/Partners';
 import { RegionsMap } from './components/sections/RegionsMap';
 import { Team } from './components/sections/Team';
@@ -78,9 +77,6 @@ export const App: React.FC = () => {
         />
         {/* About Us: Creative Scroll-Based Narrative */}
         <AboutUs />
-
-        {/* Where We Are Now (Metrics Section from volontyorlar.uz) */}
-        <WhereWeAreNow />
 
         {/* Opportunity Sources / Partners Carousel (volontyorlar.uz infinite marquee) */}
         <Partners />
