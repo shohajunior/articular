@@ -183,9 +183,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
           <div>
             &copy; {new Date().getFullYear()} ArticularUZ. All rights reserved.
           </div>
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            <span>Season 2026 Active &bull; Uzbekistan</span>
+          <div className="flex items-center gap-1 text-xs text-[var(--ink-dim)]">
+            <span>Developed and built by</span>
+            <a
+              href="https://github.com/shohajunior"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-[var(--accent)] hover:underline transition-colors ml-0.5"
+            >
+              shohajunior
+            </a>
           </div>
         </div>
       </div>
