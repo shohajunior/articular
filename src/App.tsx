@@ -3,6 +3,7 @@ import { RocketIntro } from './components/intro/RocketIntro';
 import { Header } from './components/layout/Header';
 import { Hero } from './components/sections/Hero';
 import { Stages } from './components/sections/Stages';
+import { WhereWeAreNow } from './components/sections/WhereWeAreNow';
 import { Partners } from './components/sections/Partners';
 import { RegionsMap } from './components/sections/RegionsMap';
 import { Team } from './components/sections/Team';
@@ -69,7 +70,10 @@ export const App: React.FC = () => {
         {/* 4 Stages to National Defense */}
         <Stages />
 
-        {/* Partners Section placed after Stages */}
+        {/* Where We Are Now (Metrics Section from volontyorlar.uz) */}
+        <WhereWeAreNow />
+
+        {/* Opportunity Sources / Partners Carousel (volontyorlar.uz infinite marquee) */}
         <Partners />
 
         {/* 14 Regions of Uzbekistan */}

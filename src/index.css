@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -119,4 +119,87 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+\n\n
+
+/* ==========================================================================
+   Partners Infinite Marquee Carousel (volontyorlar.uz style)
+   ========================================================================== */
+.marquee-container {
+  width: 100%;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  flex: none;
+  animation: marquee-roll var(--marquee-duration, 28s) linear infinite;
+  will-change: transform;
+}
+
+.marquee-container:hover .marquee-track,
+.marquee-container:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-roll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.marquee-logo-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.marquee-logo-grey {
+  display: block;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.marquee-logo-color {
+  position: absolute;
+  inset: 0;
+  display: block;
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.marquee-logo-item:hover .marquee-logo-grey,
+.marquee-logo-item:focus-visible .marquee-logo-grey {
+  opacity: 0;
+}
+
+.marquee-logo-item:hover .marquee-logo-color,
+.marquee-logo-item:focus-visible .marquee-logo-color {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* For single-image logos (grayscale default, full color on hover) */
+.marquee-logo-single {
+  filter: grayscale(100%) contrast(75%) opacity(0.55);
+  transition: filter 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.marquee-logo-item:hover .marquee-logo-single,
+.marquee-logo-item:focus-visible .marquee-logo-single {
+  filter: grayscale(0%) contrast(100%) opacity(1);
+  transform: scale(1.06);
 }
