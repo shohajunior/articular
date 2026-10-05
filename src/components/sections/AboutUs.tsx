@@ -18,7 +18,7 @@ const STORY_BLOCKS: StoryBlock[] = [
     desc: 'Autonomous orbital calculations. No textbook templates.',
     metric: '48+',
     metricLabel: 'Orbital Theses',
-    activeThreshold: 0.16,
+    activeThreshold: 0.15,
   },
   {
     step: '02',
@@ -27,7 +27,7 @@ const STORY_BLOCKS: StoryBlock[] = [
     desc: '100% English defense before Uzcosmos space agency engineers.',
     metric: '100%',
     metricLabel: 'English Defense Format',
-    activeThreshold: 0.50,
+    activeThreshold: 0.48,
   },
   {
     step: '03',
@@ -55,11 +55,38 @@ export const AboutUs: React.FC = () => {
   const [rocketPos, setRocketPos] = useState({ x: 0, y: 0, angle: 45 });
   const [waypoints, setWaypoints] = useState<{ x: number; y: number }[]>([]);
 
+  // Calculate rocket position along the SVG path for a given progress (0.0 to 1.0)
+  const calcRocketAtProgress = (pathElement: SVGPathElement | null, progress: number, fallbackLen = 0) => {
+    if (!pathElement) return;
+    try {
+      const len = pathElement.getTotalLength() || fallbackLen;
+      if (len <= 0) return;
+
+      const currentLen = Math.max(0, Math.min(len, progress * len));
+      const pt = pathElement.getPointAtLength(currentLen);
+
+      let angleDeg = 45;
+      if (currentLen < len - 4) {
+        const nextPt = pathElement.getPointAtLength(currentLen + 4);
+        angleDeg = Math.atan2(nextPt.y - pt.y, nextPt.x - pt.x) * (180 / Math.PI);
+      } else {
+        const prevPt = pathElement.getPointAtLength(Math.max(0, currentLen - 4));
+        angleDeg = Math.atan2(pt.y - prevPt.y, pt.x - prevPt.x) * (180 / Math.PI);
+      }
+
+      setRocketPos({ x: pt.x, y: pt.y, angle: angleDeg });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   // 1. Recalculate zigzag flight path connecting the 3 centered blocks
   const updateTrajectory = () => {
     if (!containerRef.current || !b1Ref.current || !b2Ref.current || !b3Ref.current) return;
 
     const cRect = containerRef.current.getBoundingClientRect();
+    if (cRect.width === 0) return;
+
     const r1 = b1Ref.current.getBoundingClientRect();
     const r2 = b2Ref.current.getBoundingClientRect();
     const r3 = b3Ref.current.getBoundingClientRect();
@@ -81,7 +108,7 @@ export const AboutUs: React.FC = () => {
     setWaypoints([p1, p2, p3]);
 
     const width = cRect.width;
-    // Amplitude of the zigzag wing swoops (adapts smoothly to mobile and desktop)
+    // Amplitude of the zigzag wing swoops (adapts to mobile and desktop)
     const amp = Math.max(90, Math.min(width * 0.38, 380));
 
     // Entry point: swoops in from upper left
@@ -136,11 +163,25 @@ export const AboutUs: React.FC = () => {
     const d = `M ${startX} ${startY} C ${cp0x1} ${cp0y1}, ${cp0x2} ${cp0y2}, ${p1.x} ${p1.y} C ${cp1x1} ${cp1y1}, ${cp1x2} ${cp1y2}, ${rightApexX} ${rightApexY} C ${cp2x1} ${cp2y1}, ${cp2x2} ${cp2y2}, ${p2.x} ${p2.y} C ${cp3x1} ${cp3y1}, ${cp3x2} ${cp3y2}, ${leftApexX} ${leftApexY} C ${cp4x1} ${cp4y1}, ${cp4x2} ${cp4y2}, ${p3.x} ${p3.y} C ${cp5x1} ${cp5y1}, ${cp5x2} ${cp5y2}, ${endX} ${endY}`;
 
     setPathData(d);
+
+    // Calculate length immediately using a temporary SVG path to guarantee length is available instantly
+    try {
+      const tempPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      tempPath.setAttribute('d', d);
+      const len = tempPath.getTotalLength();
+      if (len > 0) {
+        setTotalPathLength(len);
+        calcRocketAtProgress(tempPath, scrollProgress, len);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
     updateTrajectory();
-    const timer = setTimeout(updateTrajectory, 120);
+    const t1 = setTimeout(updateTrajectory, 80);
+    const t2 = setTimeout(updateTrajectory, 300);
     const handleResize = () => updateTrajectory();
     window.addEventListener('resize', handleResize);
 
@@ -151,35 +192,60 @@ export const AboutUs: React.FC = () => {
     }
 
     return () => {
-      clearTimeout(timer);
+      clearTimeout(t1);
+      clearTimeout(t2);
       window.removeEventListener('resize', handleResize);
       if (ro) ro.disconnect();
     };
   }, []);
 
-  // Update total path length whenever pathData changes
+  // Update total path length from real DOM path whenever mounted or updated
   useEffect(() => {
     if (pathRef.current) {
-      const len = pathRef.current.getTotalLength();
-      setTotalPathLength(len);
+      try {
+        const len = pathRef.current.getTotalLength();
+        if (len > 0) {
+          setTotalPathLength(len);
+          calcRocketAtProgress(pathRef.current, scrollProgress, len);
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, [pathData]);
 
-  // 2. Scroll listener to calculate scrollProgress (0.0 -> 1.0)
+  // 2. High-performance scroll listener to calculate scrollProgress and drive the rocket
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
       if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!containerRef.current) {
+            ticking = false;
+            return;
+          }
+          const rect = containerRef.current.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
 
-      // Start flight when top of arena approaches center, finish when bottom approaches center
-      const startTrigger = windowHeight * 0.75;
-      const endTrigger = windowHeight * 0.25;
-      const totalScrollable = rect.height + startTrigger - endTrigger;
-      const currentScroll = startTrigger - rect.top;
+          // Flight spans seamlessly as the container traverses through the viewport
+          const startTrigger = windowHeight * 0.75;
+          const totalDistance = rect.height;
+          const currentScrolled = startTrigger - rect.top;
 
-      const p = Math.max(0, Math.min(1, currentScroll / totalScrollable));
-      setScrollProgress(p);
+          const p = Math.max(0, Math.min(1, currentScrolled / totalDistance));
+          setScrollProgress(p);
+
+          // Update rocket position in real time
+          if (pathRef.current) {
+            calcRocketAtProgress(pathRef.current, p);
+          }
+
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -195,32 +261,7 @@ export const AboutUs: React.FC = () => {
         (window as any).lenis.off('scroll', handleScroll);
       }
     };
-  }, []);
-
-  // 3. Update Rocket (x, y, angle) directly on the trajectory path
-  useEffect(() => {
-    const path = pathRef.current;
-    if (!path || totalPathLength === 0) return;
-
-    const currentLen = scrollProgress * totalPathLength;
-    const pt = path.getPointAtLength(currentLen);
-
-    // Tangent angle in degrees with guard to avoid flipping at ends
-    let angleDeg = 45;
-    if (currentLen < totalPathLength - 3) {
-      const nextPt = path.getPointAtLength(currentLen + 3);
-      angleDeg = Math.atan2(nextPt.y - pt.y, nextPt.x - pt.x) * (180 / Math.PI);
-    } else {
-      const prevPt = path.getPointAtLength(Math.max(0, currentLen - 3));
-      angleDeg = Math.atan2(pt.y - prevPt.y, pt.x - prevPt.x) * (180 / Math.PI);
-    }
-
-    setRocketPos({
-      x: pt.x,
-      y: pt.y,
-      angle: angleDeg,
-    });
-  }, [scrollProgress, totalPathLength]);
+  }, [totalPathLength]);
 
   return (
     <section
@@ -235,7 +276,7 @@ export const AboutUs: React.FC = () => {
         {/* Deep Space Radial Vignette */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(14,30,58,0.45)_0%,_#06080d_78%)]" />
 
-        {/* Stationary Tactical Coordinate Grid (Visual proof that background is fixed) */}
+        {/* Stationary Tactical Coordinate Grid */}
         <div
           className="absolute inset-0 opacity-[0.14]"
           style={{
@@ -294,19 +335,6 @@ export const AboutUs: React.FC = () => {
           <p className="mt-4 text-sm sm:text-base text-slate-400 max-w-lg mx-auto leading-relaxed">
             Scroll down to pilot the rocket along the zigzag tournament trajectory.
           </p>
-
-          {/* Real-time Telemetry HUD indicator */}
-          <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-white/10 bg-black/40 px-5 py-2 backdrop-blur-md font-mono text-xs">
-            <span className="text-base">🚀</span>
-            <span className="text-slate-400 uppercase tracking-wider text-[11px]">FLIGHT PROGRESS:</span>
-            <span className="font-bold text-sky-400">{Math.round(scrollProgress * 100)}%</span>
-            <div className="h-1.5 w-16 rounded-full bg-white/10 overflow-hidden">
-              <div
-                className="h-full bg-sky-400 transition-all duration-100"
-                style={{ width: `${Math.round(scrollProgress * 100)}%` }}
-              />
-            </div>
-          </div>
         </div>
 
         {/* ======================================================== */}
@@ -314,7 +342,7 @@ export const AboutUs: React.FC = () => {
         {/* ======================================================== */}
         <div
           ref={containerRef}
-          className="relative w-full max-w-[1240px] mx-auto min-h-[1900px] sm:min-h-[2200px] select-none flex flex-col justify-around py-16"
+          className="relative w-full max-w-[1240px] mx-auto min-h-[1600px] sm:min-h-[1800px] select-none flex flex-col justify-around py-12"
         >
           {/* SVG Canvas with Zigzag Trajectory Lines */}
           <svg
@@ -335,9 +363,10 @@ export const AboutUs: React.FC = () => {
               </filter>
             </defs>
 
-            {/* Base Dashed Trajectory Flight Plan (The Roadmap Zigzag) */}
+            {/* Base Dashed Trajectory Flight Plan (Always rendered to guarantee path measurement) */}
             {pathData && (
               <path
+                ref={pathRef}
                 d={pathData}
                 fill="none"
                 stroke="rgba(56, 189, 248, 0.25)"
@@ -347,18 +376,16 @@ export const AboutUs: React.FC = () => {
             )}
 
             {/* Active Filled Flight Path (Fills in real-time behind the Rocket as you scroll) */}
-            {pathData && totalPathLength > 0 && (
+            {pathData && (
               <path
-                ref={pathRef}
                 d={pathData}
                 fill="none"
                 stroke="url(#rocketTrailGrad)"
                 strokeWidth="4"
-                strokeDasharray={totalPathLength}
-                strokeDashoffset={totalPathLength * (1 - scrollProgress)}
+                strokeDasharray={totalPathLength || 3000}
+                strokeDashoffset={(totalPathLength || 3000) * (1 - scrollProgress)}
                 strokeLinecap="round"
                 style={{
-                  transition: 'stroke-dashoffset 0.05s linear',
                   filter: 'drop-shadow(0 0 8px rgba(56, 189, 248, 0.7))',
                 }}
               />
@@ -408,7 +435,7 @@ export const AboutUs: React.FC = () => {
                 top: `${rocketPos.y}px`,
                 // Rocket emoji points up-right at 45deg, so rotate(angle + 45deg) aligns nose with flight path
                 transform: `translate(-50%, -50%) rotate(${rocketPos.angle + 45}deg)`,
-                transition: 'transform 0.04s linear',
+                transition: 'left 0.05s ease-out, top 0.05s ease-out, transform 0.05s ease-out',
               }}
             >
               <div className="relative flex items-center justify-center">
@@ -436,7 +463,7 @@ export const AboutUs: React.FC = () => {
           {/* Block 01: Centered */}
           <div
             ref={b1Ref}
-            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-20 sm:py-28"
+            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
           >
             {/* Stage Pill */}
             <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
@@ -478,7 +505,7 @@ export const AboutUs: React.FC = () => {
           {/* Block 02: Centered */}
           <div
             ref={b2Ref}
-            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-20 sm:py-28"
+            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
           >
             {/* Stage Pill */}
             <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
@@ -520,7 +547,7 @@ export const AboutUs: React.FC = () => {
           {/* Block 03: Centered */}
           <div
             ref={b3Ref}
-            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-20 sm:py-28"
+            className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
           >
             {/* Stage Pill */}
             <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
