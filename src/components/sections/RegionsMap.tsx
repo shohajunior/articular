@@ -1,7 +1,7 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { siteData, RegionEvent } from '../../data/site';
 import { uzMapPaths } from '../../data/uzMap';
-import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Compass, CheckCircle2, RotateCcw, Box } from 'lucide-react';
+import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Compass, CheckCircle2 } from 'lucide-react';
 
 interface CityBeacon {
   id: string;
@@ -27,9 +27,8 @@ const SELECTED_EXTRUSION_STEPS = [10, 8, 6, 4, 2];
 export const RegionsMap: React.FC = () => {
   const [selectedRegionId, setSelectedRegionId] = useState<string>('tashkent');
   const [hoveredRegionId, setHoveredRegionId] = useState<string | null>(null);
-  const [viewPreset, setViewPreset] = useState<'isometric' | 'angled' | 'top'>('isometric');
 
-  // Mouse tilt tracking
+  // Mouse tilt tracking locked to 3D Isometric base
   const [tilt, setTilt] = useState({ rotX: 38, rotY: -4, rotZ: -3 });
   const [isHoveredMap, setIsHoveredMap] = useState(false);
 
@@ -43,7 +42,6 @@ export const RegionsMap: React.FC = () => {
   };
 
   const handleMapMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (viewPreset !== 'isometric') return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
     const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
@@ -56,21 +54,8 @@ export const RegionsMap: React.FC = () => {
 
   const handleMapMouseLeave = () => {
     setIsHoveredMap(false);
-    if (viewPreset === 'isometric') {
-      setTilt({ rotX: 38, rotY: -4, rotZ: -3 });
-    }
+    setTilt({ rotX: 38, rotY: -4, rotZ: -3 });
     setHoveredRegionId(null);
-  };
-
-  const setPreset = (preset: 'isometric' | 'angled' | 'top') => {
-    setViewPreset(preset);
-    if (preset === 'isometric') {
-      setTilt({ rotX: 38, rotY: -4, rotZ: -3 });
-    } else if (preset === 'angled') {
-      setTilt({ rotX: 48, rotY: -6, rotZ: -5 });
-    } else {
-      setTilt({ rotX: 10, rotY: 0, rotZ: 0 });
-    }
   };
 
   return (
@@ -94,58 +79,17 @@ export const RegionsMap: React.FC = () => {
             </p>
           </div>
 
-          {/* Quick Legend & 3D Controls */}
-          <div className="flex flex-wrap items-center gap-3">
-            {/* 3D View Angle Switcher */}
-            <div className="flex items-center gap-1 rounded-full border border-[var(--line)] bg-[var(--bg)] p-1 text-xs shadow-sm">
-              <button
-                type="button"
-                onClick={() => setPreset('isometric')}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1 font-medium transition-all ${
-                  viewPreset === 'isometric'
-                    ? 'bg-[var(--accent)] text-white shadow-sm'
-                    : 'text-[var(--ink-muted)] hover:text-[var(--ink)]'
-                }`}
-              >
-                <Box className="h-3.5 w-3.5" />
-                <span>3D Isometric</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreset('angled')}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1 font-medium transition-all ${
-                  viewPreset === 'angled'
-                    ? 'bg-[var(--accent)] text-white shadow-sm'
-                    : 'text-[var(--ink-muted)] hover:text-[var(--ink)]'
-                }`}
-              >
-                <span>3D Deep Tilt</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreset('top')}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1 font-medium transition-all ${
-                  viewPreset === 'top'
-                    ? 'bg-[var(--accent)] text-white shadow-sm'
-                    : 'text-[var(--ink-muted)] hover:text-[var(--ink)]'
-                }`}
-              >
-                <span>Top Elevation</span>
-              </button>
-            </div>
-
-            {/* Quick Legend */}
-            <div className="flex items-center gap-3 rounded-full border border-[var(--line)] bg-[var(--bg)] px-3.5 py-1.5 text-xs text-[var(--ink-muted)] shadow-sm">
-              <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-[var(--accent)] shadow-sm" />
-                <span className="font-medium text-[var(--ink)]">5 Confirmed Rounds</span>
-              </span>
-              <span className="h-3 w-px bg-[var(--line)]" />
-              <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full border border-[var(--line-strong)] bg-[var(--surface)]" />
-                <span>9 Open Chapters</span>
-              </span>
-            </div>
+          {/* Quick Legend */}
+          <div className="flex items-center gap-3 rounded-full border border-[var(--line)] bg-[var(--bg)] px-4 py-2 text-xs text-[var(--ink-muted)] shadow-sm">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-[var(--accent)] shadow-sm" />
+              <span className="font-medium text-[var(--ink)]">5 Confirmed Rounds</span>
+            </span>
+            <span className="h-3 w-px bg-[var(--line)]" />
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full border border-[var(--line-strong)] bg-[var(--surface)]" />
+              <span>9 Open Chapters</span>
+            </span>
           </div>
         </div>
 
