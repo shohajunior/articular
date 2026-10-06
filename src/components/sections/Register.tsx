@@ -46,12 +46,15 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
 
           {/* Heading with Telegram bot cleanly on the second line */}
           <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl">
-            <RevealWords
-              parts={[
-                { text: 'Register exclusively via' },
-                { text: 'Telegram bot', className: 'font-serif-italic text-[var(--accent)]' },
-              ]}
-            />
+            <span className="block">
+              <RevealWords parts={[{ text: 'Register exclusively via' }]} />
+            </span>
+            <span className="inline-block whitespace-nowrap font-serif-italic text-[var(--accent)] mt-1 sm:mt-2">
+              <RevealWords
+                delay={210}
+                parts={[{ text: 'Telegram bot' }]}
+              />
+            </span>
           </h2>
 
           {/* Subtitle */}

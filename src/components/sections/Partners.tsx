@@ -54,9 +54,9 @@ export const Partners: React.FC = () => {
             rel="noopener noreferrer"
             title={item.name}
             aria-label={item.name}
-            className="group relative flex h-20 sm:h-24 lg:h-28 w-auto items-center justify-center p-2 outline-none cursor-pointer"
+            className="group relative flex flex-col h-20 sm:h-24 lg:h-28 w-auto items-center justify-center p-2 outline-none cursor-pointer"
           >
-            {/* Light Mode Logo: ONLY the logo, no text */}
+            {/* Light Mode Logo */}
             <img
               src={item.logoLight}
               alt={item.name}
@@ -64,7 +64,7 @@ export const Partners: React.FC = () => {
               className={`dark:hidden block w-auto object-contain transition-all duration-300 filter grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 ${
                 item.id === 'uzcosmos'
                   ? 'h-[70px] sm:h-[88px] lg:h-[105px] max-w-[280px] sm:max-w-[350px]'
-                  : 'h-10 sm:h-12 lg:h-14 max-w-[120px]'
+                  : 'h-9 sm:h-11 lg:h-12 max-w-[120px]'
               }`}
             />
             {/* Dark Mode Logo: Bright crisp white with high contrast & cyan hover glow */}
@@ -75,9 +75,16 @@ export const Partners: React.FC = () => {
               className={`hidden dark:block w-auto object-contain transition-all duration-300 opacity-90 group-hover:opacity-100 group-hover:scale-110 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] group-hover:drop-shadow-[0_0_18px_rgba(56,189,248,0.8)] ${
                 item.id === 'uzcosmos'
                   ? 'h-[70px] sm:h-[88px] lg:h-[105px] max-w-[280px] sm:max-w-[350px]'
-                  : 'h-10 sm:h-12 lg:h-14 max-w-[120px]'
+                  : 'h-9 sm:h-11 lg:h-12 max-w-[120px]'
               }`}
             />
+
+            {/* Label under YVC logo */}
+            {item.id === 'yvc' && (
+              <span className="mt-1 font-mono text-xs sm:text-sm font-bold tracking-widest text-slate-700 dark:text-slate-200 uppercase transition-all duration-300 group-hover:text-blue-600 dark:group-hover:text-sky-400 group-hover:scale-105 select-none">
+                YVC
+              </span>
+            )}
           </a>
         </li>
       ))}
