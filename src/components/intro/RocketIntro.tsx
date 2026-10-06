@@ -5,17 +5,17 @@ interface RocketIntroProps {
   onComplete?: () => void;
 }
 
-// Rapid, dramatic launch sequence (ms)
-const T_IGN = 70;         // Quick ignition burst
-const T_LIFT = 320;       // Powerful liftoff
-const FLIGHT_TIME = 850;  // Rapid climb off-screen
-const T_FULL_SMOKE = 650; // Screen becomes completely enveloped in smoke
-const T_REVEAL = 850;     // Underlying page unlocks while shrouded in smoke
-const FADE_START = 950;   // Smoke begins rolling away and clearing
-const TOTAL_DUR = 2100;   // Complete cinematic intro duration
+// Rapid, dramatic aerospace launch sequence timings (ms)
+const T_IGN = 60;         // Instant kerolox engine ignition
+const T_LIFT = 300;       // Hold-down clamp release & liftoff
+const FLIGHT_TIME = 850;  // Supersonic climb off-screen
+const T_FULL_SMOKE = 620; // 100% screen envelopment by deluge steam
+const T_REVEAL = 850;     // Underlying page unlocks behind the wall of smoke
+const FADE_START = 950;   // Massive smoke bank starts rolling & clearing
+const TOTAL_DUR = 2100;   // Full cinematic sequence duration
 
-// Rocket aspect ratio in SVG (128 x 40)
-const ASPECT = 40 / 128;
+// Rocket aspect ratio in SVG (viewBox: -48 0 148 40 -> 40 / 148)
+const ASPECT = 40 / 148;
 
 interface SmokePuff {
   x: number;
@@ -30,7 +30,7 @@ interface SmokePuff {
   alpha: number;
   rotation: number;
   vRot: number;
-  shadeType: 'hot' | 'dense' | 'mist' | 'darkDepth';
+  shadeType: 'deluge' | 'fire' | 'depth' | 'mist';
 }
 
 interface Ember {
@@ -79,21 +79,21 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Realistic scale: tall and commanding, but clean
-    let rocketLength = Math.max(280, Math.min(height * 0.58, width * 0.85, 430));
+    // Realistic rocket proportions
+    let rocketLength = Math.max(300, Math.min(height * 0.6, width * 0.85, 460));
     let padY = height * 0.78;
     let cx = width / 2;
-    let cy0 = padY - rocketLength * 0.14;
-    let travel = padY + rocketLength * 0.5 + 120;
+    let cy0 = padY - rocketLength * 0.13;
+    let travel = padY + rocketLength * 0.55 + 160;
 
     const layout = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      rocketLength = Math.max(280, Math.min(height * 0.58, width * 0.85, 430));
+      rocketLength = Math.max(300, Math.min(height * 0.6, width * 0.85, 460));
       padY = height * 0.78;
       cx = width / 2;
-      cy0 = padY - rocketLength * 0.14;
-      travel = padY + rocketLength * 0.5 + 120;
+      cy0 = padY - rocketLength * 0.13;
+      travel = padY + rocketLength * 0.55 + 160;
 
       rocket.style.width = `${rocketLength}px`;
       rocket.style.height = `${rocketLength * ASPECT}px`;
@@ -106,74 +106,129 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
 
     const isDark = document.documentElement.classList.contains('dark');
 
-    // Pre-rendered realistic volumetric smoke sprites (multi-layered billowy texture)
-    const createCloudSprite = (stops: [number, string][], size = 256) => {
+    // =========================================================================
+    // MULTI-LOBED ORGANIC VOLUMETRIC SMOKE SPRITES
+    // Instead of simple blurry circles, real cumulus smoke has overlapping lobes,
+    // top sunlit highlights, and deep underside ambient shadows.
+    // =========================================================================
+    const createOrganicCloudSprite = (
+      baseRgb: [number, number, number],
+      highlightRgb: [number, number, number],
+      shadowRgb: [number, number, number],
+      baseAlpha: number,
+      size = 320
+    ) => {
       const oc = document.createElement('canvas');
       oc.width = size;
       oc.height = size;
       const octx = oc.getContext('2d');
       if (!octx) return oc;
-      const r = size / 2;
-      const grad = octx.createRadialGradient(r, r, r * 0.05, r, r, r);
-      for (const [pos, color] of stops) {
-        grad.addColorStop(pos, color);
+
+      const center = size / 2;
+      const maxR = size * 0.44;
+
+      // 9 organic sub-lobes arranged in a billowy cumulus cauliflower formation
+      const lobes = [
+        { x: 0, y: 0, r: 0.82 },
+        { x: -0.32, y: -0.16, r: 0.68 },
+        { x: 0.3, y: -0.2, r: 0.65 },
+        { x: -0.26, y: 0.26, r: 0.62 },
+        { x: 0.32, y: 0.22, r: 0.7 },
+        { x: 0.06, y: -0.38, r: 0.58 },
+        { x: -0.4, y: 0.06, r: 0.54 },
+        { x: 0.38, y: -0.04, r: 0.56 },
+        { x: 0.02, y: 0.36, r: 0.6 },
+      ];
+
+      // 1. Underside ambient depth shadow
+      for (const l of lobes) {
+        const lx = center + l.x * maxR * 0.9;
+        const ly = center + (l.y * 0.9 + 0.12) * maxR;
+        const lr = l.r * maxR;
+        const grad = octx.createRadialGradient(lx, ly, lr * 0.05, lx, ly, lr);
+        grad.addColorStop(0, `rgba(${shadowRgb[0]}, ${shadowRgb[1]}, ${shadowRgb[2]}, ${baseAlpha * 0.6})`);
+        grad.addColorStop(0.55, `rgba(${shadowRgb[0]}, ${shadowRgb[1]}, ${shadowRgb[2]}, ${baseAlpha * 0.35})`);
+        grad.addColorStop(1, `rgba(${shadowRgb[0]}, ${shadowRgb[1]}, ${shadowRgb[2]}, 0)`);
+        octx.fillStyle = grad;
+        octx.beginPath();
+        octx.arc(lx, ly, lr, 0, Math.PI * 2);
+        octx.fill();
       }
-      octx.fillStyle = grad;
-      octx.beginPath();
-      octx.arc(r, r, r, 0, Math.PI * 2);
-      octx.fill();
+
+      // 2. Main dense cloud body
+      for (const l of lobes) {
+        const lx = center + l.x * maxR * 0.85;
+        const ly = center + l.y * maxR * 0.85;
+        const lr = l.r * maxR;
+        const grad = octx.createRadialGradient(lx, ly, lr * 0.05, lx, ly, lr);
+        grad.addColorStop(0, `rgba(${baseRgb[0]}, ${baseRgb[1]}, ${baseRgb[2]}, ${baseAlpha})`);
+        grad.addColorStop(0.5, `rgba(${baseRgb[0]}, ${baseRgb[1]}, ${baseRgb[2]}, ${baseAlpha * 0.85})`);
+        grad.addColorStop(0.82, `rgba(${baseRgb[0]}, ${baseRgb[1]}, ${baseRgb[2]}, ${baseAlpha * 0.3})`);
+        grad.addColorStop(1, `rgba(${baseRgb[0]}, ${baseRgb[1]}, ${baseRgb[2]}, 0)`);
+        octx.fillStyle = grad;
+        octx.beginPath();
+        octx.arc(lx, ly, lr, 0, Math.PI * 2);
+        octx.fill();
+      }
+
+      // 3. Top sunlit highlight crests
+      for (const l of lobes.slice(0, 5)) {
+        const lx = center + (l.x * 0.8 - 0.1) * maxR;
+        const ly = center + (l.y * 0.8 - 0.14) * maxR;
+        const lr = l.r * maxR * 0.72;
+        const grad = octx.createRadialGradient(lx, ly, lr * 0.05, lx, ly, lr);
+        grad.addColorStop(0, `rgba(${highlightRgb[0]}, ${highlightRgb[1]}, ${highlightRgb[2]}, ${baseAlpha * 0.8})`);
+        grad.addColorStop(0.65, `rgba(${highlightRgb[0]}, ${highlightRgb[1]}, ${highlightRgb[2]}, ${baseAlpha * 0.35})`);
+        grad.addColorStop(1, `rgba(${highlightRgb[0]}, ${highlightRgb[1]}, ${highlightRgb[2]}, 0)`);
+        octx.fillStyle = grad;
+        octx.beginPath();
+        octx.arc(lx, ly, lr, 0, Math.PI * 2);
+        octx.fill();
+      }
+
       return oc;
     };
 
-    // 1. Hot fiery ignition smoke (orange-yellow flame cloud)
-    const spriteHot = createCloudSprite([
-      [0, 'rgba(255, 255, 230, 0.98)'],
-      [0.2, 'rgba(255, 190, 60, 0.9)'],
-      [0.55, 'rgba(235, 95, 20, 0.55)'],
-      [0.8, 'rgba(180, 45, 10, 0.2)'],
-      [1, 'rgba(120, 30, 5, 0)'],
-    ]);
+    // 1. Ultra-dense deluge water vapor steam (massive white/slate cumulus bank)
+    const spriteDelugeLight = createOrganicCloudSprite(
+      [242, 246, 252], // body
+      [255, 255, 255], // highlight
+      [190, 205, 224], // shadow
+      0.96
+    );
+    const spriteDelugeDark = createOrganicCloudSprite(
+      [160, 175, 195], // body
+      [225, 235, 248], // highlight
+      [45, 55, 72],    // shadow
+      0.95
+    );
+    const spriteDeluge = isDark ? spriteDelugeDark : spriteDelugeLight;
 
-    // 2. Ultra-dense white/grey steam avalanche (deluge water vapor)
-    const spriteDenseLight = createCloudSprite([
-      [0, 'rgba(255, 255, 255, 0.96)'],
-      [0.3, 'rgba(240, 245, 252, 0.9)'],
-      [0.65, 'rgba(215, 225, 238, 0.5)'],
-      [0.85, 'rgba(195, 208, 222, 0.2)'],
-      [1, 'rgba(180, 195, 210, 0)'],
-    ]);
-    const spriteDenseDark = createCloudSprite([
-      [0, 'rgba(220, 230, 245, 0.9)'],
-      [0.3, 'rgba(170, 185, 205, 0.8)'],
-      [0.65, 'rgba(110, 125, 145, 0.55)'],
-      [0.85, 'rgba(60, 72, 90, 0.25)'],
-      [1, 'rgba(30, 38, 50, 0)'],
-    ]);
-    const spriteDense = isDark ? spriteDenseDark : spriteDenseLight;
+    // 2. Fiery ignition flame cloud (turbulent orange-yellow fire plume near pad)
+    const spriteFire = createOrganicCloudSprite(
+      [255, 175, 45],  // body
+      [255, 255, 220], // highlight
+      [150, 45, 12],   // shadow
+      0.96
+    );
 
-    // 3. Ambient atmospheric mist (soft outer blanket to cover full screen)
-    const spriteMistLight = createCloudSprite([
-      [0, 'rgba(245, 248, 255, 0.85)'],
-      [0.5, 'rgba(225, 235, 248, 0.55)'],
-      [0.8, 'rgba(210, 222, 236, 0.2)'],
-      [1, 'rgba(200, 215, 230, 0)'],
-    ]);
-    const spriteMistDark = createCloudSprite([
-      [0, 'rgba(140, 155, 180, 0.85)'],
-      [0.5, 'rgba(90, 105, 130, 0.55)'],
-      [0.8, 'rgba(50, 62, 80, 0.25)'],
-      [1, 'rgba(25, 32, 45, 0)'],
-    ]);
-    const spriteMist = isDark ? spriteMistDark : spriteMistLight;
+    // 3. Deep volumetric shadow cloud (gives realistic 3D crevices in the smoke)
+    const spriteDepth = createOrganicCloudSprite(
+      isDark ? [35, 45, 60] : [165, 178, 195],
+      isDark ? [60, 75, 95] : [200, 212, 228],
+      isDark ? [15, 20, 30] : [130, 145, 165],
+      0.85
+    );
 
-    // 4. Dark volumetric depth shadow (gives real 3D cloud volume)
-    const spriteDepth = createCloudSprite([
-      [0, isDark ? 'rgba(20, 26, 38, 0.7)' : 'rgba(160, 175, 195, 0.55)'],
-      [0.5, isDark ? 'rgba(30, 40, 58, 0.35)' : 'rgba(180, 192, 210, 0.25)'],
-      [1, 'rgba(0, 0, 0, 0)'],
-    ]);
+    // 4. Soft atmospheric rolling mist (wide outer blanket)
+    const spriteMist = createOrganicCloudSprite(
+      isDark ? [85, 100, 125] : [230, 238, 248],
+      isDark ? [130, 150, 175] : [250, 252, 255],
+      isDark ? [30, 40, 55] : [195, 208, 222],
+      0.75
+    );
 
-    // Realistic Web Audio API roar
+    // Realistic Web Audio API engine roar
     let audioCtx: AudioContext | null = null;
     try {
       const AudioCtx =
@@ -193,12 +248,12 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'lowpass';
         filter.frequency.setValueAtTime(140, now);
-        filter.frequency.exponentialRampToValueAtTime(1200, now + 0.45);
+        filter.frequency.exponentialRampToValueAtTime(1250, now + 0.45);
         filter.frequency.exponentialRampToValueAtTime(180, now + 1.8);
 
         const gain = audioCtx.createGain();
         gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(0.14, now + 0.2);
+        gain.gain.linearRampToValueAtTime(0.15, now + 0.2);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.0);
 
         noise.connect(filter);
@@ -230,27 +285,27 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
         if (padGlowRef.current) padGlowRef.current.style.opacity = '1';
       }
 
-      // 2. Rocket Physics: Powerful supersonic acceleration
+      // 2. Rocket Physics: Supersonic acceleration
       let lift = 0;
       if (elapsed > T_LIFT) {
         const progress = Math.min((elapsed - T_LIFT) / FLIGHT_TIME, 1.5);
-        lift = travel * Math.pow(progress, 2.2);
+        lift = travel * Math.pow(progress, 2.25);
       }
 
-      // Intense ground tremor / camera rumble
+      // Ground vibration & liftoff rumble
       const shakeAmp =
         elapsed < T_IGN
           ? 0
           : elapsed < T_LIFT
-          ? 1.8
+          ? 2.2
           : elapsed < T_LIFT + 350
-          ? 3.2
-          : Math.max(0, 2.5 - (elapsed - T_LIFT) / 350);
+          ? 3.8
+          : Math.max(0, 3.0 - (elapsed - T_LIFT) / 320);
       const shakeX = shakeAmp ? (Math.random() - 0.5) * shakeAmp : 0;
       const shakeY = shakeAmp ? (Math.random() - 0.5) * shakeAmp : 0;
 
       const rocketY = cy0 - lift;
-      const nozzleY = rocketY + rocketLength * 0.14;
+      const nozzleY = rocketY + rocketLength * 0.13;
 
       if (lift > travel + 140) {
         rocket.style.display = 'none';
@@ -258,7 +313,7 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
         rocket.style.transform = `translate3d(${cx + shakeX}px, ${rocketY + shakeY}px, 0) translate(-50%, -50%) rotate(-90deg)`;
       }
 
-      // Launch pad fiery glow
+      // Pad trench fiery illumination
       if (padGlowRef.current) {
         const padGlow =
           elapsed < T_IGN
@@ -269,68 +324,84 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
         padGlowRef.current.style.opacity = `${padGlow}`;
       }
 
-      // 3. Massive Deluge Smoke Generation (Covers entire screen)
-      if (elapsed >= T_IGN && elapsed < T_LIFT + FLIGHT_TIME + 200) {
-        // High spawn rate to build a solid, dense volumetric cloud bank
-        const count = elapsed < T_LIFT ? 5 : 8;
+      // =========================================================================
+      // 3. MASSIVE REALISTIC DELUGE SMOKE SYSTEM (100% FULL SCREEN COVERAGE)
+      // High-pressure water deluge steam explodes laterally across the whole pad
+      // and surges upward into huge billowing cumulus cloud banks.
+      // =========================================================================
+      if (elapsed >= T_IGN && elapsed < T_LIFT + FLIGHT_TIME + 150) {
+        // High spawn density for solid screen-covering cloud bank
+        const count = elapsed < T_LIFT ? 7 : 11;
         for (let i = 0; i < count; i++) {
+          const isAtBase = nozzleY >= padY - 40;
           const side = Math.random() < 0.5 ? -1 : 1;
-          const isAtBase = nozzleY >= padY - 30;
 
-          // Lateral explosion of steam along the ground trench
+          // Lateral deluge explosion across the trench
+          const spawnX = isAtBase
+            ? cx + (Math.random() - 0.5) * width * 0.75 // Spreads wide across the launch deck!
+            : cx + (Math.random() - 0.5) * (rocketLength * 0.5);
+
           const vx = isAtBase
-            ? side * (4 + Math.random() * 9) + (Math.random() - 0.5) * 4
-            : (Math.random() - 0.5) * 6;
+            ? side * (5 + Math.random() * 12) + (Math.random() - 0.5) * 6
+            : (Math.random() - 0.5) * 8;
+
+          // Powerful upward billow
           const vy = isAtBase
-            ? -1.2 - Math.random() * 3.5
-            : 0.8 + Math.random() * 2.5;
+            ? -1.8 - Math.random() * 4.2
+            : 0.5 + Math.random() * 3.5;
 
-          // Huge puffy radius to guarantee complete screen coverage
+          // Huge expanding radii to guarantee 100% viewport coverage
           const maxRadius = isAtBase
-            ? 220 + Math.random() * 260 // Up to 480px per cloud puff!
-            : 160 + Math.random() * 180;
+            ? 280 + Math.random() * 340 // Up to 620px per giant smoke billow!
+            : 200 + Math.random() * 240;
 
-          const isHot = elapsed < T_LIFT + 220 && Math.random() < 0.35;
-          const isDepth = Math.random() < 0.25;
+          const isFirePuff = elapsed < T_LIFT + 220 && Math.random() < 0.3;
+          const isDepthPuff = Math.random() < 0.25;
 
           smokeClouds.push({
-            x: cx + (Math.random() - 0.5) * (rocketLength * 0.4),
-            y: nozzleY + Math.random() * 16,
+            x: spawnX,
+            y: nozzleY + (Math.random() - 0.5) * 24,
             vx,
             vy,
-            radius: 35 + Math.random() * 30,
+            radius: 45 + Math.random() * 35,
             maxRadius,
-            growth: 4.5 + Math.random() * 3.5,
+            growth: 5.5 + Math.random() * 4.5,
             age: 0,
-            maxAge: 1200 + Math.random() * 700,
-            alpha: 0.92,
+            maxAge: 1300 + Math.random() * 800,
+            alpha: 0.95,
             rotation: Math.random() * Math.PI * 2,
-            vRot: (Math.random() - 0.5) * 0.02,
-            shadeType: isHot ? 'hot' : isDepth ? 'darkDepth' : Math.random() < 0.6 ? 'dense' : 'mist',
+            vRot: (Math.random() - 0.5) * 0.025,
+            shadeType: isFirePuff
+              ? 'fire'
+              : isDepthPuff
+              ? 'depth'
+              : Math.random() < 0.65
+              ? 'deluge'
+              : 'mist',
           });
         }
 
-        // Fiery exhaust embers
-        for (let s = 0; s < 3; s++) {
+        // Exhaust sparks & burning embers
+        for (let s = 0; s < 4; s++) {
           embers.push({
-            x: cx + (Math.random() - 0.5) * 20,
-            y: nozzleY + 6,
-            vx: (Math.random() - 0.5) * 8,
-            vy: 6 + Math.random() * 14,
-            size: 2 + Math.random() * 2.5,
+            x: cx + (Math.random() - 0.5) * 24,
+            y: nozzleY + 8,
+            vx: (Math.random() - 0.5) * 10,
+            vy: 7 + Math.random() * 16,
+            size: 2 + Math.random() * 3,
             life: 0,
-            maxLife: 16 + Math.random() * 18,
+            maxLife: 18 + Math.random() * 20,
             color: emberPalette[Math.floor(Math.random() * emberPalette.length)],
           });
         }
       }
 
-      // 4. Reveal trigger: as smoke peaks and covers screen, trigger underlying page
+      // 4. Reveal trigger: underlying page unlocks while enveloped in smoke
       if (elapsed >= T_REVEAL) {
         triggerReveal();
       }
 
-      // Background stage curtain fade: dissolves under the heavy smoke layer
+      // Background curtain smoothly dissolves beneath the impenetrable smoke wall
       if (curtainRef.current) {
         const curtainFade =
           elapsed < T_LIFT
@@ -339,34 +410,49 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
         curtainRef.current.style.opacity = `${curtainFade}`;
       }
 
-      // 5. Draw Canvas: Full Volumetric Coverage & Dissipating Mist
+      // =========================================================================
+      // 5. DRAW CANVAS: VOLUMETRIC SMOKE WITH 100% PEAK OPACITY COVERAGE
+      // =========================================================================
       ctx.clearRect(0, 0, width, height);
 
-      // Global smoke blanket dissipation factor
+      // Global dissipation factor as smoke clears after peak
       let globalSmokeAlpha = 1;
       if (elapsed > FADE_START) {
         const fadeFrac = Math.min(1, (elapsed - FADE_START) / (TOTAL_DUR - FADE_START));
-        // Smooth ease-out fade as the massive cloud thins and disperses
-        globalSmokeAlpha = Math.max(0, 1 - Math.pow(fadeFrac, 1.3));
+        // Smooth ease-out dissipation
+        globalSmokeAlpha = Math.max(0, 1 - Math.pow(fadeFrac, 1.35));
       }
 
-      // Full-screen atmospheric fog blanket during peak liftoff (guarantees 100% coverage)
+      // -----------------------------------------------------------------------
+      // SOLID VOLUMETRIC SMOKE BLANKET (GUARANTEES 100% COMPLETE SCREEN COVERAGE)
+      // User requirement: "чтобы полностью все закрыло дым"
+      // Reaches 1.0 (100% solid coverage) at peak liftoff!
+      // -----------------------------------------------------------------------
       if (elapsed > T_LIFT && elapsed < TOTAL_DUR) {
-        const blanketPeak =
-          elapsed < T_FULL_SMOKE
-            ? (elapsed - T_LIFT) / (T_FULL_SMOKE - T_LIFT)
-            : globalSmokeAlpha;
+        let blanketAlpha = 0;
+        if (elapsed < T_FULL_SMOKE) {
+          // Surges up to 100% solid opacity
+          blanketAlpha = Math.min(1.0, (elapsed - T_LIFT) / (T_FULL_SMOKE - T_LIFT));
+        } else if (elapsed <= FADE_START) {
+          // Held at 100% solid opacity during peak liftoff
+          blanketAlpha = 1.0;
+        } else {
+          // Smoothly clears away as the smoke parts
+          const fadeProgress = (elapsed - FADE_START) / (TOTAL_DUR - FADE_START);
+          blanketAlpha = Math.max(0, 1 - Math.pow(fadeProgress, 1.35));
+        }
 
-        const blanketAlpha = Math.min(0.85, blanketPeak * 0.85);
-        if (blanketAlpha > 0.01) {
+        if (blanketAlpha > 0.005) {
           ctx.fillStyle = isDark
-            ? `rgba(18, 24, 34, ${blanketAlpha * 0.95})`
-            : `rgba(240, 244, 250, ${blanketAlpha * 0.95})`;
+            ? `rgba(13, 17, 24, ${blanketAlpha})`
+            : `rgba(244, 247, 252, ${blanketAlpha})`;
           ctx.fillRect(0, 0, width, height);
         }
       }
 
-      // Render All Volumetric Smoke Puffs
+      // -----------------------------------------------------------------------
+      // RENDER ALL ORGANIC VOLUMETRIC SMOKE PUFFS
+      // -----------------------------------------------------------------------
       for (let i = smokeClouds.length - 1; i >= 0; i--) {
         const p = smokeClouds[i];
         p.age += dt;
@@ -377,8 +463,8 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
 
         p.x += p.vx;
         p.y += p.vy;
-        p.vx *= 0.96;
-        p.vy *= 0.965;
+        p.vx *= 0.965;
+        p.vy *= 0.97;
         p.rotation += p.vRot;
 
         if (p.radius < p.maxRadius) {
@@ -387,13 +473,13 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
         }
 
         const lifeFrac = p.age / p.maxAge;
-        const currentAlpha = p.alpha * Math.max(0, 1 - Math.pow(lifeFrac, 1.2)) * globalSmokeAlpha;
+        const currentAlpha = p.alpha * Math.max(0, 1 - Math.pow(lifeFrac, 1.25)) * globalSmokeAlpha;
         if (currentAlpha <= 0.01) continue;
 
-        let sprite = spriteDense;
-        if (p.shadeType === 'hot') sprite = spriteHot;
+        let sprite = spriteDeluge;
+        if (p.shadeType === 'fire') sprite = spriteFire;
+        else if (p.shadeType === 'depth') sprite = spriteDepth;
         else if (p.shadeType === 'mist') sprite = spriteMist;
-        else if (p.shadeType === 'darkDepth') sprite = spriteDepth;
 
         ctx.globalAlpha = Math.max(0, Math.min(1, currentAlpha));
         ctx.save();
@@ -403,7 +489,9 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
         ctx.restore();
       }
 
-      // Render Embers
+      // -----------------------------------------------------------------------
+      // RENDER EMBERS & EXHAUST SPARKS
+      // -----------------------------------------------------------------------
       ctx.globalAlpha = 1;
       for (let s = embers.length - 1; s >= 0; s--) {
         const em = embers[s];
@@ -425,7 +513,7 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
       }
       ctx.globalAlpha = 1;
 
-      // Completion check
+      // Sequence completion
       if (elapsed >= TOTAL_DUR) {
         triggerReveal();
         setActive(false);
@@ -460,41 +548,41 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
       className="fixed inset-0 z-50 cursor-pointer overflow-hidden select-none"
       title="Click to skip"
     >
-      {/* Background Stage Curtain (Smoothly dissolves under the dense smoke) */}
+      {/* Background Stage Curtain (Fades smoothly beneath the heavy smoke) */}
       <div
         ref={curtainRef}
         className="absolute inset-0 pointer-events-none will-change-[opacity]"
         style={{ backgroundColor: isDark ? '#090b10' : '#fafaf8' }}
       >
-        {/* Realistic Launch Pad Blast Trench Lighting (Pure warm incandescent fire, no neon) */}
+        {/* Launch pad industrial flame trench glow (Warm incandescent fire, zero neon) */}
         <div
           ref={padGlowRef}
           className="absolute left-0 right-0 pointer-events-none transition-opacity duration-300"
           style={{ opacity: 0, top: '78%' }}
         >
-          {/* Flame trench ground glow */}
+          {/* Flame trench core reflection */}
           <div
-            className="absolute left-1/2 h-44 w-[75%] max-w-[850px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
+            className="absolute left-1/2 h-48 w-[85%] max-w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
             style={{
               background:
-                'radial-gradient(ellipse at center, rgba(255,170,40,0.7) 0%, rgba(235,90,15,0.3) 45%, rgba(180,40,5,0.1) 70%, transparent 85%)',
+                'radial-gradient(ellipse at center, rgba(255,175,45,0.75) 0%, rgba(235,90,15,0.35) 45%, rgba(180,40,5,0.12) 70%, transparent 85%)',
             }}
           />
-          {/* Heavy industrial launch deck line */}
+          {/* Industrial launch mount steel deck line */}
           <div
-            className="absolute left-1/2 h-[1.5px] w-[80%] max-w-[950px] -translate-x-1/2"
+            className="absolute left-1/2 h-[2px] w-[85%] max-w-[980px] -translate-x-1/2"
             style={{
               background:
-                'linear-gradient(to right, transparent, rgba(148,163,184,0.4) 30%, rgba(255,210,120,0.8) 50%, rgba(148,163,184,0.4) 70%, transparent)',
+                'linear-gradient(to right, transparent, rgba(148,163,184,0.4) 25%, rgba(255,210,120,0.85) 50%, rgba(148,163,184,0.4) 75%, transparent)',
             }}
           />
         </div>
       </div>
 
-      {/* Massive Volumetric Smoke & Flame Canvas (Completely covers the screen) */}
+      {/* Massive Volumetric Smoke & Flame Canvas (Completely covers entire screen) */}
       <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 z-20 h-full w-full" />
 
-      {/* Realistic Detailed Orbital Rocket (Clean aerospace materials, no neon) */}
+      {/* Realistic Aerospace Orbital Rocket Vessel (No neon, pure aerospace detailing) */}
       <div
         ref={rocketRef}
         className="pointer-events-none absolute left-0 top-0 z-30 will-change-transform"
@@ -505,7 +593,7 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
         <OrbitalRocketVessel className="h-full w-full overflow-visible select-none pointer-events-none filter drop-shadow-[0_12px_28px_rgba(0,0,0,0.75)]" />
       </div>
 
-      {/* Minimal skip pill */}
+      {/* Subtle skip badge */}
       <div className="absolute bottom-5 right-5 z-40 rounded-full border border-[var(--line)] bg-[var(--surface)]/75 px-3 py-0.5 text-[10px] font-medium text-[var(--ink-muted)] opacity-50 backdrop-blur-md transition-opacity hover:opacity-100">
         Skip ✕
       </div>
