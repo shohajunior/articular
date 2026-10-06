@@ -5,36 +5,48 @@ interface RocketIntroProps {
   onComplete?: () => void;
 }
 
-// Launch timeline (ms)
-const T_IGN = 1000; // engine ignition
-const T_LIFT = 1900; // liftoff
-const FLIGHT = 2400; // time to leave the screen after liftoff
-const T_REVEAL = T_LIFT + 1300; // page content starts to appear while rocket climbs
-const FADE = 1500; // slow curtain fade (page info appears)
+// Fast cinematic timeline (ms) — rapid, thrilling, no waiting
+const T_IGN = 80;        // Near-instant engine ignition & flare
+const T_LIFT = 350;      // Liftoff begins in ~1/3 second
+const FLIGHT_TIME = 950; // Rapid supersonic climb off-screen
+const T_REVEAL = 550;    // Page content starts fading in behind smoke
+const FADE_DUR = 650;    // Silky smooth curtain dissolve
+const TOTAL_DUR = 1850;  // Complete sequence finishes under 2 seconds
 
-// Rocket SVG viewBox is 128x40 (flame to the left, nose to the right, rotated -90deg to point up)
+// Rocket SVG viewBox aspect (width/height when horizontal: 128x40)
 const ASPECT = 40 / 128;
 
-interface SmokeCloud {
+interface SmokeParticle {
   x: number;
   y: number;
   vx: number;
   vy: number;
-  r0: number;
-  rMax: number;
+  radius: number;
+  maxRadius: number;
+  growth: number;
   age: number;
+  maxAge: number;
+  alpha: number;
+  isHot: boolean;
+}
+
+interface SparkParticle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
   life: number;
-  alpha0: number;
-  hot: boolean;
+  maxLife: number;
+  color: string;
 }
 
 export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
   const [active, setActive] = useState(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const curtainRef = useRef<HTMLDivElement>(null);
-  const rocketWrapperRef = useRef<HTMLDivElement>(null);
-  const padRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLSpanElement>(null);
+  const rocketRef = useRef<HTMLDivElement>(null);
+  const flameGlowRef = useRef<HTMLDivElement>(null);
   const animFrameRef = useRef<number | null>(null);
   const hasTriggeredReveal = useRef(false);
   const onCompleteRef = useRef(onComplete);
@@ -47,52 +59,53 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
   };
 
   useEffect(() => {
-    // Welcome screen always plays on every page load
     sessionStorage.removeItem('articular-rocket-played');
 
     const canvas = canvasRef.current;
-    const wrapper = rocketWrapperRef.current;
-    if (!canvas || !wrapper) return;
+    const rocket = rocketRef.current;
+    if (!canvas || !rocket) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Safety fallback if RAF is throttled (background tab): never leave the page hidden
+    // Safety fallback
     const safetyTimer = setTimeout(() => {
       triggerReveal();
       setActive(false);
-    }, 9000);
+    }, 4000);
 
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
-    let rocketW = 0;
-    let padY = 0;
-    let cx = 0;
-    let cy0 = 0;
-    let travel = 0;
+
+    // Responsive rocket scale
+    let rocketLength = Math.max(280, Math.min(height * 0.6, width * 0.85, 420));
+    let padY = height * 0.76;
+    let cx = width / 2;
+    // When rotated -90deg, the nozzle sits ~0.14 * rocketLength below the center
+    let cy0 = padY - rocketLength * 0.14;
+    let travel = padY + rocketLength * 0.5 + 100;
 
     const layout = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      rocketW = Math.max(300, Math.min(height * 0.8, width * 0.95, 620));
-      padY = height * 0.74;
+      rocketLength = Math.max(280, Math.min(height * 0.6, width * 0.85, 420));
+      padY = height * 0.76;
       cx = width / 2;
-      // nozzle sits at 0.14 * rocketW below the rocket's centre
-      cy0 = padY - rocketW * 0.14;
-      travel = padY + rocketW * 0.36 + 60;
-      wrapper.style.width = `${rocketW}px`;
-      wrapper.style.height = `${rocketW * ASPECT}px`;
-      if (padRef.current) padRef.current.style.top = `${padY}px`;
+      cy0 = padY - rocketLength * 0.14;
+      travel = padY + rocketLength * 0.5 + 100;
+
+      rocket.style.width = `${rocketLength}px`;
+      rocket.style.height = `${rocketLength * ASPECT}px`;
     };
     layout();
     window.addEventListener('resize', layout);
 
-    const flame = wrapper.querySelector<SVGGElement>('[data-rocket-flame]');
-    if (flame) flame.style.opacity = '0';
+    const flameGroup = rocket.querySelector<SVGGElement>('[data-rocket-flame]');
+    if (flameGroup) flameGroup.style.opacity = '0';
 
     const isDark = document.documentElement.classList.contains('dark');
 
-    // Pre-rendered soft sprites (cheap GPU blits)
-    const createSprite = (inner: string, outer: string, size = 128) => {
+    // Pre-rendered soft radial sprites for smooth 60-120fps GPU canvas rendering
+    const createSprite = (inner: string, mid: string, outer: string, size = 128) => {
       const oc = document.createElement('canvas');
       oc.width = size;
       oc.height = size;
@@ -101,8 +114,8 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
       const r = size / 2;
       const grad = octx.createRadialGradient(r, r, 0, r, r, r);
       grad.addColorStop(0, inner);
-      grad.addColorStop(0.5, outer);
-      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      grad.addColorStop(0.4, mid);
+      grad.addColorStop(1, outer);
       octx.fillStyle = grad;
       octx.beginPath();
       octx.arc(r, r, r, 0, Math.PI * 2);
@@ -110,173 +123,217 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
       return oc;
     };
 
-    const spriteHot = createSprite('rgba(255, 200, 100, 0.8)', 'rgba(255, 110, 30, 0.35)');
-    const spriteSmoke = isDark
-      ? createSprite('rgba(150, 165, 190, 0.7)', 'rgba(95, 110, 135, 0.3)')
-      : createSprite('rgba(170, 182, 200, 0.8)', 'rgba(205, 214, 228, 0.35)');
+    const spriteFlameCore = createSprite(
+      'rgba(255, 245, 200, 0.95)',
+      'rgba(255, 140, 30, 0.6)',
+      'rgba(255, 60, 0, 0)'
+    );
+    const spriteSmokeDark = createSprite(
+      'rgba(180, 195, 220, 0.65)',
+      'rgba(100, 115, 140, 0.28)',
+      'rgba(40, 50, 70, 0)'
+    );
+    const spriteSmokeLight = createSprite(
+      'rgba(240, 245, 255, 0.85)',
+      'rgba(200, 215, 235, 0.35)',
+      'rgba(180, 195, 215, 0)'
+    );
+    const spriteSmoke = isDark ? spriteSmokeDark : spriteSmokeLight;
 
-    // Engine rumble (silently ignored if autoplay is blocked)
+    // Realistic audio rumble synth (Web Audio API)
     let audioCtx: AudioContext | null = null;
-    const rumbleTimer = setTimeout(() => {
-      try {
-        const AudioCtx =
-          window.AudioContext ||
-          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-        if (!AudioCtx) return;
+    try {
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (AudioCtx) {
         audioCtx = new AudioCtx();
         const now = audioCtx.currentTime;
-        const len = audioCtx.sampleRate * 3.6;
-        const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-        const out = buf.getChannelData(0);
-        for (let i = 0; i < len; i++) out[i] = Math.random() * 2 - 1;
-        const src = audioCtx.createBufferSource();
-        src.buffer = buf;
+        const dur = 2.4;
+        const buf = audioCtx.createBuffer(1, Math.floor(audioCtx.sampleRate * dur), audioCtx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buf;
+
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(140, now);
-        filter.frequency.exponentialRampToValueAtTime(900, now + 1.8);
-        filter.frequency.exponentialRampToValueAtTime(200, now + 3.4);
+        filter.frequency.setValueAtTime(160, now);
+        filter.frequency.exponentialRampToValueAtTime(1400, now + 0.6);
+        filter.frequency.exponentialRampToValueAtTime(220, now + 2.0);
+
         const gain = audioCtx.createGain();
         gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(0.1, now + 1.2);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.5);
-        src.connect(filter);
+        gain.gain.linearRampToValueAtTime(0.12, now + 0.25);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);
+
+        noise.connect(filter);
         filter.connect(gain);
         gain.connect(audioCtx.destination);
-        src.start(now);
-      } catch {
-        // ignore
+        noise.start(now);
       }
-    }, T_IGN);
+    } catch {
+      // Audio autoplay policy handled silently
+    }
 
-    const clouds: SmokeCloud[] = [];
-    const start = performance.now();
-    let last = start;
-    let groundAcc = 0;
-    let trailAcc = 0;
-    let lastLabel = '';
+    const smokeList: SmokeParticle[] = [];
+    const sparkList: SparkParticle[] = [];
+    const sparkColors = ['#ffffff', '#fef08a', '#f97316', '#38bdf8', '#ffea70'];
+
+    const startTime = performance.now();
+    let lastTime = startTime;
     let ignited = false;
 
-    const animate = () => {
-      const nowMs = performance.now();
-      const t = nowMs - start;
-      const dtMs = Math.min(nowMs - last, 50);
-      last = nowMs;
-      const k = dtMs / 16.667;
+    const animate = (time: number) => {
+      const elapsed = time - startTime;
+      const dt = Math.min(time - lastTime, 40);
+      lastTime = time;
 
-      // Countdown label
-      if (labelRef.current) {
-        const label =
-          t < 400 ? 'T−3' : t < 800 ? 'T−2' : t < T_IGN ? 'T−1' : t < T_LIFT ? 'IGNITION' : 'LIFTOFF';
-        if (label !== lastLabel) {
-          labelRef.current.textContent = label;
-          lastLabel = label;
-        }
-      }
-
-      // Ignition: flame on, pad glow on
-      if (!ignited && t >= T_IGN) {
+      // 1. Engine Ignition: Instant flame on & ground flare
+      if (!ignited && elapsed >= T_IGN) {
         ignited = true;
-        if (flame) flame.style.opacity = '1';
-        if (padRef.current) padRef.current.style.opacity = '1';
+        if (flameGroup) flameGroup.style.opacity = '1';
+        if (flameGlowRef.current) flameGlowRef.current.style.opacity = '1';
       }
 
-      // Rocket motion: vibrates on the pad, then accelerates upward (slow start)
+      // 2. Rocket Physics: Smooth, rapid supersonic acceleration upwards
       let lift = 0;
-      if (t > T_LIFT) {
-        const p = (t - T_LIFT) / FLIGHT;
-        lift = travel * Math.pow(p, 2.3);
+      if (elapsed > T_LIFT) {
+        const progress = Math.min((elapsed - T_LIFT) / FLIGHT_TIME, 1.4);
+        // Realistic quadratic acceleration curve
+        lift = travel * Math.pow(progress, 2.1);
       }
-      const shakeAmp = t < T_IGN ? 0 : t < T_LIFT ? 1.4 : t < T_LIFT + 900 ? 2.2 : 0;
-      const shake = shakeAmp ? (Math.random() - 0.5) * shakeAmp : 0;
-      if (lift > travel + 160) {
-        wrapper.style.display = 'none';
+
+      // Earth Tremor / Camera shake
+      const shakeAmp = elapsed < T_IGN ? 0 : elapsed < T_LIFT ? 1.2 : elapsed < T_LIFT + 400 ? 2.5 : Math.max(0, 2 - (elapsed - T_LIFT) / 400);
+      const shakeX = shakeAmp ? (Math.random() - 0.5) * shakeAmp : 0;
+      const shakeY = shakeAmp ? (Math.random() - 0.5) * shakeAmp : 0;
+
+      const rocketY = cy0 - lift;
+      const nozzleY = rocketY + rocketLength * 0.14;
+
+      if (lift > travel + 100) {
+        rocket.style.display = 'none';
       } else {
-        wrapper.style.transform = `translate3d(${cx + shake}px, ${cy0 - lift}px, 0) translate(-50%, -50%) rotate(-90deg)`;
+        rocket.style.transform = `translate3d(${cx + shakeX}px, ${rocketY + shakeY}px, 0) translate(-50%, -50%) rotate(-90deg)`;
       }
-      const nozzleY = cy0 - lift + rocketW * 0.14;
 
-      // Ground blast smoke: spreads sideways along the pad
-      if (t > T_IGN && t < T_LIFT + 1500) {
-        groundAcc += dtMs * (t < T_LIFT ? 0.022 : 0.04);
-        while (groundAcc >= 1) {
-          groundAcc -= 1;
+      // Ground launch pad glow tracking
+      if (flameGlowRef.current) {
+        const glowOpacity = elapsed < T_IGN ? 0 : elapsed < T_LIFT + 300 ? 1 : Math.max(0, 1 - (elapsed - T_LIFT) / 500);
+        flameGlowRef.current.style.opacity = `${glowOpacity}`;
+        flameGlowRef.current.style.transform = `translate3d(0, ${Math.min(0, nozzleY - padY)}px, 0)`;
+      }
+
+      // 3. Volumetric Smoke Spawning
+      if (elapsed >= T_IGN && elapsed < T_LIFT + FLIGHT_TIME) {
+        // Lateral flame-trench plume billowing outward
+        const spawnCount = elapsed < T_LIFT ? 2 : 3;
+        for (let i = 0; i < spawnCount; i++) {
           const side = Math.random() < 0.5 ? -1 : 1;
-          clouds.push({
-            x: cx + side * Math.random() * rocketW * 0.05,
-            y: padY - 4 - Math.random() * 14,
-            vx: side * (1.8 + Math.random() * 4.2),
-            vy: -0.1 - Math.random() * 0.3,
-            r0: 26 + Math.random() * 16,
-            rMax: 90 + Math.random() * 60,
+          const isAtPad = nozzleY >= padY - 20;
+
+          smokeList.push({
+            x: cx + (Math.random() - 0.5) * 16,
+            y: nozzleY + Math.random() * 8,
+            vx: isAtPad ? side * (2.5 + Math.random() * 4.5) : (Math.random() - 0.5) * 2,
+            vy: isAtPad ? (Math.random() - 0.5) * 1.5 - 0.2 : 0.6 + Math.random() * 1.2,
+            radius: 18 + Math.random() * 12,
+            maxRadius: isAtPad ? 100 + Math.random() * 60 : 50 + Math.random() * 30,
+            growth: 2.2 + Math.random() * 1.8,
             age: 0,
-            life: 2200 + Math.random() * 600,
-            alpha0: 0.6,
-            hot: Math.random() < 0.4,
+            maxAge: 700 + Math.random() * 400,
+            alpha: 0.85,
+            isHot: Math.random() < 0.45 && elapsed < T_LIFT + 200,
           });
         }
-      }
 
-      // Exhaust trail: smoke left hanging behind the climbing rocket
-      if (t > T_LIFT && nozzleY > -60 && nozzleY < height + 100) {
-        trailAcc += dtMs * 0.032;
-        while (trailAcc >= 1) {
-          trailAcc -= 1;
-          clouds.push({
+        // Fast Fiery Sparks
+        for (let s = 0; s < 2; s++) {
+          sparkList.push({
             x: cx + (Math.random() - 0.5) * 14,
-            y: nozzleY + 12,
-            vx: (Math.random() - 0.5) * 1.2,
-            vy: 0.15 + Math.random() * 0.3,
-            r0: 20 + Math.random() * 10,
-            rMax: 55 + Math.random() * 35,
-            age: 0,
-            life: 1800 + Math.random() * 500,
-            alpha0: 0.5,
-            hot: Math.random() < 0.25,
+            y: nozzleY + 4,
+            vx: (Math.random() - 0.5) * 6,
+            vy: 4 + Math.random() * 10,
+            size: 1.5 + Math.random() * 2,
+            life: 0,
+            maxLife: 14 + Math.random() * 12,
+            color: sparkColors[Math.floor(Math.random() * sparkColors.length)],
           });
         }
       }
 
-      // Page info appears slowly while the rocket is already climbing
-      if (t > T_REVEAL) triggerReveal();
-      if (curtainRef.current) {
-        const f = t > T_REVEAL ? Math.min(1, (t - T_REVEAL) / FADE) : 0;
-        const eased = f * f * (3 - 2 * f);
-        curtainRef.current.style.opacity = String(1 - eased);
+      // 4. Smooth Page Reveal Trigger & Curtain Dissolve
+      if (elapsed >= T_REVEAL) {
+        triggerReveal();
       }
 
-      // Draw smoke
+      if (curtainRef.current) {
+        const fadeProgress = elapsed >= T_REVEAL ? Math.min(1, (elapsed - T_REVEAL) / FADE_DUR) : 0;
+        const eased = fadeProgress * fadeProgress * (3 - 2 * fadeProgress); // smooth cubic ease
+        curtainRef.current.style.opacity = `${1 - eased}`;
+      }
+
+      // 5. Draw Canvas Particles
       ctx.clearRect(0, 0, width, height);
-      for (let i = clouds.length - 1; i >= 0; i--) {
-        const c = clouds[i];
-        c.age += dtMs;
-        if (c.age >= c.life) {
-          clouds.splice(i, 1);
+
+      // Render Smoke Puffs
+      for (let i = smokeList.length - 1; i >= 0; i--) {
+        const p = smokeList[i];
+        p.age += dt;
+        if (p.age >= p.maxAge) {
+          smokeList.splice(i, 1);
           continue;
         }
-        const drag = Math.pow(0.975, k);
-        c.vx *= drag;
-        c.x += c.vx * k;
-        c.y += c.vy * k;
 
-        const life = c.age / c.life;
-        const grow = 1 - Math.pow(1 - Math.min(1, c.age / 1400), 2);
-        const radius = c.r0 + (c.rMax - c.r0) * grow;
-        const fadeIn = Math.min(1, c.age / 160);
-        const alpha = c.alpha0 * fadeIn * Math.pow(1 - life, 1.3);
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.96;
+        p.vy *= 0.97;
 
-        const sprite = c.hot && c.age < 380 ? spriteHot : spriteSmoke;
-        ctx.globalAlpha = alpha;
-        ctx.drawImage(sprite, c.x - radius, c.y - radius, radius * 2, radius * 2);
+        if (p.radius < p.maxRadius) {
+          p.radius += p.growth;
+          p.growth *= 0.95;
+        }
+
+        const lifeFrac = p.age / p.maxAge;
+        const currentAlpha = p.alpha * Math.max(0, 1 - Math.pow(lifeFrac, 1.4));
+
+        const sprite = p.isHot && p.age < 220 ? spriteFlameCore : spriteSmoke;
+        ctx.globalAlpha = Math.max(0, Math.min(1, currentAlpha));
+        ctx.drawImage(sprite, p.x - p.radius, p.y - p.radius, p.radius * 2, p.radius * 2);
+      }
+
+      // Render Fiery Sparks
+      ctx.globalAlpha = 1;
+      for (let s = sparkList.length - 1; s >= 0; s--) {
+        const sp = sparkList[s];
+        sp.life += 1;
+        sp.x += sp.vx;
+        sp.y += sp.vy;
+        sp.vx *= 0.94;
+        sp.vy *= 0.96;
+
+        if (sp.life >= sp.maxLife) {
+          sparkList.splice(s, 1);
+          continue;
+        }
+
+        const sparkAlpha = Math.max(0, 1 - sp.life / sp.maxLife);
+        ctx.fillStyle = sp.color;
+        ctx.globalAlpha = sparkAlpha;
+        ctx.fillRect(sp.x, sp.y, sp.size, sp.size);
       }
       ctx.globalAlpha = 1;
 
-      const rocketGone = lift > travel + 160;
-      if ((t > T_LIFT + FLIGHT && rocketGone && clouds.length === 0) || t > 8000) {
+      // Completion check
+      if (elapsed >= TOTAL_DUR) {
         triggerReveal();
         setActive(false);
         return;
       }
+
       animFrameRef.current = requestAnimationFrame(animate);
     };
 
@@ -284,12 +341,10 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
 
     return () => {
       clearTimeout(safetyTimer);
-      clearTimeout(rumbleTimer);
       window.removeEventListener('resize', layout);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       audioCtx?.close().catch(() => undefined);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSkip = () => {
@@ -305,62 +360,56 @@ export const RocketIntro: React.FC<RocketIntroProps> = ({ onComplete }) => {
     <div
       onClick={handleSkip}
       className="fixed inset-0 z-50 cursor-pointer overflow-hidden select-none"
+      title="Click to skip"
     >
-      {/* Opaque stage: fades out slowly to reveal the page */}
+      {/* Background Curtain: Fades smoothly to reveal Hero directly underneath */}
       <div
         ref={curtainRef}
         className="absolute inset-0 pointer-events-none will-change-[opacity]"
         style={{ backgroundColor: isDark ? '#090b10' : '#fafaf8' }}
       >
-        {/* Launch pad: ground line + ignition glow */}
+        {/* Dynamic Launch Pad Illumination / Ground Flare */}
         <div
-          ref={padRef}
-          className="absolute left-0 right-0 transition-opacity duration-700"
-          style={{ opacity: 0, top: '74%' }}
+          ref={flameGlowRef}
+          className="absolute left-0 right-0 pointer-events-none transition-opacity duration-300"
+          style={{ opacity: 0, top: '76%' }}
         >
+          {/* Intense hot plasma core glow */}
           <div
-            className="absolute left-1/2 h-40 w-[70%] max-w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+            className="absolute left-1/2 h-36 w-[60%] max-w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
             style={{
               background:
-                'radial-gradient(ellipse at center, rgba(255,150,60,0.45) 0%, rgba(255,110,30,0.18) 40%, rgba(0,0,0,0) 70%)',
+                'radial-gradient(ellipse at center, rgba(255,160,40,0.65) 0%, rgba(255,80,10,0.25) 50%, transparent 75%)',
             }}
           />
+          {/* Sleek horizontal launch line reflection */}
           <div
-            className="absolute left-1/2 h-px w-[80%] -translate-x-1/2"
+            className="absolute left-1/2 h-px w-[75%] max-w-[850px] -translate-x-1/2"
             style={{
               background:
-                'linear-gradient(to right, transparent, rgba(56,189,248,0.5), transparent)',
+                'linear-gradient(to right, transparent, rgba(56,189,248,0.6) 50%, transparent)',
             }}
           />
-        </div>
-
-        {/* Countdown / status */}
-        <div className="absolute left-1/2 top-8 flex -translate-x-1/2 items-center gap-2 opacity-60">
-          <span className="h-2 w-2 animate-ping rounded-full bg-[var(--accent)]" />
-          <span
-            ref={labelRef}
-            className="font-mono text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--ink)]"
-          >
-            T−3
-          </span>
         </div>
       </div>
 
-      {/* Smoke canvas */}
+      {/* Volumetric Smoke & Fiery Plasma Canvas */}
       <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 z-20 h-full w-full" />
 
-      {/* Big vertical rocket (SVG points right → rotated to point up) */}
+      {/* Majestic Aerospace Rocket Vessel */}
       <div
-        ref={rocketWrapperRef}
+        ref={rocketRef}
         className="pointer-events-none absolute left-0 top-0 z-30 will-change-transform"
-        style={{ transform: 'translate3d(50vw, 60vh, 0) translate(-50%, -50%) rotate(-90deg)' }}
+        style={{
+          transform: 'translate3d(50vw, 60vh, 0) translate(-50%, -50%) rotate(-90deg)',
+        }}
       >
-        <OrbitalRocketVessel className="h-full w-full overflow-visible select-none pointer-events-none" />
+        <OrbitalRocketVessel className="h-full w-full overflow-visible select-none pointer-events-none filter drop-shadow-[0_0_24px_rgba(56,189,248,0.7)]" />
       </div>
 
-      {/* Subtle Skip Button */}
-      <div className="absolute bottom-6 right-6 z-40 rounded-full border border-[var(--line)] bg-[var(--surface)]/90 px-3.5 py-1 text-[11px] font-medium text-[var(--ink-muted)] shadow-sm backdrop-blur-md transition-all hover:bg-[var(--surface-elevated)] hover:text-[var(--ink)]">
-        Click anywhere to skip ✕
+      {/* Minimal clean skip pill */}
+      <div className="absolute bottom-5 right-5 z-40 rounded-full border border-[var(--line)] bg-[var(--surface)]/80 px-3 py-0.5 text-[10px] font-medium text-[var(--ink-muted)] opacity-60 backdrop-blur-md transition-opacity hover:opacity-100">
+        Skip ✕
       </div>
     </div>
   );
