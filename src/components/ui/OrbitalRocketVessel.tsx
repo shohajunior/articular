@@ -75,7 +75,7 @@ export const OrbitalRocketVessel: React.FC<OrbitalRocketVesselProps> = ({
     {/* ========================================================= */}
     {/* 1. SUPERSONIC ROCKET EXHAUST PLUME & MACH SHOCK DIAMONDS   */}
     {/* ========================================================= */}
-    <g filter="url(#rocketBloom)">
+    <g filter="url(#rocketBloom)" data-rocket-flame="" style={{ transition: 'opacity 0.5s ease-out' }}>
       {/* Outer expanding turbulent flame */}
       <path
         d="M 10 14.5 C -4 11, -22 8, -36 20 C -22 32, -4 29, 10 25.5 Z"
