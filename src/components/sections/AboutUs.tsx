@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { OrbitalRocketVessel } from '../ui/OrbitalRocketVessel';
 import { RevealWords } from '../ui/RevealWords';
 
@@ -288,48 +288,48 @@ export const AboutUs: React.FC = () => {
     <section
       id="about"
       ref={sectionRef}
-      className="relative bg-[#06080d] text-white border-t border-[var(--line)] overflow-visible transition-colors duration-300"
+      className="relative bg-[var(--bg)] text-[var(--ink)] dark:bg-[#06080d] dark:text-white border-t border-[var(--line)] overflow-visible transition-colors duration-300"
     >
       {/* ======================================================== */}
       {/* 1. STATIONARY FIXED BACKGROUND (Stands still while scrolling) */}
       {/* ======================================================== */}
       <div className="sticky top-0 h-screen w-full pointer-events-none overflow-hidden z-0">
-        {/* Deep Space Radial Vignette */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(14,30,58,0.45)_0%,_#06080d_78%)]" />
+        {/* Deep Space Radial Vignette (Adapts to light & dark theme) */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(2,132,199,0.06)_0%,_transparent_75%)] dark:bg-[radial-gradient(ellipse_at_center,_rgba(14,30,58,0.45)_0%,_#06080d_78%)] transition-colors duration-300" />
 
         {/* Stationary Tactical Coordinate Grid */}
         <div
           className="absolute inset-0 opacity-[0.14]"
           style={{
             backgroundImage: `
-              linear-gradient(to right, rgba(56, 189, 248, 0.35) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(56, 189, 248, 0.35) 1px, transparent 1px)
+              linear-gradient(to right, var(--about-grid-color) 1px, transparent 1px),
+              linear-gradient(to bottom, var(--about-grid-color) 1px, transparent 1px)
             `,
             backgroundSize: '80px 80px',
           }}
         />
 
         {/* Stationary Concentric Orbital Radar Rings */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] rounded-full border border-sky-500/15 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[820px] rounded-full border border-sky-500/10 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1240px] h-[1240px] rounded-full border border-sky-500/5 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] rounded-full border border-sky-600/15 dark:border-sky-500/15 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[820px] rounded-full border border-sky-600/10 dark:border-sky-500/10 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1240px] h-[1240px] rounded-full border border-sky-600/5 dark:border-sky-500/5 pointer-events-none" />
 
         {/* Crosshair Center Lines */}
-        <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-sky-500/10" />
-        <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-sky-500/10" />
+        <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-sky-600/10 dark:bg-sky-500/10" />
+        <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-sky-600/10 dark:bg-sky-500/10" />
 
         {/* Static Aerospace HUD Telemetry (Pinned Corners) */}
-        <div className="absolute top-6 left-6 font-mono text-[10px] text-sky-400/40 uppercase tracking-widest flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
+        <div className="absolute top-6 left-6 font-mono text-[10px] text-sky-700/60 dark:text-sky-400/40 uppercase tracking-widest flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-sky-600 dark:bg-sky-400 animate-pulse" />
           SYS // FIXED REFERENCE FRAME
         </div>
-        <div className="absolute top-6 right-6 font-mono text-[10px] text-sky-400/40 uppercase tracking-widest">
+        <div className="absolute top-6 right-6 font-mono text-[10px] text-sky-700/60 dark:text-sky-400/40 uppercase tracking-widest">
           41.2995° N, 69.2401° E // UZCOSMOS
         </div>
-        <div className="absolute bottom-6 left-6 font-mono text-[10px] text-sky-400/30 uppercase tracking-widest">
+        <div className="absolute bottom-6 left-6 font-mono text-[10px] text-sky-700/50 dark:text-sky-400/30 uppercase tracking-widest">
           ORBITAL MATRIX: STATIONARY
         </div>
-        <div className="absolute bottom-6 right-6 font-mono text-[10px] text-sky-400/30 uppercase tracking-widest">
+        <div className="absolute bottom-6 right-6 font-mono text-[10px] text-sky-700/50 dark:text-sky-400/30 uppercase tracking-widest">
           ALT: 450 KM STABLE
         </div>
       </div>
@@ -340,22 +340,22 @@ export const AboutUs: React.FC = () => {
       <div className="relative z-10 -mt-[100vh]">
         {/* Section Intro Header */}
         <div className="mx-auto max-w-4xl px-6 pt-24 pb-14 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/10 px-4 py-1.5 backdrop-blur-md mb-6">
-            <span className="h-2 w-2 rounded-full bg-sky-400 animate-pulse" />
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-sky-400">
+          <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 dark:border-sky-500/25 dark:bg-sky-500/10 px-4 py-1.5 backdrop-blur-md mb-6">
+            <span className="h-2 w-2 rounded-full bg-sky-600 dark:bg-sky-400 animate-pulse" />
+            <span className="font-mono text-xs font-bold uppercase tracking-widest text-sky-600 dark:text-sky-400">
               MISSION TRAJECTORY // ABOUT ARTICULAR
             </span>
           </div>
 
-          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
             <RevealWords
               parts={[
                 { text: 'Where young minds' },
-                { text: 'articulate the future.', className: 'font-serif-italic font-normal text-sky-400' },
+                { text: 'articulate the future.', className: 'font-serif-italic font-normal text-sky-600 dark:text-sky-400' },
               ]}
             />
           </h2>
-          <p className="mt-4 text-sm sm:text-base text-slate-400 max-w-lg mx-auto leading-relaxed">
+          <p className="mt-4 text-sm sm:text-base text-[var(--ink-muted)] max-w-lg mx-auto leading-relaxed">
             Scroll down to pilot the spacecraft along the zigzag tournament trajectory.
           </p>
         </div>
@@ -375,14 +375,14 @@ export const AboutUs: React.FC = () => {
             <defs>
               {/* Glowing Rocket Trail Gradient */}
               <linearGradient id="rocketTrailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#1f5eea" stopOpacity="0.1" />
-                <stop offset="60%" stopColor="#0284c7" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#38bdf8" stopOpacity="1" />
+                <stop offset="0%" stopColor="var(--rocket-trail-start)" stopOpacity="0.2" />
+                <stop offset="60%" stopColor="var(--rocket-trail-mid)" stopOpacity="0.85" />
+                <stop offset="100%" stopColor="var(--rocket-trail-end)" stopOpacity="1" />
               </linearGradient>
 
               {/* Waypoint Glow Filter */}
               <filter id="beaconGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#38bdf8" floodOpacity="0.8" />
+                <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#0284c7" floodOpacity="0.6" />
               </filter>
             </defs>
 
@@ -392,9 +392,10 @@ export const AboutUs: React.FC = () => {
                 ref={pathRef}
                 d={pathData}
                 fill="none"
-                stroke="rgba(56, 189, 248, 0.25)"
+                stroke="currentColor"
                 strokeWidth="2.5"
                 strokeDasharray="8 8"
+                className="text-sky-600/30 dark:text-sky-400/25"
               />
             )}
 
@@ -409,7 +410,7 @@ export const AboutUs: React.FC = () => {
                 strokeDasharray={totalPathLength || 3000}
                 strokeDashoffset={totalPathLength || 3000}
                 strokeLinecap="round"
-                className="drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]"
+                className="drop-shadow-[0_0_8px_rgba(2,132,199,0.45)] dark:drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]"
               />
             )}
 
@@ -421,25 +422,29 @@ export const AboutUs: React.FC = () => {
                   <circle
                     r={isActive ? "20" : "10"}
                     fill="none"
-                    stroke="#38bdf8"
+                    stroke="currentColor"
                     strokeWidth={isActive ? "2" : "1.5"}
                     opacity={isActive ? "0.9" : "0.3"}
-                    className="transition-all duration-300"
+                    className="text-sky-600 dark:text-sky-400 transition-all duration-300"
                   />
                   {isActive && (
                     <circle
                       r="30"
                       fill="none"
-                      stroke="#38bdf8"
+                      stroke="currentColor"
                       strokeWidth="1"
                       opacity="0.3"
-                      className="animate-ping"
+                      className="text-sky-600 dark:text-sky-400 animate-ping"
                     />
                   )}
                   <circle
                     r="4.5"
-                    fill={isActive ? "#38bdf8" : "rgba(56, 189, 248, 0.4)"}
-                    className="transition-all duration-300"
+                    fill="currentColor"
+                    className={`transition-all duration-300 ${
+                      isActive
+                        ? 'text-sky-600 dark:text-sky-400'
+                        : 'text-sky-600/40 dark:text-sky-400/40'
+                    }`}
                   />
                 </g>
               );
@@ -457,7 +462,7 @@ export const AboutUs: React.FC = () => {
                 transform: 'translate3d(-200px, -200px, 0) translate(-50%, -50%) rotate(45deg)',
               }}
             >
-              <OrbitalRocketVessel />
+              <OrbitalRocketVessel className="w-24 h-10 sm:w-32 sm:h-13 overflow-visible select-none pointer-events-none filter drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)] dark:drop-shadow-[0_8px_18px_rgba(0,0,0,0.75)]" />
             </div>
           )}
 
@@ -471,11 +476,11 @@ export const AboutUs: React.FC = () => {
             className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
           >
             {/* Stage Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/10 dark:border-sky-500/20 dark:bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4 shadow-sm">
               <span className={`h-1.5 w-1.5 rounded-full ${
-                activeStages[0] ? 'bg-sky-400 animate-pulse' : 'bg-slate-500'
+                activeStages[0] ? 'bg-sky-600 dark:bg-sky-400 animate-pulse' : 'bg-slate-400 dark:bg-slate-600'
               }`} />
-              <span className="font-mono text-xs font-bold text-sky-400 tracking-wider">
+              <span className="font-mono text-xs font-bold text-sky-600 dark:text-sky-400 tracking-wider">
                 {STORY_BLOCKS[0].step} // {STORY_BLOCKS[0].tag}
               </span>
             </div>
@@ -484,15 +489,15 @@ export const AboutUs: React.FC = () => {
             <h3
               className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-500 ${
                 activeStages[0]
-                  ? 'text-white scale-105 [text-shadow:0_0_28px_rgba(56,189,248,0.55)]'
-                  : 'text-slate-500 opacity-40 scale-100'
+                  ? 'text-slate-900 dark:text-white scale-105 [text-shadow:0_0_36px_rgba(2,132,199,0.22)] dark:[text-shadow:0_0_28px_rgba(56,189,248,0.55)]'
+                  : 'text-slate-300 dark:text-slate-600 opacity-50 dark:opacity-40 scale-100'
               }`}
             >
               {STORY_BLOCKS[0].word}
             </h3>
 
             {/* Short Punchy Statement */}
-            <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
+            <p className="mt-4 text-base sm:text-xl font-medium text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
               {STORY_BLOCKS[0].desc}
             </p>
           </div>
@@ -503,11 +508,11 @@ export const AboutUs: React.FC = () => {
             className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
           >
             {/* Stage Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/10 dark:border-sky-500/20 dark:bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4 shadow-sm">
               <span className={`h-1.5 w-1.5 rounded-full ${
-                activeStages[1] ? 'bg-sky-400 animate-pulse' : 'bg-slate-500'
+                activeStages[1] ? 'bg-sky-600 dark:bg-sky-400 animate-pulse' : 'bg-slate-400 dark:bg-slate-600'
               }`} />
-              <span className="font-mono text-xs font-bold text-sky-400 tracking-wider">
+              <span className="font-mono text-xs font-bold text-sky-600 dark:text-sky-400 tracking-wider">
                 {STORY_BLOCKS[1].step} // {STORY_BLOCKS[1].tag}
               </span>
             </div>
@@ -516,15 +521,15 @@ export const AboutUs: React.FC = () => {
             <h3
               className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-500 ${
                 activeStages[1]
-                  ? 'text-white scale-105 [text-shadow:0_0_28px_rgba(56,189,248,0.55)]'
-                  : 'text-slate-500 opacity-40 scale-100'
+                  ? 'text-slate-900 dark:text-white scale-105 [text-shadow:0_0_36px_rgba(2,132,199,0.22)] dark:[text-shadow:0_0_28px_rgba(56,189,248,0.55)]'
+                  : 'text-slate-300 dark:text-slate-600 opacity-50 dark:opacity-40 scale-100'
               }`}
             >
               {STORY_BLOCKS[1].word}
             </h3>
 
             {/* Short Punchy Statement */}
-            <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
+            <p className="mt-4 text-base sm:text-xl font-medium text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
               {STORY_BLOCKS[1].desc}
             </p>
           </div>
@@ -535,11 +540,11 @@ export const AboutUs: React.FC = () => {
             className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
           >
             {/* Stage Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/10 dark:border-sky-500/20 dark:bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4 shadow-sm">
               <span className={`h-1.5 w-1.5 rounded-full ${
-                activeStages[2] ? 'bg-sky-400 animate-pulse' : 'bg-slate-500'
+                activeStages[2] ? 'bg-sky-600 dark:bg-sky-400 animate-pulse' : 'bg-slate-400 dark:bg-slate-600'
               }`} />
-              <span className="font-mono text-xs font-bold text-sky-400 tracking-wider">
+              <span className="font-mono text-xs font-bold text-sky-600 dark:text-sky-400 tracking-wider">
                 {STORY_BLOCKS[2].step} // {STORY_BLOCKS[2].tag}
               </span>
             </div>
@@ -548,15 +553,15 @@ export const AboutUs: React.FC = () => {
             <h3
               className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-500 ${
                 activeStages[2]
-                  ? 'text-white scale-105 [text-shadow:0_0_28px_rgba(56,189,248,0.55)]'
-                  : 'text-slate-500 opacity-40 scale-100'
+                  ? 'text-slate-900 dark:text-white scale-105 [text-shadow:0_0_36px_rgba(2,132,199,0.22)] dark:[text-shadow:0_0_28px_rgba(56,189,248,0.55)]'
+                  : 'text-slate-300 dark:text-slate-600 opacity-50 dark:opacity-40 scale-100'
               }`}
             >
               {STORY_BLOCKS[2].word}
             </h3>
 
             {/* Short Punchy Statement */}
-            <p className="mt-4 text-base sm:text-xl font-medium text-slate-300 max-w-md mx-auto leading-relaxed">
+            <p className="mt-4 text-base sm:text-xl font-medium text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
               {STORY_BLOCKS[2].desc}
             </p>
           </div>

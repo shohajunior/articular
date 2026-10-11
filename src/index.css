@@ -30,6 +30,12 @@
   --shadow-md: 0 8px 24px rgba(14, 17, 23, 0.06);
   --shadow-lg: 0 16px 40px rgba(14, 17, 23, 0.1);
 
+  /* Aerospace trajectory tokens - Light mode */
+  --about-grid-color: rgba(2, 132, 199, 0.18);
+  --rocket-trail-start: rgba(2, 132, 199, 0.15);
+  --rocket-trail-mid: #0284c7;
+  --rocket-trail-end: #1f5eea;
+
   color-scheme: light dark;
 }
 
@@ -54,6 +60,12 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+
+  /* Aerospace trajectory tokens - Dark mode */
+  --about-grid-color: rgba(56, 189, 248, 0.35);
+  --rocket-trail-start: rgba(31, 94, 234, 0.1);
+  --rocket-trail-mid: #0284c7;
+  --rocket-trail-end: #38bdf8;
 }
 
 *, *::before, *::after {
