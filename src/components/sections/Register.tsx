@@ -36,14 +36,6 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
     <section id="register" className="border-t border-[var(--line)] bg-[var(--surface)] py-20">
       <div className="mx-auto max-w-[1040px] px-6">
         <div className="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--bg)] p-8 sm:p-14 text-center shadow-sm">
-          {/* Top Label */}
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-4 py-1 text-xs text-[var(--ink-muted)]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-            <span className="font-mono-tag font-semibold uppercase tracking-wider text-[var(--accent)]">
-              Season 2026 Registration
-            </span>
-          </div>
-
           {/* Heading with Telegram bot cleanly on the second line */}
           <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl">
             <span className="block">

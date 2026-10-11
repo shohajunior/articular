@@ -317,21 +317,6 @@ export const AboutUs: React.FC = () => {
         {/* Crosshair Center Lines */}
         <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-sky-600/10 dark:bg-sky-500/10" />
         <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-sky-600/10 dark:bg-sky-500/10" />
-
-        {/* Static Aerospace HUD Telemetry (Pinned Corners) */}
-        <div className="absolute top-6 left-6 font-mono text-[10px] text-sky-700/60 dark:text-sky-400/40 uppercase tracking-widest flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-sky-600 dark:bg-sky-400 animate-pulse" />
-          SYS // FIXED REFERENCE FRAME
-        </div>
-        <div className="absolute top-6 right-6 font-mono text-[10px] text-sky-700/60 dark:text-sky-400/40 uppercase tracking-widest">
-          41.2995° N, 69.2401° E // UZCOSMOS
-        </div>
-        <div className="absolute bottom-6 left-6 font-mono text-[10px] text-sky-700/50 dark:text-sky-400/30 uppercase tracking-widest">
-          ORBITAL MATRIX: STATIONARY
-        </div>
-        <div className="absolute bottom-6 right-6 font-mono text-[10px] text-sky-700/50 dark:text-sky-400/30 uppercase tracking-widest">
-          ALT: 450 KM STABLE
-        </div>
       </div>
 
       {/* ======================================================== */}
@@ -340,13 +325,6 @@ export const AboutUs: React.FC = () => {
       <div className="relative z-10 -mt-[100vh]">
         {/* Section Intro Header */}
         <div className="mx-auto max-w-4xl px-6 pt-24 pb-14 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-500/10 dark:border-sky-500/25 dark:bg-sky-500/10 px-4 py-1.5 backdrop-blur-md mb-6">
-            <span className="h-2 w-2 rounded-full bg-sky-600 dark:bg-sky-400 animate-pulse" />
-            <span className="font-mono text-xs font-bold uppercase tracking-widest text-sky-600 dark:text-sky-400">
-              MISSION TRAJECTORY // ABOUT ARTICULAR
-            </span>
-          </div>
-
           <h2 className="text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
             <RevealWords
               parts={[
@@ -475,16 +453,6 @@ export const AboutUs: React.FC = () => {
             ref={b1Ref}
             className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
           >
-            {/* Stage Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/10 dark:border-sky-500/20 dark:bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4 shadow-sm">
-              <span className={`h-1.5 w-1.5 rounded-full ${
-                activeStages[0] ? 'bg-sky-600 dark:bg-sky-400 animate-pulse' : 'bg-slate-400 dark:bg-slate-600'
-              }`} />
-              <span className="font-mono text-xs font-bold text-sky-600 dark:text-sky-400 tracking-wider">
-                {STORY_BLOCKS[0].step} // {STORY_BLOCKS[0].tag}
-              </span>
-            </div>
-
             {/* Monumental Punchy Word */}
             <h3
               className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-500 ${
@@ -507,16 +475,6 @@ export const AboutUs: React.FC = () => {
             ref={b2Ref}
             className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
           >
-            {/* Stage Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/10 dark:border-sky-500/20 dark:bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4 shadow-sm">
-              <span className={`h-1.5 w-1.5 rounded-full ${
-                activeStages[1] ? 'bg-sky-600 dark:bg-sky-400 animate-pulse' : 'bg-slate-400 dark:bg-slate-600'
-              }`} />
-              <span className="font-mono text-xs font-bold text-sky-600 dark:text-sky-400 tracking-wider">
-                {STORY_BLOCKS[1].step} // {STORY_BLOCKS[1].tag}
-              </span>
-            </div>
-
             {/* Monumental Punchy Word */}
             <h3
               className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-500 ${
@@ -539,16 +497,6 @@ export const AboutUs: React.FC = () => {
             ref={b3Ref}
             className="relative z-20 flex flex-col items-center text-center max-w-3xl mx-auto px-6 py-16 sm:py-24"
           >
-            {/* Stage Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/10 dark:border-sky-500/20 dark:bg-sky-950/40 px-3.5 py-1 backdrop-blur-md mb-4 shadow-sm">
-              <span className={`h-1.5 w-1.5 rounded-full ${
-                activeStages[2] ? 'bg-sky-600 dark:bg-sky-400 animate-pulse' : 'bg-slate-400 dark:bg-slate-600'
-              }`} />
-              <span className="font-mono text-xs font-bold text-sky-600 dark:text-sky-400 tracking-wider">
-                {STORY_BLOCKS[2].step} // {STORY_BLOCKS[2].tag}
-              </span>
-            </div>
-
             {/* Monumental Punchy Word */}
             <h3
               className={`text-6xl sm:text-8xl lg:text-9xl font-black tracking-tighter uppercase transition-all duration-500 ${
