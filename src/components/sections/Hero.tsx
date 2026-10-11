@@ -4,6 +4,7 @@ import { ArrowRight, Maximize2 } from 'lucide-react';
 import { LightboxItem } from '../ui/LightboxModal';
 import { CountUp } from '../ui/CountUp';
 import { RevealWords } from '../ui/RevealWords';
+import { useStats } from '../../lib/useContent';
 
 interface HeroProps {
   onPhotoClick: (item: LightboxItem) => void;
@@ -11,6 +12,7 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) => {
+  const { data: stats } = useStats();
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -108,7 +110,7 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
 
             {/* Compact Stats with CountUp Animation */}
             <div className="grid grid-cols-3 gap-6 border-t border-[var(--line)] pt-6">
-              {siteData.stats.slice(0, 3).map((stat) => (
+              {stats.slice(0, 3).map((stat) => (
                 <div key={stat.label}>
                   <div className="font-mono-tag text-2xl font-bold tracking-tight text-[var(--ink)] sm:text-3xl">
                     <CountUp value={stat.value} start={isRevealed} duration={1300} />

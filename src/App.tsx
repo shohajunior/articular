@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { initSmoothScroll } from './lib/smoothScroll';
+import { applyTheme, getInitialTheme } from './lib/theme';
 import { RocketIntro } from './components/intro/RocketIntro';
 import { Header } from './components/layout/Header';
 import { Hero } from './components/sections/Hero';
@@ -12,11 +13,22 @@ import { Footer } from './components/layout/Footer';
 import { LegalPage } from './components/pages/LegalPage';
 import { LightboxModal, LightboxItem } from './components/ui/LightboxModal';
 import { BackToTop } from './components/ui/BackToTop';
+import { News } from './components/sections/News';
+
+const NewsPage = lazy(() => import('./components/pages/NewsPage').then((m) => ({ default: m.NewsPage })));
+const AdminPage = lazy(() => import('./components/admin/AdminPage').then((m) => ({ default: m.AdminPage })));
+
+type Route = 'home' | 'privacy' | 'terms' | 'news' | 'admin';
 
 export const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'home' | 'privacy' | 'terms'>('home');
+  const [currentPage, setCurrentPage] = useState<Route>('home');
   const [heroRevealed, setHeroRevealed] = useState(false);
   const [activeLightbox, setActiveLightbox] = useState<LightboxItem | null>(null);
+
+  // Apply persisted theme immediately (needed for direct loads of #/news and #/admin)
+  useEffect(() => {
+    applyTheme(getInitialTheme());
+  }, []);
 
   // Initialize Lenis Buttery Smooth Momentum Scroll
   useEffect(() => {
@@ -34,6 +46,10 @@ export const App: React.FC = () => {
         setCurrentPage('privacy');
       } else if (hash === '#/terms') {
         setCurrentPage('terms');
+      } else if (hash === '#/news') {
+        setCurrentPage('news');
+      } else if (hash === '#/admin') {
+        setCurrentPage('admin');
       } else {
         setCurrentPage('home');
       }
@@ -53,6 +69,15 @@ export const App: React.FC = () => {
   // Render Dedicated Separate Page for Privacy Policy & Terms of Participation
   if (currentPage === 'privacy' || currentPage === 'terms') {
     return <LegalPage docKey={currentPage} onNavigate={handleNavigate} />;
+  }
+
+  // All news page & admin panel (lazy-loaded)
+  if (currentPage === 'news' || currentPage === 'admin') {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-[var(--bg)]" />}>
+        {currentPage === 'news' ? <NewsPage /> : <AdminPage />}
+      </Suspense>
+    );
   }
 
   // Render Main Tournament Landing Page
@@ -81,6 +106,9 @@ export const App: React.FC = () => {
 
         {/* Leadership Team */}
         <Team />
+
+        {/* Latest News (hidden until at least one news item exists) */}
+        <News />
 
         {/* Telegram-First Registration */}
         <Register onNavigateLegal={handleNavigate} />

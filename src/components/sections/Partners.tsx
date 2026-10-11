@@ -1,41 +1,24 @@
 import React from 'react';
 import { RevealWords } from '../ui/RevealWords';
+import { usePartners } from '../../lib/useContent';
 
-interface Partner {
-  id: string;
-  name: string;
-  url: string;
-  logoLight: string;
-  logoDark: string;
-}
-
-// ONLY the official partners provided by the user in the project root
-const PARTNERS: Partner[] = [
-  {
-    id: 'uzcosmos',
-    name: 'Uzcosmos Agency',
-    url: 'https://uzspace.uz',
-    logoLight: './assets/uzcosmos-dark.svg',
-    logoDark: './assets/uzcosmos-white.svg',
-  },
-  {
-    id: 'yvc',
-    name: 'Youth Volunteering Club',
-    url: 'https://t.me/yvc_uz',
-    logoLight: './assets/yvc-png.png',
-    logoDark: './assets/yvc-white.png',
-  },
-];
-
-// Repeating alternating partners to create a smooth, continuous infinite stream
-const REPEATED_ITEMS = Array.from({ length: 8 }).flatMap((_, cycleIdx) =>
-  PARTNERS.map((partner) => ({
-    ...partner,
-    key: `${partner.id}-${cycleIdx}`,
-  }))
-);
+const isUzcosmos = (name: string) => /uzcosmos/i.test(name);
+const isYvc = (name: string) => /yvc|youth volunteering/i.test(name);
 
 export const Partners: React.FC = () => {
+  const { data: partners } = usePartners();
+
+  // Repeat partners to create a smooth, continuous infinite stream
+  const repeats = Math.max(2, Math.ceil(16 / Math.max(partners.length, 1)));
+  const REPEATED_ITEMS = Array.from({ length: repeats }).flatMap((_, cycleIdx) =>
+    partners.map((partner) => ({
+      ...partner,
+      logoLight: partner.logo_light,
+      logoDark: partner.logo_dark,
+      key: `${partner.id}-${cycleIdx}`,
+    }))
+  );
+
   const renderTrack = (trackId: string, ariaHidden = false) => (
     <ul
       role={ariaHidden ? undefined : 'group'}
@@ -62,7 +45,7 @@ export const Partners: React.FC = () => {
               alt={item.name}
               loading="lazy"
               className={`dark:hidden block w-auto object-contain transition-all duration-300 filter grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 ${
-                item.id === 'uzcosmos'
+                isUzcosmos(item.name)
                   ? 'h-[70px] sm:h-[88px] lg:h-[105px] max-w-[280px] sm:max-w-[350px]'
                   : 'h-9 sm:h-11 lg:h-12 max-w-[120px]'
               }`}
@@ -73,14 +56,14 @@ export const Partners: React.FC = () => {
               alt={item.name}
               loading="lazy"
               className={`hidden dark:block w-auto object-contain transition-all duration-300 opacity-90 group-hover:opacity-100 group-hover:scale-110 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] group-hover:drop-shadow-[0_0_18px_rgba(56,189,248,0.8)] ${
-                item.id === 'uzcosmos'
+                isUzcosmos(item.name)
                   ? 'h-[70px] sm:h-[88px] lg:h-[105px] max-w-[280px] sm:max-w-[350px]'
                   : 'h-9 sm:h-11 lg:h-12 max-w-[120px]'
               }`}
             />
 
             {/* Label under YVC logo */}
-            {item.id === 'yvc' && (
+            {isYvc(item.name) && (
               <span className="mt-1 font-mono text-xs sm:text-sm font-bold tracking-widest text-slate-700 dark:text-slate-200 uppercase transition-all duration-300 group-hover:text-blue-600 dark:group-hover:text-sky-400 group-hover:scale-105 select-none">
                 YVC
               </span>
