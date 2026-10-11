@@ -333,9 +333,6 @@ export const AboutUs: React.FC = () => {
               ]}
             />
           </h2>
-          <p className="mt-4 text-sm sm:text-base text-[var(--ink-muted)] max-w-lg mx-auto leading-relaxed">
-            Scroll down to pilot the spacecraft along the zigzag tournament trajectory.
-          </p>
         </div>
 
         {/* ======================================================== */}
