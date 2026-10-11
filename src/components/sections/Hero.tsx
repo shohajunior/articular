@@ -77,10 +77,7 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               <RevealWords
                 start={isRevealed}
                 delay={150}
-                parts={[
-                  { text: 'Where young minds' },
-                  { text: 'articulate the future.', className: 'font-serif-italic text-[var(--accent)]' },
-                ]}
+                parts={[{ text: 'Where young minds articulate the future.' }]}
               />
             </h1>
 

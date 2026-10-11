@@ -327,10 +327,7 @@ export const AboutUs: React.FC = () => {
         <div className="mx-auto max-w-4xl px-6 pt-24 pb-14 text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
             <RevealWords
-              parts={[
-                { text: 'Where young minds' },
-                { text: 'articulate the future.', className: 'font-serif-italic font-normal text-sky-600 dark:text-sky-400' },
-              ]}
+              parts={[{ text: 'Where young minds articulate the future.' }]}
             />
           </h2>
         </div>
