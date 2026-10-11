@@ -118,11 +118,11 @@ export const RegionsMap: React.FC = () => {
                 Regional Chapters // Nationwide Presence
               </span>
             </div>
-            <h2 className="mt-2 text-3xl font-normal tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl font-serif-italic">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
               <RevealWords
                 parts={[
-                  { text: 'Tournament presence across', className: 'font-serif-italic font-normal' },
-                  { text: 'Uzbekistan', className: 'font-serif-italic font-normal text-[var(--accent)]' },
+                  { text: 'Tournament presence across' },
+                  { text: 'Uzbekistan', className: 'font-serif italic text-[var(--accent)]' },
                 ]}
               />
             </h2>
