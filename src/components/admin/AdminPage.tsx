@@ -30,7 +30,33 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-6">
+    <div className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
+      {/* Brand Header & ArticularUZ Logo */}
+      <div className="mb-8 flex flex-col items-center text-center">
+        <a
+          href="#/"
+          className="group inline-flex items-center gap-3 transition-opacity hover:opacity-90"
+          aria-label="ArticularUZ Home"
+        >
+          <img
+            src="./assets/logo.png"
+            alt="ArticularUZ Logo"
+            className="h-11 w-11 shrink-0 object-contain drop-shadow-[0_0_14px_rgba(0,229,255,0.45)] transition-transform duration-300 group-hover:scale-105"
+          />
+          <div className="flex flex-col text-left justify-center">
+            <span className="text-xl sm:text-2xl font-extrabold tracking-tight leading-none text-[var(--ink)]">
+              ARTICULAR<span className="text-[#00e5ff] dark:text-[#38bdf8]">UZ</span>
+            </span>
+            <span className="font-mono text-[8.5px] sm:text-[9.5px] font-bold tracking-[0.24em] uppercase text-[var(--ink-muted)] leading-none mt-1">
+              LEARN · THINK · ARTICULATE
+            </span>
+          </div>
+        </a>
+        <h2 className="mt-3.5 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--ink-muted)]">
+          Administration Portal
+        </h2>
+      </div>
+
       <form onSubmit={submit} className="w-full max-w-sm space-y-5 rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-8 shadow-[var(--shadow-lg)]">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent-tint)] text-[var(--accent)]">
           <Lock className="h-5 w-5" />
@@ -118,9 +144,18 @@ export const AdminPage: React.FC = () => {
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
       <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-[var(--header-bg)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1000px] flex-wrap items-center justify-between gap-3 px-6 py-3">
-          <a href="#/" className="flex items-center gap-2 text-sm font-semibold text-[var(--ink-muted)] hover:text-[var(--ink)]">
-            <ArrowLeft className="h-4 w-4" /> Site
-          </a>
+          <div className="flex items-center gap-3">
+            <a href="#/" className="flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--ink-muted)] hover:border-[var(--line-strong)] hover:text-[var(--ink)] transition-colors">
+              <ArrowLeft className="h-3.5 w-3.5" /> Back to site
+            </a>
+            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-[var(--line)]">
+              <img src="./assets/logo.png" alt="ArticularUZ" className="h-6 w-6 object-contain" />
+              <span className="text-sm font-bold tracking-tight text-[var(--ink)]">
+                ARTICULAR<span className="text-[#00e5ff] dark:text-[#38bdf8]">UZ</span>
+                <span className="ml-1.5 rounded bg-[var(--surface-elevated)] px-1.5 py-0.5 text-[9.5px] font-semibold text-[var(--accent)] uppercase tracking-wider">Admin</span>
+              </span>
+            </div>
+          </div>
           <nav className="flex gap-1 rounded-full border border-[var(--line)] bg-[var(--surface)] p-1">
             {TABS.map((t) => (
               <button
