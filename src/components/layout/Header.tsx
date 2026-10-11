@@ -24,8 +24,42 @@ export const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const [currentHash, setCurrentHash] = useState(() =>
+    typeof window !== 'undefined' ? window.location.hash : ''
+  );
+
+  useEffect(() => {
+    const onHash = () => setCurrentHash(window.location.hash);
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  const isNewsPage = currentHash === '#/news';
+
   const scrollTo = (id: string) => {
     setMobileMenuOpen(false);
+    const hash = window.location.hash;
+    const isStandalone = hash === '#/news' || (hash.startsWith('#/') && hash !== '#/');
+
+    if (isStandalone) {
+      if (id === 'news' && hash === '#/news') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      window.location.hash = '#/';
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          if ((window as any).lenis) {
+            (window as any).lenis.scrollTo(el, { offset: -65, duration: 1.35 });
+          } else {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }, 120);
+      return;
+    }
+
     const el = document.getElementById(id);
     if (el) {
       if ((window as any).lenis) {
@@ -51,7 +85,7 @@ export const Header: React.FC = () => {
       >
         {/* Brand Logo: Original Iconic Identity */}
         <a
-          href="#"
+          href="#/"
           className="group flex items-center gap-2.5 transition-opacity hover:opacity-95"
           aria-label="ArticularUZ Home"
         >
@@ -103,7 +137,11 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={() => scrollTo('news')}
-            className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
+            className={`cursor-pointer text-xs font-semibold transition-colors duration-200 ${
+              isNewsPage
+                ? 'text-[var(--accent)] font-bold'
+                : 'text-[var(--ink-muted)] hover:text-[var(--accent)]'
+            }`}
           >
             News
           </button>
@@ -213,7 +251,9 @@ export const Header: React.FC = () => {
             </button>
             <button
               onClick={() => scrollTo('news')}
-              className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
+              className={`text-left text-sm font-semibold transition-colors duration-200 ${
+                isNewsPage ? 'text-[var(--accent)] font-bold' : 'text-[var(--ink-muted)] hover:text-[var(--accent)]'
+              }`}
             >
               News
             </button>
