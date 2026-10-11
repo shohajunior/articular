@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { siteData } from '../../data/site';
 import { TelegramIcon, InstagramIcon, LinkedinIcon } from '../ui/SocialIcons';
 import { User } from 'lucide-react';
@@ -6,8 +6,30 @@ import { RevealWords } from '../ui/RevealWords';
 
 export const Team: React.FC = () => {
   const glowRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const [cardsVisible, setCardsVisible] = useState(false);
   const rafRef = useRef(0);
   const posRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const el = cardsRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setCardsVisible(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCardsVisible(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -30px 0px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -64,91 +86,101 @@ export const Team: React.FC = () => {
         </div>
 
         {/* Wider Cards Grid with Photo Slots Ready for Real Photos */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {siteData.team.map((member) => (
+        <div ref={cardsRef} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {siteData.team.map((member, index) => (
             <div
               key={member.id}
-              className="group flex flex-col overflow-hidden rounded-[28px] border border-[var(--line)] bg-[var(--surface)] shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-[var(--accent)]/50 hover:shadow-[0_16px_36px_rgba(31,94,234,0.12)]"
+              style={{
+                opacity: cardsVisible ? 1 : 0,
+                transform: cardsVisible ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.96)',
+                transition: `opacity 800ms cubic-bezier(0.16, 1, 0.3, 1) ${index * 130}ms, transform 800ms cubic-bezier(0.16, 1, 0.3, 1) ${index * 130}ms`,
+                willChange: 'transform, opacity',
+              }}
+              className="h-full"
             >
-              {/* Top Photo Frame / Placeholder Slot: Adapts seamlessly to light and dark themes */}
-              <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-100 dark:bg-[#07192e] flex items-center justify-center border-b border-[var(--line)] dark:border-white/10 transition-colors group-hover:bg-slate-200/70 dark:group-hover:bg-[#0a233f]">
-                {member.photo ? (
-                  <img
-                    src={member.photo}
-                    alt={member.name}
-                    className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center gap-3 text-slate-400 transition-colors group-hover:text-[var(--accent)] dark:group-hover:text-slate-300">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-xs dark:border-white/15 dark:bg-white/5 transition-all duration-300 group-hover:scale-105 group-hover:border-[var(--accent)]/40 group-hover:bg-[var(--accent)]/10">
-                      <User className="h-8 w-8 text-slate-400 group-hover:text-[var(--accent)] dark:text-slate-400 dark:group-hover:text-sky-300 transition-colors" />
+              <div
+                className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-[var(--line)] bg-[var(--surface)] shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-[var(--accent)]/50 hover:shadow-[0_16px_36px_rgba(31,94,234,0.12)]"
+              >
+                {/* Top Photo Frame / Placeholder Slot: Adapts seamlessly to light and dark themes */}
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-100 dark:bg-[#07192e] flex items-center justify-center border-b border-[var(--line)] dark:border-white/10 transition-colors group-hover:bg-slate-200/70 dark:group-hover:bg-[#0a233f]">
+                  {member.photo ? (
+                    <img
+                      src={member.photo}
+                      alt={member.name}
+                      className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-3 text-slate-400 transition-colors group-hover:text-[var(--accent)] dark:group-hover:text-slate-300">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-xs dark:border-white/15 dark:bg-white/5 transition-all duration-300 group-hover:scale-105 group-hover:border-[var(--accent)]/40 group-hover:bg-[var(--accent)]/10">
+                        <User className="h-8 w-8 text-slate-400 group-hover:text-[var(--accent)] dark:text-slate-400 dark:group-hover:text-sky-300 transition-colors" />
+                      </div>
+                      <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400/80">
+                        Photo Slot
+                      </span>
                     </div>
-                    <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400/80">
-                      Photo Slot
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Bottom Info Box */}
-              <div className="flex flex-1 flex-col justify-between bg-[var(--surface)] dark:bg-[#0a233f] p-5 transition-colors">
-                <div>
-                  <h3 className="text-base font-bold tracking-tight text-[var(--ink)] dark:text-white sm:text-lg">
-                    {member.name}
-                  </h3>
-                  <div className="mt-0.5 text-xs font-semibold text-[var(--accent)] dark:text-sky-300">
-                    {member.role}
-                  </div>
+                  )}
                 </div>
 
-                <div>
-                  {/* Subtle Separator Line */}
-                  <div className="my-3.5 border-t border-[var(--line)] dark:border-white/15" />
+                {/* Bottom Info Box */}
+                <div className="flex flex-1 flex-col justify-between bg-[var(--surface)] dark:bg-[#0a233f] p-5 transition-colors">
+                  <div>
+                    <h3 className="text-base font-bold tracking-tight text-[var(--ink)] dark:text-white sm:text-lg">
+                      {member.name}
+                    </h3>
+                    <div className="mt-0.5 text-xs font-semibold text-[var(--accent)] dark:text-sky-300">
+                      {member.role}
+                    </div>
+                  </div>
 
-                  {/* Bottom Row: Department on left + Small Social Buttons on right */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-[var(--ink-muted)] dark:text-slate-300 truncate">
-                      {member.department}
-                    </span>
+                  <div>
+                    {/* Subtle Separator Line */}
+                    <div className="my-3.5 border-t border-[var(--line)] dark:border-white/15" />
 
-                    {/* Quick Social Redirect Buttons (Telegram, Instagram, LinkedIn) */}
-                    <div className="flex shrink-0 items-center gap-1.5">
-                      {member.socials?.telegram && (
-                        <a
-                          href={member.socials.telegram}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] text-[var(--ink-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--surface)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/25 transition-all hover:scale-105"
-                          title="Telegram"
-                          aria-label={`${member.name} Telegram`}
-                        >
-                          <TelegramIcon className="h-3 w-3" />
-                        </a>
-                      )}
-                      {member.socials?.instagram && (
-                        <a
-                          href={member.socials.instagram}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] text-[var(--ink-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--surface)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/25 transition-all hover:scale-105"
-                          title="Instagram"
-                          aria-label={`${member.name} Instagram`}
-                        >
-                          <InstagramIcon className="h-3 w-3" />
-                        </a>
-                      )}
-                      {member.socials?.linkedin && (
-                        <a
-                          href={member.socials.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] text-[var(--ink-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--surface)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/25 transition-all hover:scale-105"
-                          title="LinkedIn"
-                          aria-label={`${member.name} LinkedIn`}
-                        >
-                          <LinkedinIcon className="h-3 w-3" />
-                        </a>
-                      )}
+                    {/* Bottom Row: Department on left + Small Social Buttons on right */}
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-medium text-[var(--ink-muted)] dark:text-slate-300 truncate">
+                        {member.department}
+                      </span>
+
+                      {/* Quick Social Redirect Buttons (Telegram, Instagram, LinkedIn) */}
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        {member.socials?.telegram && (
+                          <a
+                            href={member.socials.telegram}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] text-[var(--ink-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--surface)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/25 transition-all hover:scale-105"
+                            title="Telegram"
+                            aria-label={`${member.name} Telegram`}
+                          >
+                            <TelegramIcon className="h-3 w-3" />
+                          </a>
+                        )}
+                        {member.socials?.instagram && (
+                          <a
+                            href={member.socials.instagram}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] text-[var(--ink-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--surface)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/25 transition-all hover:scale-105"
+                            title="Instagram"
+                            aria-label={`${member.name} Instagram`}
+                          >
+                            <InstagramIcon className="h-3 w-3" />
+                          </a>
+                        )}
+                        {member.socials?.linkedin && (
+                          <a
+                            href={member.socials.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] text-[var(--ink-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--surface)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/25 transition-all hover:scale-105"
+                            title="LinkedIn"
+                            aria-label={`${member.name} LinkedIn`}
+                          >
+                            <LinkedinIcon className="h-3 w-3" />
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
