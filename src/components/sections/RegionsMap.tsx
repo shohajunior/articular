@@ -113,12 +113,7 @@ export const RegionsMap: React.FC = () => {
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end mb-8">
           <div>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
-              <RevealWords
-                parts={[
-                  { text: 'Tournament presence across' },
-                  { text: 'Uzbekistan', className: 'font-serif italic text-[var(--accent)]' },
-                ]}
-              />
+              <RevealWords parts={[{ text: 'Tournament presence across Uzbekistan' }]} />
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-[var(--ink-muted)]">
               Interactive 3D volumetric map. Explore verified aerospace event venues and active tournament chapters across all 14 regions.
