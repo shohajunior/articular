@@ -106,7 +106,7 @@ export const Partners: React.FC = () => {
             />
             OPPORTUNITY SOURCES
           </p>
-          <h2 className="mt-4 font-serif text-3xl font-normal tracking-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl">
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl">
             <RevealWords parts={[{ text: 'Where the opportunities come from' }]} />
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
