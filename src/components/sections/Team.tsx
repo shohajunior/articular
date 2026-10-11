@@ -56,12 +56,7 @@ export const Team: React.FC = () => {
             Leadership
           </span>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
-            <RevealWords
-              parts={[
-                { text: 'Meet the' },
-                { text: 'organizers', className: 'font-serif-italic text-[var(--accent)]' },
-              ]}
-            />
+            <RevealWords parts={[{ text: 'Meet the organizers' }]} />
           </h2>
           <p className="mt-2 text-sm text-[var(--ink-muted)]">
             Student directors, academic leaders, and regional chapter coordinators.

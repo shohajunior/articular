@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { siteData, RegionEvent } from '../../data/site';
 import { uzMapPaths } from '../../data/uzMap';
 import { RevealWords } from '../ui/RevealWords';
-import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Compass, CheckCircle2 } from 'lucide-react';
+import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 interface CityBeacon {
   id: string;
@@ -112,12 +112,6 @@ export const RegionsMap: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end mb-8">
           <div>
-            <div className="flex items-center gap-2">
-              <Compass className="h-4 w-4 text-[var(--accent)]" />
-              <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-                Regional Chapters // Nationwide Presence
-              </span>
-            </div>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
               <RevealWords
                 parts={[
