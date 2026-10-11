@@ -3,13 +3,9 @@ import { ArrowRight } from 'lucide-react';
 import { RevealWords } from '../ui/RevealWords';
 import { NewsGrid } from '../ui/NewsGrid';
 import { useNews } from '../../lib/useContent';
-import { isSupabaseConfigured } from '../../lib/config';
 
 export const News: React.FC = () => {
   const { data: news, loading } = useNews(3);
-
-  // Hide the section entirely until there is something to show.
-  if (!isSupabaseConfigured || (!loading && news.length === 0)) return null;
 
   return (
     <section id="news" className="relative border-t border-[var(--line)] bg-[var(--bg)] py-20 transition-colors">
@@ -17,7 +13,7 @@ export const News: React.FC = () => {
         <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <span className="font-mono-tag text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-              Latest
+              Latest Updates
             </span>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
               <RevealWords parts={[{ text: 'News from ArticularUZ' }]} />

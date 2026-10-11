@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { siteData } from '../../data/site';
 import { useTheme } from '../../lib/theme';
 import { Sun, Moon, Menu, X } from 'lucide-react';
@@ -99,6 +99,13 @@ export const Header: React.FC = () => {
             className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
           >
             Team
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollTo('news')}
+            className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
+          >
+            News
           </button>
         </nav>
 
@@ -203,6 +210,12 @@ export const Header: React.FC = () => {
               className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
             >
               Team
+            </button>
+            <button
+              onClick={() => scrollTo('news')}
+              className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
+            >
+              News
             </button>
             <div className="mt-3 flex items-center gap-4 pt-3 border-t border-[var(--line)]">
               <a

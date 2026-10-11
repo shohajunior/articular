@@ -86,6 +86,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
                   Organizing Team
                 </button>
               </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('news')}
+                  className="cursor-pointer transition-colors hover:text-[var(--accent)]"
+                >
+                  Latest News
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -183,7 +192,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
           <div>
             &copy; {new Date().getFullYear()} ArticularUZ. All rights reserved.
           </div>
-          <div className="flex items-center gap-1 text-xs text-[var(--ink-dim)]">
+          <div className="flex items-center gap-1.5 text-xs text-[var(--ink-dim)]">
             <span>Developed and built by</span>
             <a
               href="https://github.com/shohajunior"
@@ -192,6 +201,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
               className="font-medium text-[var(--accent)] hover:underline transition-colors ml-0.5"
             >
               shohajunior
+            </a>
+            <span className="opacity-30">·</span>
+            <a
+              href="#/admin"
+              className="opacity-40 transition-opacity hover:opacity-100 hover:text-[var(--accent)] select-none text-[11px]"
+              title="Admin Panel"
+            >
+              admin
             </a>
           </div>
         </div>
