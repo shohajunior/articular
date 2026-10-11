@@ -70,8 +70,8 @@ export const Team: React.FC = () => {
               key={member.id}
               className="group flex flex-col overflow-hidden rounded-[28px] border border-[var(--line)] bg-[var(--surface)] shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-[var(--accent)]/50 hover:shadow-[0_16px_36px_rgba(31,94,234,0.12)]"
             >
-              {/* Top Photo Frame / Placeholder Slot: Preserves full geometry for new photos */}
-              <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#07192e] flex items-center justify-center border-b border-white/10 transition-colors group-hover:bg-[#0a233f]">
+              {/* Top Photo Frame / Placeholder Slot: Adapts seamlessly to light and dark themes */}
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-slate-100 dark:bg-[#07192e] flex items-center justify-center border-b border-[var(--line)] dark:border-white/10 transition-colors group-hover:bg-slate-200/70 dark:group-hover:bg-[#0a233f]">
                 {member.photo ? (
                   <img
                     src={member.photo}
@@ -79,35 +79,35 @@ export const Team: React.FC = () => {
                     className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-3 text-slate-400/60 transition-colors group-hover:text-slate-300">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/15 bg-white/5 transition-transform duration-300 group-hover:scale-105 group-hover:border-sky-400/30 group-hover:bg-sky-400/10">
-                      <User className="h-8 w-8 text-slate-400 group-hover:text-sky-300 transition-colors" />
+                  <div className="flex flex-col items-center justify-center gap-3 text-slate-400 transition-colors group-hover:text-[var(--accent)] dark:group-hover:text-slate-300">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-xs dark:border-white/15 dark:bg-white/5 transition-all duration-300 group-hover:scale-105 group-hover:border-[var(--accent)]/40 group-hover:bg-[var(--accent)]/10">
+                      <User className="h-8 w-8 text-slate-400 group-hover:text-[var(--accent)] dark:text-slate-400 dark:group-hover:text-sky-300 transition-colors" />
                     </div>
-                    <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-slate-400/80">
+                    <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400/80">
                       Photo Slot
                     </span>
                   </div>
                 )}
               </div>
 
-              {/* Bottom Dark Navy Info Box */}
-              <div className="flex flex-1 flex-col justify-between bg-[#0a233f] p-5 text-white">
+              {/* Bottom Info Box */}
+              <div className="flex flex-1 flex-col justify-between bg-[var(--surface)] dark:bg-[#0a233f] p-5 transition-colors">
                 <div>
-                  <h3 className="text-base font-bold tracking-tight text-white sm:text-lg">
+                  <h3 className="text-base font-bold tracking-tight text-[var(--ink)] dark:text-white sm:text-lg">
                     {member.name}
                   </h3>
-                  <div className="mt-0.5 text-xs font-semibold text-sky-300">
+                  <div className="mt-0.5 text-xs font-semibold text-[var(--accent)] dark:text-sky-300">
                     {member.role}
                   </div>
                 </div>
 
                 <div>
                   {/* Subtle Separator Line */}
-                  <div className="my-3.5 border-t border-white/15" />
+                  <div className="my-3.5 border-t border-[var(--line)] dark:border-white/15" />
 
                   {/* Bottom Row: Department on left + Small Social Buttons on right */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-slate-300 truncate">
+                    <span className="text-xs font-medium text-[var(--ink-muted)] dark:text-slate-300 truncate">
                       {member.department}
                     </span>
 
@@ -118,7 +118,7 @@ export const Team: React.FC = () => {
                           href={member.socials.telegram}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-all hover:border-white/40 hover:bg-white/25 hover:scale-105"
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] text-[var(--ink-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--surface)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/25 transition-all hover:scale-105"
                           title="Telegram"
                           aria-label={`${member.name} Telegram`}
                         >
@@ -130,7 +130,7 @@ export const Team: React.FC = () => {
                           href={member.socials.instagram}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-all hover:border-white/40 hover:bg-white/25 hover:scale-105"
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] text-[var(--ink-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--surface)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/25 transition-all hover:scale-105"
                           title="Instagram"
                           aria-label={`${member.name} Instagram`}
                         >
@@ -142,7 +142,7 @@ export const Team: React.FC = () => {
                           href={member.socials.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-all hover:border-white/40 hover:bg-white/25 hover:scale-105"
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] text-[var(--ink-muted)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--surface)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/25 transition-all hover:scale-105"
                           title="LinkedIn"
                           aria-label={`${member.name} LinkedIn`}
                         >
