@@ -56,6 +56,29 @@ create policy "media admin write" on storage.objects
   using (bucket_id = 'media') with check (bucket_id = 'media');
 
 -- Seed current landing content.
+insert into public.news (title, description, image_url, created_at)
+select * from (values
+  (
+    'ArticularUZ 2026 Space Tournament Registration Open',
+    'Registration for young aerospace and physics talents across Uzbekistan has officially commenced. Form your teams of 3 to 5 participants and submit your credentials via @articularuzbot.',
+    './assets/workshop.jpg',
+    '2026-10-01 10:00:00+00'::timestamptz
+  ),
+  (
+    'Uzcosmos Agency Confirmed as Scientific Patron & Jury Mentors',
+    'Uzbekistan Space Agency (Uzcosmos) joins ArticularUZ as official partner. Top finalists will defend their orbital mechanics solutions before leading agency engineers.',
+    './assets/uzcosmos-banner.jpg',
+    '2026-10-05 12:00:00+00'::timestamptz
+  ),
+  (
+    'Orbital Math & 100% English Defense Workshops Announced',
+    'Masterclasses and preparation sessions in trajectory modeling, scientific hypothesis defense, and academic English presentation will be conducted across all 14 regional chapters.',
+    './assets/mentoring.jpg',
+    '2026-10-08 15:30:00+00'::timestamptz
+  )
+) as v(title, description, image_url, created_at)
+where not exists (select 1 from public.news);
+
 insert into public.stats (value, label, sort_order)
 select * from (values
   ('5', 'Active Regions', 0),
