@@ -75,18 +75,18 @@ export const Team: React.FC = () => {
       <div className="relative mx-auto max-w-[1340px] px-6 lg:px-8">
         <div className="mb-12">
           <span className="font-mono-tag text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
-            Leadership
+            TEAM
           </span>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
-            <RevealWords parts={[{ text: 'Meet the organizers' }]} />
+            <RevealWords parts={[{ text: 'Meet our core team' }]} />
           </h2>
           <p className="mt-2 text-sm text-[var(--ink-muted)]">
-            Student directors, academic leaders, and regional chapter coordinators.
+            Student leaders and department heads building the space movement across Uzbekistan.
           </p>
         </div>
 
-        {/* Wider Cards Grid with Photo Slots Ready for Real Photos */}
-        <div ref={cardsRef} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/* 5-Column Responsive Core Team Cards Grid */}
+        <div ref={cardsRef} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {siteData.team.map((member, index) => (
             <div
               key={member.id}

@@ -5,15 +5,20 @@ import { RocketIntro } from './components/intro/RocketIntro';
 import { Header } from './components/layout/Header';
 import { Hero } from './components/sections/Hero';
 import { AboutUs } from './components/sections/AboutUs';
-import { Partners } from './components/sections/Partners';
+import { Events } from './components/sections/Events';
+import { SpaceFest } from './components/sections/SpaceFest';
+import { Milestones } from './components/sections/Milestones';
 import { RegionsMap } from './components/sections/RegionsMap';
+import { Partners } from './components/sections/Partners';
+import { Certificates } from './components/sections/Certificates';
 import { Team } from './components/sections/Team';
+import { News } from './components/sections/News';
 import { Register } from './components/sections/Register';
+import { FAQ } from './components/sections/FAQ';
 import { Footer } from './components/layout/Footer';
 import { LegalPage } from './components/pages/LegalPage';
 import { LightboxModal, LightboxItem } from './components/ui/LightboxModal';
 import { BackToTop } from './components/ui/BackToTop';
-import { News } from './components/sections/News';
 
 const NewsPage = lazy(() => import('./components/pages/NewsPage').then((m) => ({ default: m.NewsPage })));
 const AdminPage = lazy(() => import('./components/admin/AdminPage').then((m) => ({ default: m.AdminPage })));
@@ -38,7 +43,7 @@ export const App: React.FC = () => {
     };
   }, []);
 
-  // Sync route with URL hash for standalone shareable pages (e.g. #/privacy, #/terms)
+  // Sync route with URL hash for standalone shareable pages (e.g. #/privacy, #/terms, #/news, #/admin)
   useEffect(() => {
     const syncPageFromHash = () => {
       const hash = window.location.hash;
@@ -91,27 +96,44 @@ export const App: React.FC = () => {
 
       {/* Main Page Content */}
       <main>
+        {/* 1. Hero: Where young minds articulate the future. */}
         <Hero
           isRevealed={heroRevealed}
           onPhotoClick={(item) => setActiveLightbox(item)}
         />
-        {/* About Us: Creative Scroll-Based Narrative */}
+
+        {/* 2. About Us: Mission, Perception, Values & The Method */}
         <AboutUs />
 
-        {/* Opportunity Sources / Partners Carousel (volontyorlar.uz infinite marquee) */}
-        <Partners />
+        {/* 3. Events: What we run (Workshops, Debates, Mentoring) */}
+        <Events />
 
-        {/* 14 Regions of Uzbekistan */}
+        {/* 4. Space Fest: Featured Event (Space Fest 2026 Mars Challenge) */}
+        <SpaceFest onPhotoClick={(item) => setActiveLightbox(item)} />
+
+        {/* 5. Milestones: Timeline of achievements */}
+        <Milestones />
+
+        {/* 6. Regions: 14 Regions of Uzbekistan (5 active chapters) */}
         <RegionsMap />
 
-        {/* Leadership Team */}
+        {/* 7. Partners: Official Recognition (Uzcosmos Agency & Youth Volunteers Club) */}
+        <Partners />
+
+        {/* 8. Certificates: Earned, not handed out. */}
+        <Certificates onPhotoClick={(item) => setActiveLightbox(item)} />
+
+        {/* 9. Team: Meet our core team */}
         <Team />
 
-        {/* Latest News (hidden until at least one news item exists) */}
+        {/* 10. News: Latest updates & articles */}
         <News />
 
-        {/* Telegram-First Registration */}
+        {/* 11. Join: Telegram-First Registration */}
         <Register onNavigateLegal={handleNavigate} />
+
+        {/* 12. FAQ: Frequently Asked Questions */}
+        <FAQ />
       </main>
 
       {/* Modern Minimal Footer */}

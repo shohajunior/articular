@@ -84,38 +84,44 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
             </h1>
 
             {/* Short punchy subtext */}
-            <p className="mb-7 max-w-xl text-base text-[var(--ink-muted)] sm:text-lg">
+            <p className="mb-5 max-w-xl text-base text-[var(--ink-muted)] sm:text-lg leading-relaxed">
               {siteData.shortDesc}
             </p>
+
+            {/* Vision without execution is daydreaming */}
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3.5 py-1 text-xs font-medium text-[var(--ink-muted)] shadow-xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+              <span className="font-mono-tag italic">“{siteData.heroQuote}”</span>
+            </div>
 
             {/* CTAs */}
             <div className="mb-10 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() => scrollTo('register')}
-                className="group flex items-center gap-2 rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent-contrast)] transition-colors hover:bg-[var(--accent-hover)] cursor-pointer"
+                className="group flex items-center gap-2 rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent-contrast)] transition-colors hover:bg-[var(--accent-hover)] cursor-pointer shadow-sm"
               >
-                <span>Register for Season</span>
+                <span>Join an Event</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
 
               <button
                 type="button"
-                onClick={() => scrollTo('regions')}
+                onClick={() => scrollTo('about')}
                 className="rounded-full border border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--surface-elevated)] px-6 py-3 text-sm font-semibold text-[var(--ink)] shadow-sm transition-all hover:border-[var(--line-strong)] hover:shadow-md cursor-pointer"
               >
-                Explore 14 Regions
+                Explore ArticularUZ
               </button>
             </div>
 
             {/* Compact Stats with CountUp Animation */}
-            <div className="grid grid-cols-3 gap-6 border-t border-[var(--line)] pt-6">
-              {stats.slice(0, 3).map((stat) => (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 border-t border-[var(--line)] pt-6">
+              {stats.map((stat) => (
                 <div key={stat.label}>
                   <div className="font-mono-tag text-2xl font-bold tracking-tight text-[var(--ink)] sm:text-3xl">
                     <CountUp value={stat.value} start={isRevealed} duration={1300} />
                   </div>
-                  <div className="text-xs text-[var(--ink-muted)]">{stat.label}</div>
+                  <div className="text-xs text-[var(--ink-muted)] mt-0.5">{stat.label}</div>
                 </div>
               ))}
             </div>

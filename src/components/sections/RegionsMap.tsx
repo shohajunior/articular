@@ -112,11 +112,14 @@ export const RegionsMap: React.FC = () => {
         {/* Section Header */}
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end mb-8">
           <div>
+            <span className="font-mono-tag text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
+              REGIONAL CHAPTERS
+            </span>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">
-              <RevealWords parts={[{ text: 'Tournament presence across Uzbekistan' }]} />
+              <RevealWords parts={[{ text: 'Presence across Uzbekistan' }]} />
             </h2>
-            <p className="mt-2 max-w-2xl text-sm text-[var(--ink-muted)]">
-              Interactive 3D volumetric map. Explore verified aerospace event venues and active tournament chapters across all 14 regions.
+            <p className="mt-2 max-w-2xl text-sm sm:text-base leading-relaxed text-[var(--ink-muted)]">
+              ArticularUZ is active in five regions: Bukhara, Andijan, Fergana, Tashkent region, and Tashkent city. Every other region is coming soon.
             </p>
           </div>
         </div>
@@ -467,11 +470,32 @@ export const RegionsMap: React.FC = () => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-6 py-3 text-xs font-semibold text-[var(--accent-contrast)] shadow-sm transition-all hover:bg-[var(--accent-hover)] hover:shadow-md"
               >
-                <span>Register from {selectedRegion.name}</span>
+                <span>Join from {selectedRegion.name}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </a>
             </div>
           </div>
+        </div>
+
+        {/* Want to open the next chapter callout */}
+        <div className="mt-4 rounded-2xl border border-[var(--line)] bg-[var(--bg)] p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs shadow-xs">
+          <div className="flex items-center gap-3">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-tint)] text-[var(--accent)] font-bold text-sm">
+              ★
+            </span>
+            <p className="text-[var(--ink-muted)]">
+              <strong className="text-[var(--ink)] font-semibold">Want to open the next chapter?</strong> Regional coordinators lead ArticularUZ in their region. Contact us on Telegram to apply.
+            </p>
+          </div>
+          <a
+            href={siteData.links.channel}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center gap-1.5 font-semibold text-[var(--accent)] hover:underline"
+          >
+            <span>Apply on Telegram</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </a>
         </div>
       </div>
     </section>

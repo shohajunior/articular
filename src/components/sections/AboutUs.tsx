@@ -13,23 +13,23 @@ interface StoryBlock {
 const STORY_BLOCKS: StoryBlock[] = [
   {
     step: '01',
-    tag: 'THE HYPOTHESIS',
-    word: 'CALCULATE.',
-    desc: 'Autonomous orbital calculations. No textbook templates.',
+    tag: 'THE METHOD · STEP 01',
+    word: 'LEARN.',
+    desc: 'Space science through real questions, not textbook templates.',
     activeThreshold: 0.15,
   },
   {
     step: '02',
-    tag: 'THE DEFENSE',
-    word: 'DEFEND.',
-    desc: '100% English defense before Uzcosmos space agency engineers.',
+    tag: 'THE METHOD · STEP 02',
+    word: 'THINK.',
+    desc: 'Critical thinking applied to bold scientific ideas.',
     activeThreshold: 0.48,
   },
   {
     step: '03',
-    tag: 'THE APOGEE',
-    word: 'LAUNCH.',
-    desc: 'Uzcosmos co-signed credentials. Direct global academic trajectory.',
+    tag: 'THE METHOD · STEP 03',
+    word: 'ARTICULATE.',
+    desc: 'Present your ideas in English, with confidence, in front of an audience.',
     activeThreshold: 0.80,
   },
 ];
@@ -323,13 +323,31 @@ export const AboutUs: React.FC = () => {
       {/* 2. SCROLLING MOVING CONTENT (Moves over stationary background) */}
       {/* ======================================================== */}
       <div className="relative z-10 -mt-[100vh]">
-        {/* Section Intro Header */}
-        <div className="mx-auto max-w-4xl px-6 pt-24 pb-14 text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
+        {/* Section Intro Header: Mission & Perception */}
+        <div className="mx-auto max-w-3xl px-6 pt-24 pb-14 text-center">
+          <span className="font-mono-tag text-xs font-semibold uppercase tracking-wider text-[var(--accent)]">
+            MISSION
+          </span>
+          <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
             <RevealWords
-              parts={[{ text: 'Where young minds articulate the future.' }]}
+              parts={[{ text: 'Public opinion first. The industry follows.' }]}
             />
           </h2>
+          <p className="mt-5 text-base sm:text-lg leading-relaxed text-[var(--ink-muted)]">
+            The space industry cannot grow without young people who care about it, and young people cannot care about what they have never seen. So we begin with perception. ArticularUZ was founded on 8 April 2026 with one mission: to make the space industry popular among young people in Uzbekistan.
+          </p>
+          <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-2 rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-xs font-medium text-[var(--ink)] shadow-xs">
+            <span className="text-[var(--accent)] font-semibold uppercase tracking-wider font-mono-tag">Our values:</span>
+            <span className="text-[var(--ink-muted)]">Respect, humility, and a commitment to improving the space industry in Uzbekistan.</span>
+          </div>
+
+          <div className="mt-14 flex items-center justify-center gap-3">
+            <div className="h-px w-12 bg-[var(--line)]" />
+            <span className="font-mono-tag text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent)]">
+              THE METHOD · LEARN · THINK · ARTICULATE
+            </span>
+            <div className="h-px w-12 bg-[var(--line)]" />
+          </div>
         </div>
 
         {/* ======================================================== */}

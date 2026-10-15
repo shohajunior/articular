@@ -80,20 +80,20 @@ export const Partners: React.FC = () => {
       className="relative isolate scroll-mt-20 border-b border-[var(--line)] bg-[#edf4f9] dark:bg-[#0c1422] py-20 sm:py-24 transition-colors duration-300 overflow-hidden"
     >
       <div className="mx-auto max-w-[1140px] px-6">
-        {/* Header matching volontyorlar.uz Opportunity sources */}
+        {/* Header matching official copy */}
         <div className="max-w-2xl">
           <p className="flex items-center gap-2.5 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-blue-600 dark:text-blue-400">
             <span
               aria-hidden="true"
               className="h-px w-6 shrink-0 bg-blue-600 dark:bg-blue-400"
             />
-            OPPORTUNITY SOURCES
+            OFFICIAL RECOGNITION
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl">
-            <RevealWords parts={[{ text: 'Where the opportunities come from' }]} />
+            <RevealWords parts={[{ text: 'Who stands behind us' }]} />
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
-            Official strategic partners collaborating to empower students in aerospace tournaments and youth volunteer initiatives across Uzbekistan.
+            Uzcosmos Agency and the Youth Volunteers Club officially recognize ArticularUZ. They support our events with promotion, juries, and personnel.
           </p>
         </div>
       </div>

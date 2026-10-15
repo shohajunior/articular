@@ -105,7 +105,7 @@ export const Header: React.FC = () => {
         </a>
 
         {/* Desktop Navigation with Color Change on Hover */}
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-5 lg:gap-6 md:flex">
           <button
             type="button"
             onClick={() => scrollTo('about')}
@@ -115,10 +115,24 @@ export const Header: React.FC = () => {
           </button>
           <button
             type="button"
+            onClick={() => scrollTo('events')}
+            className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
+          >
+            Events
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollTo('space-fest')}
+            className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)] whitespace-nowrap"
+          >
+            Space Fest
+          </button>
+          <button
+            type="button"
             onClick={() => scrollTo('regions')}
             className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
           >
-            14 Regions
+            Regions
           </button>
           <button
             type="button"
@@ -133,6 +147,13 @@ export const Header: React.FC = () => {
             className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
           >
             Team
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollTo('join')}
+            className="cursor-pointer text-xs font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
+          >
+            Join
           </button>
           <button
             type="button"
@@ -226,16 +247,28 @@ export const Header: React.FC = () => {
         <div className="mx-auto mt-2 max-w-[920px] rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-lg md:hidden">
           <nav className="flex flex-col gap-3">
             <button
-              onClick={() => scrollTo('stages')}
+              onClick={() => scrollTo('about')}
               className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
             >
-              Stages
+              About
+            </button>
+            <button
+              onClick={() => scrollTo('events')}
+              className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
+            >
+              Events
+            </button>
+            <button
+              onClick={() => scrollTo('space-fest')}
+              className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
+            >
+              Space Fest
             </button>
             <button
               onClick={() => scrollTo('regions')}
               className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
             >
-              14 Regions
+              Regions
             </button>
             <button
               onClick={() => scrollTo('partners')}
@@ -248,6 +281,12 @@ export const Header: React.FC = () => {
               className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
             >
               Team
+            </button>
+            <button
+              onClick={() => scrollTo('join')}
+              className="text-left text-sm font-semibold text-[var(--ink-muted)] transition-colors duration-200 hover:text-[var(--accent)]"
+            >
+              Join
             </button>
             <button
               onClick={() => scrollTo('news')}

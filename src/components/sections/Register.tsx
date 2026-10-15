@@ -1,6 +1,6 @@
 import React from 'react';
 import { siteData } from '../../data/site';
-import { ArrowRight, ShieldCheck, Users, MapPin, Award } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Users, MapPin, Award, Send } from 'lucide-react';
 import { TelegramIcon } from '../ui/SocialIcons';
 import { RevealWords } from '../ui/RevealWords';
 
@@ -12,46 +12,62 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
   const perks = [
     {
       icon: Users,
-      title: "Teams of 2–5",
-      desc: "Or solo student competitors"
+      title: "Solo or Team",
+      desc: "Solo participants are placed in a team"
     },
     {
       icon: MapPin,
-      title: "All 14 Regions",
-      desc: "Open across Uzbekistan"
+      title: "Open to All Regions",
+      desc: "Active across Uzbekistan"
     },
     {
       icon: Award,
-      title: "Uzcosmos Credentials",
-      desc: "Gold, Silver & Bronze honors"
+      title: "Top 3 Receive Certificates",
+      desc: "Recognized by Uzcosmos & YVC"
     },
     {
       icon: ShieldCheck,
-      title: "100% Free",
-      desc: "Zero registration fees"
+      title: "Free of Charge",
+      desc: "Zero participation fees"
     }
   ];
 
   return (
-    <section id="register" className="border-t border-[var(--line)] bg-[var(--surface)] py-20">
-      <div className="mx-auto max-w-[1040px] px-6">
+    <section id="join" className="scroll-mt-20 border-t border-[var(--line)] bg-[var(--surface)] py-20 sm:py-28 transition-colors">
+      <div id="register" className="mx-auto max-w-[1040px] px-6">
         <div className="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--bg)] p-8 sm:p-14 text-center shadow-sm">
-          {/* Heading with Telegram bot cleanly on the second line */}
-          <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl">
-            <span className="block">
-              <RevealWords parts={[{ text: 'Register exclusively via' }]} />
-            </span>
-            <span className="inline-block whitespace-nowrap font-serif-italic text-[var(--accent)] mt-1 sm:mt-2">
-              <RevealWords
-                delay={210}
-                parts={[{ text: 'Telegram bot' }]}
-              />
-            </span>
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent-tint)] px-3.5 py-1 text-xs font-semibold text-[var(--accent)] mb-4">
+            <Send className="h-3.5 w-3.5" />
+            <span className="font-mono-tag tracking-wider uppercase">REGISTRATION</span>
+          </div>
+
+          {/* Heading */}
+          <h2 className="mx-auto max-w-2xl text-3xl font-extrabold tracking-tight text-[var(--ink)] sm:text-4xl lg:text-5xl">
+            <RevealWords parts={[{ text: 'Join through our Telegram bot' }]} />
           </h2>
 
           {/* Subtitle */}
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[var(--ink-muted)] sm:text-base">
-            All team rosters, engineering track selection, rules verification, and schedule updates are conducted strictly through our official Telegram service bot.
+            Register for events and follow announcements through{' '}
+            <a
+              href={siteData.links.bot}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-[var(--accent)] hover:underline"
+            >
+              @articularuzbot
+            </a>
+            . News and updates:{' '}
+            <a
+              href={siteData.links.channel}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-[var(--accent)] hover:underline"
+            >
+              @articularuz
+            </a>
+            .
           </p>
 
           {/* 4 Feature Badges in Balanced Grid */}
@@ -69,7 +85,7 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
                   <div className="text-xs font-bold text-[var(--ink)]">
                     {perk.title}
                   </div>
-                  <div className="mt-0.5 text-[11px] text-[var(--ink-muted)]">
+                  <div className="mt-1 text-[11px] text-[var(--ink-muted)] leading-tight">
                     {perk.desc}
                   </div>
                 </div>
@@ -77,7 +93,7 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
             })}
           </div>
 
-          {/* Primary Action Button */}
+          {/* Primary Action Buttons */}
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
               href={siteData.links.bot}
@@ -86,7 +102,7 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
               className="group inline-flex items-center gap-3 rounded-full bg-[var(--accent)] px-8 py-4 text-sm font-semibold text-[var(--accent-contrast)] shadow-sm transition-all hover:bg-[var(--accent-hover)] hover:shadow-md"
             >
               <TelegramIcon className="h-4 w-4" />
-              <span>Register Now</span>
+              <span>Join Now</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
 
@@ -101,9 +117,9 @@ export const Register: React.FC<RegisterProps> = ({ onNavigateLegal }) => {
             </a>
           </div>
 
-          {/* Legal notes linking to separate pages */}
+          {/* Official Footer Agreement notice */}
           <div className="mt-8 border-t border-[var(--line)] pt-6 text-xs text-[var(--ink-dim)]">
-            By participating, you agree to our{' '}
+            By taking part, you agree to our{' '}
             <a
               href="#/privacy"
               onClick={(e) => {

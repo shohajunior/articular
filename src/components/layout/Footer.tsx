@@ -44,7 +44,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
             </p>
           </div>
 
-          {/* Tournament Navigation */}
+          {/* Official Navigation */}
           <div>
             <div className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--ink)]">
               Navigation
@@ -56,16 +56,25 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
                   onClick={() => scrollTo('about')}
                   className="cursor-pointer transition-colors hover:text-[var(--accent)]"
                 >
-                  Tournament Stages
+                  About
                 </button>
               </li>
               <li>
                 <button
                   type="button"
-                  onClick={() => scrollTo('partners')}
+                  onClick={() => scrollTo('events')}
                   className="cursor-pointer transition-colors hover:text-[var(--accent)]"
                 >
-                  Official Partners
+                  Events
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('space-fest')}
+                  className="cursor-pointer transition-colors hover:text-[var(--accent)]"
+                >
+                  Space Fest
                 </button>
               </li>
               <li>
@@ -74,7 +83,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
                   onClick={() => scrollTo('regions')}
                   className="cursor-pointer transition-colors hover:text-[var(--accent)]"
                 >
-                  14 Regional Chapters
+                  Regions
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('partners')}
+                  className="cursor-pointer transition-colors hover:text-[var(--accent)]"
+                >
+                  Partners
                 </button>
               </li>
               <li>
@@ -83,7 +101,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
                   onClick={() => scrollTo('team')}
                   className="cursor-pointer transition-colors hover:text-[var(--accent)]"
                 >
-                  Organizing Team
+                  Team
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => scrollTo('join')}
+                  className="cursor-pointer transition-colors hover:text-[var(--accent)]"
+                >
+                  Join
                 </button>
               </li>
               <li>
@@ -92,7 +119,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
                   onClick={() => scrollTo('news')}
                   className="cursor-pointer transition-colors hover:text-[var(--accent)]"
                 >
-                  Latest News
+                  News
                 </button>
               </li>
             </ul>
@@ -106,24 +133,33 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
             <ul className="space-y-2 text-xs text-[var(--ink-muted)]">
               <li>
                 <a
-                  href={siteData.links.bot}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 transition-colors hover:text-[var(--accent)]"
-                >
-                  <TelegramIcon className="h-3.5 w-3.5" />
-                  <span>@articularuzbot (Registration)</span>
-                </a>
-              </li>
-              <li>
-                <a
                   href={siteData.links.channel}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 transition-colors hover:text-[var(--accent)]"
                 >
                   <TelegramIcon className="h-3.5 w-3.5" />
-                  <span>@articularuz (Announcements)</span>
+                  <span>Telegram: @articularuz</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={siteData.links.bot}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 transition-colors hover:text-[var(--accent)]"
+                >
+                  <TelegramIcon className="h-3.5 w-3.5" />
+                  <span>Bot: @articularuzbot</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`mailto:${siteData.links.email}`}
+                  className="inline-flex items-center gap-1.5 transition-colors hover:text-[var(--accent)]"
+                >
+                  <span className="font-mono text-xs">✉</span>
+                  <span>Email: {siteData.links.email}</span>
                 </a>
               </li>
               <li>
@@ -145,18 +181,42 @@ export const Footer: React.FC<FooterProps> = ({ onNavigateLegal }) => {
                   className="inline-flex items-center gap-1.5 transition-colors hover:text-[var(--accent)]"
                 >
                   <LinkedinIcon className="h-3.5 w-3.5" />
-                  <span>LinkedIn Company</span>
+                  <span>LinkedIn @articularuz</span>
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Legal Pages */}
+          {/* Legal Pages & Agreement */}
           <div className="space-y-4">
             <div>
               <div className="mb-3 text-xs font-bold uppercase tracking-wider text-[var(--ink)]">
                 Regulations
               </div>
+              <p className="mb-3 text-xs leading-relaxed text-[var(--ink-muted)]">
+                By taking part, you agree to our{' '}
+                <a
+                  href="#/privacy"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigateLegal('privacy');
+                  }}
+                  className="font-semibold text-[var(--accent)] hover:underline"
+                >
+                  Privacy Policy
+                </a>{' '}
+                and{' '}
+                <a
+                  href="#/terms"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigateLegal('terms');
+                  }}
+                  className="font-semibold text-[var(--accent)] hover:underline"
+                >
+                  Terms of Participation
+                </a>.
+              </p>
               <ul className="space-y-2 text-xs text-[var(--ink-muted)]">
                 <li>
                   <a
