@@ -336,18 +336,6 @@ export const AboutUs: React.FC = () => {
           <p className="mt-5 text-base sm:text-lg leading-relaxed text-[var(--ink-muted)]">
             The space industry cannot grow without young people who care about it, and young people cannot care about what they have never seen. So we begin with perception. ArticularUZ was founded on 8 April 2026 with one mission: to make the space industry popular among young people in Uzbekistan.
           </p>
-          <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-2 rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-xs font-medium text-[var(--ink)] shadow-xs">
-            <span className="text-[var(--accent)] font-semibold uppercase tracking-wider font-mono-tag">Our values:</span>
-            <span className="text-[var(--ink-muted)]">Respect, humility, and a commitment to improving the space industry in Uzbekistan.</span>
-          </div>
-
-          <div className="mt-14 flex items-center justify-center gap-3">
-            <div className="h-px w-12 bg-[var(--line)]" />
-            <span className="font-mono-tag text-xs font-bold uppercase tracking-[0.2em] text-[var(--accent)]">
-              THE METHOD · LEARN · THINK · ARTICULATE
-            </span>
-            <div className="h-px w-12 bg-[var(--line)]" />
-          </div>
         </div>
 
         {/* ======================================================== */}
