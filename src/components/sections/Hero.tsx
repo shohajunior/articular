@@ -88,12 +88,6 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
               {siteData.shortDesc}
             </p>
 
-            {/* Vision without execution is daydreaming */}
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-3.5 py-1 text-xs font-medium text-[var(--ink-muted)] shadow-xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-              <span className="font-mono-tag italic">“{siteData.heroQuote}”</span>
-            </div>
-
             {/* CTAs */}
             <div className="mb-10 flex flex-wrap items-center gap-3">
               <button
@@ -135,6 +129,26 @@ export const Hero: React.FC<HeroProps> = ({ onPhotoClick, isRevealed = true }) =
           >
             {/* Visual container with 6 overlapping photos */}
             <div className="relative mx-auto h-[520px] w-full max-w-[540px]">
+
+              {/* Handwritten Quote Sticker slightly tilted on the right side of photos */}
+              <div className="absolute -top-6 right-0 sm:-right-4 z-35 select-none pointer-events-auto">
+                <div className="group relative rotate-[3.5deg] transition-all duration-300 hover:rotate-0 hover:scale-105">
+                  {/* Subtle Washi Tape effect at the top */}
+                  <div
+                    className="absolute -top-2.5 left-1/2 -translate-x-1/2 h-4 w-12 -rotate-2 rounded-xs bg-amber-400/40 dark:bg-sky-400/35 backdrop-blur-xs border border-white/40 shadow-xs pointer-events-none z-10"
+                  />
+
+                  {/* Note card */}
+                  <div className="rounded-2xl border border-[var(--line-strong)] bg-white/95 dark:bg-[#0c1524]/95 px-4 py-2.5 shadow-xl backdrop-blur-md dark:shadow-[0_12px_32px_rgba(0,0,0,0.6)]">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 shrink-0 rounded-full bg-[var(--accent)] animate-pulse" />
+                      <span className="font-handwriting text-xl sm:text-2xl font-bold tracking-wide text-[var(--ink)] leading-none pt-0.5">
+                        “{siteData.heroQuote}”
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {/* Card 1 (Base Anchor Left): Grand Final Tashkent */}
               <div
